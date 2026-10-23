@@ -6,6 +6,7 @@ CFLAGS := -std=c17 -Wall -Wextra -Wpedantic -O2
 
 
 BUILD_DIR = build
+SRC_DIR = src
 
 
 all: build
@@ -13,16 +14,18 @@ all: build
 build: network udp_server udp_client
 
 
-network: network.c
-> $(CC) $(CFLAGS) network.c -o $(BUILD_DIR)/network.o
+network: $(SRC_DIR)/network.c
+> $(CC) $(CFLAGS) $(SRC_DIR)/network.c -o $(BUILD_DIR)/network
 
-udp_server: udp_server.c
-> $(CC) $(CFLAGS) udp_server.c -o $(BUILD_DIR)/udp_server.o
+udp_server: $(SRC_DIR)/udp_server.c
+> $(CC) $(CFLAGS) $(SRC_DIR)/udp_server.c -o $(BUILD_DIR)/udp_server
 
-udp_client: udp_client.c
-> $(CC) $(CFLAGS) udp_client.c -o $(BUILD_DIR)/udp_client.o
+udp_client: $(SRC_DIR)/udp_client.c
+> $(CC) $(CFLAGS) $(SRC_DIR)/udp_client.c -o $(BUILD_DIR)/udp_client
 
 
 clean:
-> rm -f $(BUILD_DIR)/*.o
+> rm $(BUILD_DIR)/network
+> rm $(BUILD_DIR)/udp_server
+> rm $(BUILD_DIR)/udp_client
 
