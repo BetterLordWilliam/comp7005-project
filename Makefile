@@ -14,14 +14,18 @@ all: build
 build: network udp_server udp_client
 
 
-network: $(SRC_DIR)/network.c
+network: $(SRC_DIR)/network.c | $(BUILD_DIR)
 > $(CC) $(CFLAGS) $(SRC_DIR)/network.c -o $(BUILD_DIR)/network
 
-udp_server: $(SRC_DIR)/udp_server.c
+udp_server: $(SRC_DIR)/udp_server.c | $(BUILD_DIR)
 > $(CC) $(CFLAGS) $(SRC_DIR)/udp_server.c -o $(BUILD_DIR)/udp_server
 
-udp_client: $(SRC_DIR)/udp_client.c
+udp_client: $(SRC_DIR)/udp_client.c | $(BUILD_DIR)
 > $(CC) $(CFLAGS) $(SRC_DIR)/udp_client.c -o $(BUILD_DIR)/udp_client
+
+
+$(BUILD_DIR):
+> mkdir -p $(BUILD_DIR)
 
 
 clean:
