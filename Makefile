@@ -5,22 +5,22 @@ CFLAGS := -std=c17 -Wall -Wextra -Wpedantic -O2
 .PHONY: all build clean
 
 
-BUILD_DIR = build
-SRC_DIR = src
+BUILD_DIR = ./build
+SRC_DIR = ./src
 
 
-all: build
+all: build_project
 
-build: network udp_server udp_client
+build_project: $(BUILD_DIR) network udp_server udp_client
 
 
-network: $(SRC_DIR)/network.c | $(BUILD_DIR)
+network: $(SRC_DIR)/network.c
 > $(CC) $(CFLAGS) $(SRC_DIR)/network.c -o $(BUILD_DIR)/network
 
-udp_server: $(SRC_DIR)/udp_server.c | $(BUILD_DIR)
+udp_server: $(SRC_DIR)/udp_server.c
 > $(CC) $(CFLAGS) $(SRC_DIR)/udp_server.c -o $(BUILD_DIR)/udp_server
 
-udp_client: $(SRC_DIR)/udp_client.c | $(BUILD_DIR)
+udp_client: $(SRC_DIR)/udp_client.c
 > $(CC) $(CFLAGS) $(SRC_DIR)/udp_client.c -o $(BUILD_DIR)/udp_client
 
 
