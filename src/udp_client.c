@@ -7,6 +7,8 @@
 #include <sys/socket.h>
 #include <unistd.h>
 
+#include "udp_saw.h"
+
 #define BUFFER_SIZE 4096
 
 static void usage(const char *program)
