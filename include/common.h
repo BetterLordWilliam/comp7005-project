@@ -16,5 +16,9 @@
         "%s:%s:%d \e[31mERROR\e[0m\t" fmt "\n", __FILE__, __func__, __LINE__\
             , ##__VA_ARGS__)
 
+
+int doNothing();
+
+
 #endif
 
