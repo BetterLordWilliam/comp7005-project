@@ -11,8 +11,20 @@ SRC_DIR = ./src
 
 all: build_project
 
+debug: CFLAGS += -g
+debug: CFLAGS += -DUDP_DEBUG
+debug: build_project
+
+
+test: build_project_tester
+
+debug_test: CFLAGS += -g
+debug_test: CFLAGS += -DUDP_DEBUG
+debug_test: build_project_tester
+
 
 build_project: $(BUILD_DIR) common udp_saw network udp_server udp_client
+
 build_project_tester: $(BUILD_DIR) common udp_saw udp_tester
 
 
@@ -36,18 +48,24 @@ udp_server: $(SRC_DIR)/udp_server.c
 udp_client: $(SRC_DIR)/udp_client.c
 > $(CC) $(CFLAGS) $(BUILD_DIR)/*.o $(SRC_DIR)/udp_client.c -o $(BUILD_DIR)/udp_client
 
-
 udp_tester: $(SRC_DIR)/udp_tester.c
 > $(CC) $(CFLAGS) $(BUILD_DIR)/*.o $(SRC_DIR)/udp_tester.c -o $(BUILD_DIR)/udp_tester
 
+
+# locations
 
 $(BUILD_DIR):
 > mkdir -p $(BUILD_DIR)
 
 
-clean:
+# utilities
+
+clean: clean_obj
+
+clean_obj:
 > rm $(BUILD_DIR)/*.o
-> rm $(BUILD_DIR)/network
-> rm $(BUILD_DIR)/udp_server
-> rm $(BUILD_DIR)/udp_client
+
+# kinda dangerous
+dclean:
+> echo "rm $(BUILD_DIR)/*"
 

@@ -18,6 +18,10 @@ int main() {
 
     // writing of a packet
 
+#ifdef UDP_DEBUG
+    printf("program in debug mode\n");
+#endif
+
     char* str = "this is a test";
     h.length = strlen(str);
     LINFO("%d", h.length);
