@@ -24,6 +24,21 @@ void saw_writePacket(const udp_sawHeader_t* header,
 
     assert(netBuf != NULL);
     assert(netBufSize - HEADER_LEN >= dataBufSize);
+    assert(header->length == dataBufSize);
+
+    int offset = 0;
+
+    memcpy((netBuf + offset), &header->packetId, PACKETID_L);
+    offset += PACKETID_L;
+    
+    memcpy((netBuf + offset), &header->checksum, CHECKSUM_L);
+    offset += CHECKSUM_L;
+
+    memcpy((netBuf + offset), &header->length, LENGTH_L);
+    offset += LENGTH_L;
+
+    memcpy((netBuf + offset), dataBuf, dataBufSize);
+    offset += dataBufSize;
 }
 
 void saw_readPacket(udp_sawHeader_t* header,
