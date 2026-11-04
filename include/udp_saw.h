@@ -38,6 +38,9 @@ typedef enum udp_saw_packetType {
 
 /**
 UDP stop-and-wait 'connection' information struct.
+    Storing connection state in a struct like this should help in the future
+    Sliding window implementation when we will have multiple of these 
+    'connections' simultaneously
 */
 typedef struct udp_saw_state {
     int ack;                    // current ack no
