@@ -31,17 +31,30 @@ edge cases
 */
 
 
+#define MAX_RETRY (3)
+
+typedef enum saw_cState {
+    INIT, CON, DISCON,
+} saw_cState_t;
+
 /**
 UDP stop-and-wait 'connection' information struct.
     Storing connection state in a struct like this should help in the future
     Sliding window implementation when we will have multiple of these 
     'connections' simultaneously
+
+
 */
 typedef struct saw_state {
-    int ack;                    // current ack no
-    struct timespec timeout;
-    struct timespec current;    // maybe not necessary
+    uint8_t cSeqNo;             // current ack no
+    uint8_t nSeqNo;             // next ack no
+    int rtrans;
+    saw_cState_t cState;        // connection status
+    struct timespec timeoutDur; // timeout duration (should be calculated from RTT)
+    struct timespec timeout;    // expiration time
 } saw_state_t;
+
+void saw_initState(saw_state_t* state);
 
 
 #define HEADER_LEN  (6) // why is this 40?

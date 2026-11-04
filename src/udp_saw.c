@@ -1,16 +1,33 @@
 #include "udp_saw.h"
-#include <netinet/in.h>
 
-
-void saw_initHeader(udp_sawHeader_t* header)
+void saw_initState(saw_state_t* state)
 {
+    assert(state != NULL);
+    
+    state->cSeqNo = (uint8_t)0;
+    state->nSeqNo = (uint8_t)0;
+    state->rtrans = 0;
+
+    state->cState = INIT;
+}
+
+void saw_setTimeout(saw_state_t* state)
+{
+    assert(state != NULL);
+}
+
+
+void saw_initHeader(saw_header_t* header)
+{
+    assert(header != NULL);
+
     header->packetId    = 0;
-    header->packetType  = DATA;
+    header->packetType  = (uint8_t)DATA;
     header->checksum    = 0;
     header->length      = 0;
 }
 
-void saw_writePacket(const udp_sawHeader_t* header,
+void saw_writePacket(const saw_header_t* header,
     char* netBuf, size_t netBufSize, const char* dataBuf, size_t dataBufSize
 ) {
     assert(netBuf != NULL);
@@ -38,7 +55,7 @@ void saw_writePacket(const udp_sawHeader_t* header,
     offset += dataBufSize;      // same byte ordering this is client data
 }
 
-void saw_readPacket(udp_sawHeader_t* header,
+void saw_readPacket(saw_header_t* header,
     const char* netBuf, size_t netBufSize
 ) {
     assert(netBuf != NULL);
