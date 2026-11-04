@@ -6,6 +6,7 @@
 #include <string.h>
 #include <assert.h>
 #include <netinet/in.h>
+#include <time.h>
 
 /**
 Stop and wait requirements:
@@ -26,16 +27,24 @@ edge cases
 
 */
 
+
+/**
+Defines the packet types for stop-and-wait.
+*/
 typedef enum udp_saw_packetType {
     DATA,
     ACK
 } udp_sawPacketType_t;
 
+/**
+UDP stop-and-wait 'connection' information struct.
+*/
 typedef struct udp_saw_state {
     int ack;                    // current ack no
+    struct timespec timeout;
 } udp_sawState_t;
 
-#define HEADER_LEN  (40)
+#define HEADER_LEN  (6) // why is this 40?
 
 #define PACKETID_M  (0xFF0000000000)
 #define PACKETID_IM (0x00FFFFFFFFFF)
@@ -52,6 +61,9 @@ typedef struct udp_saw_state {
 #define LENGTH_M    (0x00000000FFFF)
 #define LENGTH_IM   (0xFFFFFFFF0000)
 #define LENGTH_L    (2)
+
+#define PLEN(len) (HEADER_LEN + (len))
+#define PLENU(head) (HEADER_LEN + (head.length)) /* THIS MUST BE USED W/ HEADER STRUCT */
 
 
 /**
