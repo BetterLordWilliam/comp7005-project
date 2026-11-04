@@ -13,7 +13,7 @@ int main() {
     char rbuf[4096] = { 0 };
     char wbuf[4096] = { 0 };
    
-    udp_sawHeader_t h = { 0 };
+    saw_header_t h = { 0 };
     saw_initHeader(&h);
 
     // writing of a packet
@@ -36,7 +36,7 @@ int main() {
     // read the packet, sort of like reading it from the net
     // we know we need to read 6 bytes (or HEADER_LEN)
     // then we check what the 
-    udp_sawHeader_t h1 = { 0 };
+    saw_header_t h1 = { 0 };
     saw_initHeader(&h1);
 
     FILE* tester2 = fopen("data.bin", "rb");

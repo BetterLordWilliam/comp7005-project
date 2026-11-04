@@ -1,6 +1,7 @@
 #ifndef UDP_SAW
 #define UDP_SAW
 
+
 #include <stdint.h>
 #include <sys/types.h>
 #include <string.h>
@@ -8,7 +9,9 @@
 #include <netinet/in.h>
 #include <time.h>
 
-/**
+/*
+[WO] udp saw protocol implementation running notes.
+
 Stop and wait requirements:
     1. introduce a format for messages
     2. define DATA / ACK message types
@@ -29,23 +32,17 @@ edge cases
 
 
 /**
-Defines the packet types for stop-and-wait.
-*/
-typedef enum udp_saw_packetType {
-    DATA,
-    ACK
-} udp_sawPacketType_t;
-
-/**
 UDP stop-and-wait 'connection' information struct.
     Storing connection state in a struct like this should help in the future
     Sliding window implementation when we will have multiple of these 
     'connections' simultaneously
 */
-typedef struct udp_saw_state {
+typedef struct saw_state {
     int ack;                    // current ack no
     struct timespec timeout;
-} udp_sawState_t;
+    struct timespec current;    // maybe not necessary
+} saw_state_t;
+
 
 #define HEADER_LEN  (6) // why is this 40?
 
@@ -66,8 +63,16 @@ typedef struct udp_saw_state {
 #define LENGTH_L    (2)
 
 #define PLEN(len) (HEADER_LEN + (len))
-#define PLENU(head) (HEADER_LEN + (head.length)) /* THIS MUST BE USED W/ HEADER STRUCT */
 
+/* THIS MUST BE USED W/ HEADER STRUCT */
+#define PLENU(head) (HEADER_LEN + (head.length))
+
+/**
+Defines the packet types for stop-and-wait.
+*/
+typedef enum saw_packetType {
+    DATA, ACK, I, IACK, T, TACK
+} saw_packetType_t;
 
 /**
 Store all info such that this packet is as a window into the buffer
@@ -75,29 +80,29 @@ Store all info such that this packet is as a window into the buffer
     though I don't think its required that either server nor client process
     this in any significant way other than passing it back and forth
 */
-typedef struct udp_saw_header {
+typedef struct saw_header {
     uint8_t     packetId;
     uint8_t     packetType;
     uint16_t    checksum;
     uint16_t    length;         // length of the packet contents
-} udp_sawHeader_t;
+} saw_header_t;
 
-void saw_initHeader(udp_sawHeader_t* header);
-
+void saw_initHeader(saw_header_t* header);
 
 /**
 Writes from the given `dataBuf` to given `netBuf` network buffer according to
 the given `udp_sawHeader_t` `header`.
 */
-void saw_writePacket(const udp_sawHeader_t* header,
+void saw_writePacket(const saw_header_t* header,
     char* netBuf, size_t netBufSize, const char* dataBuf, size_t dataBufSize);
 
 /**
 Reads from the given `netBuf` network buffer & initialzies the given
 `udp_sawHeader_t` `header`.
 */
-void saw_readPacket(udp_sawHeader_t* header,
+void saw_readPacket(saw_header_t* header,
     const char* netBuf, size_t netBufSize);
+
 
 #endif
 

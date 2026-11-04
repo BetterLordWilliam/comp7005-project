@@ -57,7 +57,7 @@ int main(int argc, char **argv)
         return EXIT_FAILURE;
     }
 
-    udp_sawHeader_t state = { 0 };
+    saw_header_t state = { 0 };
     saw_initHeader(&state);
 
     setvbuf(stdin, NULL, _IONBF, 0);
