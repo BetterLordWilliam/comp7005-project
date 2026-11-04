@@ -26,22 +26,31 @@ edge cases
 
 */
 
+typedef enum udp_saw_packetType {
+    DATA,
+    ACK
+} udp_sawPacketType_t;
+
 typedef struct udp_saw_state {
     int ack;                    // current ack no
 } udp_sawState_t;
 
 #define HEADER_LEN  (40)
 
-#define PACKETID_M  (0xFF00000000)
-#define PACKETID_IM (0x00FFFFFFFF)
+#define PACKETID_M  (0xFF0000000000)
+#define PACKETID_IM (0x00FFFFFFFFFF)
 #define PACKETID_L  (1)         // byte length of this header field
 
-#define CHECKSUM_M  (0x00FFFF0000)
-#define CHECKSUM_IM (0xFF0000FFFF)
+#define PACKETTYPE_M    (0x00FF00000000)
+#define PACKETTYPE_IM   (0xFF00FFFFFFFF)
+#define PACKETTYPE_L    (1)
+
+#define CHECKSUM_M  (0x0000FFFF0000)
+#define CHECKSUM_IM (0xFFFF0000FFFF)
 #define CHECKSUM_L  (2)
 
-#define LENGTH_M    (0x000000FFFF)
-#define LENGTH_IM   (0xFFFFFF0000)
+#define LENGTH_M    (0x00000000FFFF)
+#define LENGTH_IM   (0xFFFFFFFF0000)
 #define LENGTH_L    (2)
 
 
@@ -53,6 +62,7 @@ Store all info such that this packet is as a window into the buffer
 */
 typedef struct udp_saw_header {
     uint8_t     packetId;
+    uint8_t     packetType;
     uint16_t    checksum;
     uint16_t    length;         // length of the packet contents
 } udp_sawHeader_t;

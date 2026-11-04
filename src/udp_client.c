@@ -57,6 +57,9 @@ int main(int argc, char **argv)
         return EXIT_FAILURE;
     }
 
+    udp_sawHeader_t state = { 0 };
+    saw_initHeader(&state);
+
     setvbuf(stdin, NULL, _IONBF, 0);
     printf("Type lines quickly, or paste several lines. Echoes print as they arrive.\n");
     printf("Ctrl+D exits.\n");
@@ -73,7 +76,9 @@ int main(int argc, char **argv)
             .revents = 0,
         },
     };
+
     char buffer[BUFFER_SIZE];
+
     for (;;) {
         watched[0].revents = 0;
         watched[1].revents = 0;
