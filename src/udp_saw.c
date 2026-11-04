@@ -1,10 +1,6 @@
 #include "udp_saw.h"
 #include <netinet/in.h>
 
-int sawDoNothing(void) {
-    return 10;
-}
-
 
 void saw_initHeader(udp_sawHeader_t* header)
 {

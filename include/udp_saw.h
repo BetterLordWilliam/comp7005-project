@@ -79,20 +79,19 @@ typedef struct udp_saw_header {
     uint16_t    length;         // length of the packet contents
 } udp_sawHeader_t;
 
-
-int sawDoNothing(void);
-
 void saw_initHeader(udp_sawHeader_t* header);
 
+
 /**
-Writes from the given `dataBuf` 
+Writes from the given `dataBuf` to given `netBuf` network buffer according to
+the given `udp_sawHeader_t` `header`.
 */
 void saw_writePacket(const udp_sawHeader_t* header,
     char* netBuf, size_t netBufSize, const char* dataBuf, size_t dataBufSize);
 
 /**
-Reads from the given `netBuf` network buffer & initialzies the given `udp_sawHeader`
-w/ values from the expected bytes in the network buffer (as per the udp_sawHeader definition).
+Reads from the given `netBuf` network buffer & initialzies the given
+`udp_sawHeader_t` `header`.
 */
 void saw_readPacket(udp_sawHeader_t* header,
     const char* netBuf, size_t netBufSize);
