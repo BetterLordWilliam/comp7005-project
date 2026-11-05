@@ -7,6 +7,61 @@
 #include <sys/socket.h>
 #include <unistd.h>
 
+
+/*      CLIENT STARTER CODE LOOP
+        watched[0].revents = 0;
+        watched[1].revents = 0;
+
+        int ready = poll(watched, 2, -1);
+        if (ready == -1) {
+            if (errno == EINTR) {
+                continue;
+            }
+            perror("poll");
+            close(client_fd);
+            return EXIT_FAILURE;
+        }
+
+        // stdin is independent: send each available line immediately.
+        if (watched[0].revents & (POLLIN | POLLHUP)) {
+            if (fgets(buffer, sizeof(buffer), stdin) == NULL) {
+                break;
+            }
+
+            size_t length = strlen(buffer);
+            if (send_text(client_fd, &network, buffer, length) == -1) {
+                close(client_fd);
+                return EXIT_FAILURE;
+            }
+        }
+
+        // Echo reception is independent and never gates the next send.
+        if (watched[1].revents & POLLIN) {
+            ssize_t received = recvfrom(client_fd,
+                                        buffer,
+                                        sizeof(buffer),
+                                        0,
+                                        NULL,
+                                        NULL);
+            if (received == -1) {
+                if (errno == EINTR) {
+                    continue;
+                }
+                perror("recvfrom");
+                close(client_fd);
+                return EXIT_FAILURE;
+            }
+
+            printf("echo: ");
+            fwrite(buffer, 1, (size_t)received, stdout);
+            if (received == 0 || buffer[received - 1] != '\n') {
+                putchar('\n');
+            }
+            fflush(stdout);
+        }
+*/
+
+
 #include "udp_saw.h"
 
 #define BUFFER_SIZE 4096
@@ -34,6 +89,73 @@ static int send_text(int client_fd,
     return 0;
 }
 
+struct saw_cstate {
+    int client_fd;
+    struct pollfd* watched;
+    struct sockaddr_in network;
+};
+
+enum saw_loop_codes {
+    CONTINUE,
+    END
+};
+
+
+int saw_loop(struct saw_cstate* cstate)
+{
+    char buffer[BUFFER_SIZE];
+
+    cstate->watched[0].revents = 0;
+    cstate->watched[1].revents = 0;
+
+    int ready = poll(cstate->watched, 2, -1);
+    if (ready == -1) {
+        if (errno == EINTR) {
+            return CONTINUE;
+        }
+        perror("poll");
+        return EXIT_FAILURE;
+    }
+
+    /* stdin is independent: send each available line immediately. */
+    if (cstate->watched[0].revents & (POLLIN | POLLHUP)) {
+        if (fgets(buffer, sizeof(buffer), stdin) == NULL) {
+            return END;
+        }
+
+        size_t length = strlen(buffer);
+        if (send_text(cstate->client_fd, &cstate->network, buffer, length) == -1) {
+            return EXIT_FAILURE;
+        }
+    }
+
+    /* Echo reception is independent and never gates the next send. */
+    if (cstate->watched[1].revents & POLLIN) {
+        ssize_t received = recvfrom(cstate->client_fd,
+                                    buffer,
+                                    sizeof(buffer),
+                                    0,
+                                    NULL,
+                                    NULL);
+        if (received == -1) {
+            if (errno == EINTR) {
+                return CONTINUE;
+            }
+            perror("recvfrom");
+            return EXIT_FAILURE;
+        }
+
+        printf("echo: ");
+        fwrite(buffer, 1, (size_t)received, stdout);
+        if (received == 0 || buffer[received - 1] != '\n') {
+            putchar('\n');
+        }
+        fflush(stdout);
+    }
+
+    return CONTINUE;
+}
+
 int main(int argc, char **argv)
 {
     if (argc != 3) {
@@ -57,9 +179,6 @@ int main(int argc, char **argv)
         return EXIT_FAILURE;
     }
 
-    saw_header_t state = { 0 };
-    saw_initHeader(&state);
-
     setvbuf(stdin, NULL, _IONBF, 0);
     printf("Type lines quickly, or paste several lines. Echoes print as they arrive.\n");
     printf("Ctrl+D exits.\n");
@@ -77,61 +196,28 @@ int main(int argc, char **argv)
         },
     };
 
-    char buffer[BUFFER_SIZE];
+    struct saw_cstate cstate = { 0 };
+    cstate.client_fd = client_fd;
+    cstate.watched   = watched;
+    cstate.network   = network;
+
 
     for (;;) {
-        watched[0].revents = 0;
-        watched[1].revents = 0;
-
-        int ready = poll(watched, 2, -1);
-        if (ready == -1) {
-            if (errno == EINTR) {
-                continue;
-            }
-            perror("poll");
+        int r = saw_loop(&cstate);
+        if (r == CONTINUE)
+            continue;
+        else if (r == END)
+            break;
+        else if (r == EXIT_FAILURE) {
             close(client_fd);
             return EXIT_FAILURE;
         }
-
-        /* stdin is independent: send each available line immediately. */
-        if (watched[0].revents & (POLLIN | POLLHUP)) {
-            if (fgets(buffer, sizeof(buffer), stdin) == NULL) {
-                break;
-            }
-
-            size_t length = strlen(buffer);
-            if (send_text(client_fd, &network, buffer, length) == -1) {
-                close(client_fd);
-                return EXIT_FAILURE;
-            }
-        }
-
-        /* Echo reception is independent and never gates the next send. */
-        if (watched[1].revents & POLLIN) {
-            ssize_t received = recvfrom(client_fd,
-                                        buffer,
-                                        sizeof(buffer),
-                                        0,
-                                        NULL,
-                                        NULL);
-            if (received == -1) {
-                if (errno == EINTR) {
-                    continue;
-                }
-                perror("recvfrom");
-                close(client_fd);
-                return EXIT_FAILURE;
-            }
-
-            printf("echo: ");
-            fwrite(buffer, 1, (size_t)received, stdout);
-            if (received == 0 || buffer[received - 1] != '\n') {
-                putchar('\n');
-            }
-            fflush(stdout);
+        else {
+            break;
         }
     }
 
     close(client_fd);
+
     return EXIT_SUCCESS;
 }
