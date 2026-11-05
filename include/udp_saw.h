@@ -114,11 +114,26 @@ void saw_initState(saw_state_t* state);
 int saw_calcTimeoutDur(saw_state_t* state);
 int saw_calcTimeout(saw_state_t* state);
 
+
+/**
+Listen for incoming SAW proto connection handshakes.
+
+this will have to initialize a shared state to track queued connections for
+applications which are supporting multiple saw clients.
+*/
+int saw_listen(int fd, saw_state_t* state);
+
+/**
+Accept a queued connection from the list.
+*/
+int saw_accept(int fd, saw_state_t* state);
+
 /**
 Go through the connection initiation lifecycle on a socket FD w/ handshake
-define in SAW proto
+define in SAW proto.
 */
 int saw_connect(int fd, saw_state_t* state);
+
 
 
 
