@@ -1,43 +1,6 @@
 #include "udp_saw.h"
 
 
-void saw_initState(saw_state_t* state)
-{
-#ifdef UDP_DEBUG
-    assert(state != NULL);
-#endif   
- 
-    state->cSeqNo = (uint8_t)0;
-    state->nSeqNo = (uint8_t)0;
-    state->rtrans = 0;
-    
-    state->timeout = 0;
-    state->timeoutDur = I_TIMEOUTDUR_MS;
-
-    state->cStatus = INIT;
-}
-
-int saw_calcTimeoutDur(saw_state_t* state)
-{
-    state->timeoutDur = I_TIMEOUTDUR_MS; // previous RTTs are not tracked (yet)
-    return 0;
-}
-
-int saw_calcTimeout(saw_state_t* state)
-{
-    struct timespec ts = { 0 };
-    if (clock_gettime(CLOCK_MONOTONIC, &ts) == -1) {
-        perror("clock_gettime");
-        LERROR("error getting monotonic time.");
-        return -1;
-    }
-    // [WO] normalized to milliseconds
-    time_t ntime    = NTIME(ts);
-    state->timeout  = ntime + state->timeoutDur;
-    return 0;
-}
-
-
 void saw_initHeader(saw_header_t* header)
 {
 #ifdef UDP_DEBUG
@@ -108,4 +71,43 @@ void saw_readPacket(saw_header_t* header,
     assert(netBufSize - HEADER_LEN >= header->length);
 #endif
 }
+
+
+void saw_initState(saw_state_t* state)
+{
+#ifdef UDP_DEBUG
+    assert(state != NULL);
+#endif   
+ 
+    state->cSeqNo = (uint8_t)0;
+    state->nSeqNo = (uint8_t)0;
+    state->rtrans = 0;
+    
+    state->timeout = 0;
+    state->timeoutDur = I_TIMEOUTDUR_MS;
+
+    state->cStatus = INIT;
+}
+
+int saw_calcTimeoutDur(saw_state_t* state)
+{
+    state->timeoutDur = I_TIMEOUTDUR_MS; // previous RTTs are not tracked (yet)
+    return 0;
+}
+
+int saw_calcTimeout(saw_state_t* state)
+{
+    struct timespec ts = { 0 };
+    if (clock_gettime(CLOCK_MONOTONIC, &ts) == -1) {
+        perror("clock_gettime");
+        LERROR("error getting monotonic time.");
+        return -1;
+    }
+    // [WO] normalized to milliseconds
+    time_t ntime    = NTIME(ts);
+    state->timeout  = ntime + state->timeoutDur;
+    return 0;
+}
+
+
 
