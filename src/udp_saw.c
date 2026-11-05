@@ -32,7 +32,7 @@ int saw_calcTimeout(saw_state_t* state)
         return -1;
     }
     // [WO] normalized to milliseconds
-    time_t ntime    = ( ts.tv_sec * 1000 + ( ts.tv_nsec / 1000000 ) );
+    time_t ntime    = NTIME(ts);
     state->timeout  = ntime + state->timeoutDur;
     return 0;
 }
