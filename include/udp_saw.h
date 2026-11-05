@@ -85,7 +85,7 @@ void saw_readPacket(saw_header_t* header,
 #define I_TIMEOUTDUR_MS (1000)
 
 #define NTIME(timespec) ( \
-    timespec.tv_sec * (1000) + ( timespec.tv_nsec / (10000000) ) \
+    timespec.tv_sec * (1000) + ( timespec.tv_nsec / (1000000) ) \
 )
 
 typedef enum saw_cstatus {
