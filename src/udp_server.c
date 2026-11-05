@@ -54,37 +54,38 @@ SAW specific application loop
 */
 int saw_loop(struct saw_sstate* sstate)
 {
-    unsigned char buffer[BUFFER_SIZE];
-    struct sockaddr_in peer;
-    socklen_t peer_length = sizeof(peer);
-    ssize_t length = recvfrom(sstate->server_fd,
-                              buffer,
-                              sizeof(buffer),
-                              0,
-                              (struct sockaddr *)&peer,
-                              &peer_length);
-    if (length == -1) {
-        perror("recvfrom");
-        return CONTINUE;
-    }
+    for (;;) {
+        unsigned char buffer[BUFFER_SIZE];
+        struct sockaddr_in peer;
+        socklen_t peer_length = sizeof(peer);
+        ssize_t length = recvfrom(sstate->server_fd,
+                                  buffer,
+                                  sizeof(buffer),
+                                  0,
+                                  (struct sockaddr *)&peer,
+                                  &peer_length);
+        if (length == -1) {
+            perror("recvfrom");
+            continue;
+        }
 
-    printf("received: ");
-    fwrite(buffer, 1, (size_t)length, stdout);
-    if (length == 0 || buffer[length - 1] != '\n') {
-        putchar('\n');
-    }
-    fflush(stdout);
+        printf("received: ");
+        fwrite(buffer, 1, (size_t)length, stdout);
+        if (length == 0 || buffer[length - 1] != '\n') {
+            putchar('\n');
+        }
+        fflush(stdout);
 
-    if (sendto(sstate->server_fd,
-               buffer,
-               (size_t)length,
-               0,
-               (struct sockaddr *)&peer,
-               peer_length) == -1) {
-        perror("sendto");
+        if (sendto(sstate->server_fd,
+                   buffer,
+                   (size_t)length,
+                   0,
+                   (struct sockaddr *)&peer,
+                   peer_length) == -1) {
+            perror("sendto");
+        }
+        continue;
     }
-
-    return CONTINUE;
 }
 
 
@@ -122,11 +123,8 @@ int main(int argc, char **argv)
     struct saw_sstate sstate = { 0 };
     sstate.server_fd = server_fd;
 
-    for (;;) {
-        if (saw_loop(&sstate) == CONTINUE) {
-            continue;
-        } else {
-            break;
-        }
-    }
+    int r = saw_loop(&sstate);
+    (void)r;
+    
+    return 0;
 }

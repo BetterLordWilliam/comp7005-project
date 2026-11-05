@@ -33,9 +33,9 @@ edge cases
 
 #define MAX_RETRY (3)
 
-typedef enum saw_cState {
+typedef enum saw_cstatus {
     INIT, CON, DISCON,
-} saw_cState_t;
+} saw_cstatus_t;
 
 /**
 UDP stop-and-wait 'connection' information struct.
@@ -49,7 +49,7 @@ typedef struct saw_state {
     uint8_t cSeqNo;             // current ack no
     uint8_t nSeqNo;             // next ack no
     int rtrans;
-    saw_cState_t cState;        // connection status
+    saw_cstatus_t cState;        // connection status
     struct timespec timeoutDur; // timeout duration (should be calculated from RTT)
     struct timespec timeout;    // expiration time
 } saw_state_t;

@@ -71,6 +71,7 @@ static void usage(const char *program)
     fprintf(stderr, "Usage: %s <network-ip> <network-port>\n", program);
 }
 
+/*
 static int send_text(int client_fd,
                      const struct sockaddr_in *network,
                      const char *text,
@@ -88,6 +89,7 @@ static int send_text(int client_fd,
 
     return 0;
 }
+*/
 
 struct saw_cstate {
     int client_fd;
@@ -105,55 +107,58 @@ int saw_loop(struct saw_cstate* cstate)
 {
     char buffer[BUFFER_SIZE];
 
-    cstate->watched[0].revents = 0;
-    cstate->watched[1].revents = 0;
+    for (;;) {
+        cstate->watched[0].revents = 0;
+        cstate->watched[1].revents = 0;
 
-    int ready = poll(cstate->watched, 2, -1);
-    if (ready == -1) {
-        if (errno == EINTR) {
-            return CONTINUE;
-        }
-        perror("poll");
-        return EXIT_FAILURE;
-    }
-
-    /* stdin is independent: send each available line immediately. */
-    if (cstate->watched[0].revents & (POLLIN | POLLHUP)) {
-        if (fgets(buffer, sizeof(buffer), stdin) == NULL) {
-            return END;
-        }
-
-        size_t length = strlen(buffer);
-        if (send_text(cstate->client_fd, &cstate->network, buffer, length) == -1) {
-            return EXIT_FAILURE;
-        }
-    }
-
-    /* Echo reception is independent and never gates the next send. */
-    if (cstate->watched[1].revents & POLLIN) {
-        ssize_t received = recvfrom(cstate->client_fd,
-                                    buffer,
-                                    sizeof(buffer),
-                                    0,
-                                    NULL,
-                                    NULL);
-        if (received == -1) {
+        int ready = poll(cstate->watched, 2, -1);
+        if (ready == -1) {
             if (errno == EINTR) {
-                return CONTINUE;
+                continue;
             }
-            perror("recvfrom");
+            perror("poll");
             return EXIT_FAILURE;
         }
 
-        printf("echo: ");
-        fwrite(buffer, 1, (size_t)received, stdout);
-        if (received == 0 || buffer[received - 1] != '\n') {
-            putchar('\n');
-        }
-        fflush(stdout);
-    }
+        /* stdin is independent: send each available line immediately. */
+        if (cstate->watched[0].revents & (POLLIN | POLLHUP)) {
+            if (fgets(buffer, sizeof(buffer), stdin) == NULL) {
+                break;
+            }
 
-    return CONTINUE;
+            size_t length = strlen(buffer);
+            int send_result = sendto(cstate->client_fd, buffer, length, 0,
+                (struct sockaddr*)&cstate->network, sizeof(cstate->network));
+            if (send_result == -1) {
+                return EXIT_FAILURE;
+            }
+        }
+
+        /* Echo reception is independent and never gates the next send. */
+        if (cstate->watched[1].revents & POLLIN) {
+            ssize_t received = recvfrom(cstate->client_fd,
+                                        buffer,
+                                        sizeof(buffer),
+                                        0,
+                                        NULL,
+                                        NULL);
+            if (received == -1) {
+                if (errno == EINTR) {
+                    return CONTINUE;
+                }
+                perror("recvfrom");
+                return EXIT_FAILURE;
+            }
+
+            printf("echo: ");
+            fwrite(buffer, 1, (size_t)received, stdout);
+            if (received == 0 || buffer[received - 1] != '\n') {
+                putchar('\n');
+            }
+            fflush(stdout);
+        }
+    }
+    return 0;
 }
 
 int main(int argc, char **argv)
@@ -196,25 +201,18 @@ int main(int argc, char **argv)
         },
     };
 
+    // [WO] client state
     struct saw_cstate cstate = { 0 };
     cstate.client_fd = client_fd;
     cstate.watched   = watched;
     cstate.network   = network;
 
 
-    for (;;) {
-        int r = saw_loop(&cstate);
-        if (r == CONTINUE)
-            continue;
-        else if (r == END)
-            break;
-        else if (r == EXIT_FAILURE) {
-            close(client_fd);
-            return EXIT_FAILURE;
-        }
-        else {
-            break;
-        }
+    int r = saw_loop(&cstate);
+
+    if (r == EXIT_FAILURE) {
+        close(client_fd);
+        return EXIT_FAILURE;
     }
 
     close(client_fd);
