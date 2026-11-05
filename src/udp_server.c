@@ -126,5 +126,7 @@ int main(int argc, char **argv)
     int r = saw_loop(&sstate);
     (void)r;
     
+    close(server_fd);
+    
     return 0;
 }
