@@ -7,7 +7,11 @@
 #include <string.h>
 #include <assert.h>
 #include <netinet/in.h>
+#include <stdio.h>
+#include <errno.h>
 #include <time.h>
+
+#include "common.h"
 
 /*
 Notes
@@ -97,8 +101,8 @@ typedef struct saw_state {
     uint8_t nSeqNo; // next ack no
     int rtrans;     // connection retransmission counter
     saw_cstatus_t cStatus;  // connection status
-    int timeoutDur; // timeout duration (should be calculated from RTT)
-    int timeout;    // expiration time
+    time_t timeoutDur; // timeout duration (should be calculated from RTT)
+    time_t timeout;    // expiration time
 } saw_state_t;
 
 void saw_initState(saw_state_t* state);

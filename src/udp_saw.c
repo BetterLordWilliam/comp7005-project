@@ -23,7 +23,14 @@ void saw_calcTimeoutDur(saw_state_t* state)
 void saw_calcTimeout(saw_state_t* state)
 {
     struct timespec ts = { 0 };
-    clock_gettime(CLOCK_MONOTONIC, &ts);
+    if (clock_gettime(CLOCK_MONOTONIC, &ts) == -1) {
+        perror("clock_gettime");
+        LERROR("error getting monotonic time.");
+        return;
+    }
+    // [WO] normalized to milliseconds
+    time_t ntime    = ( ts.tv_sec * 1000 + ( ts.tv_nsec / 1000000 ) );
+    state->timeout  = ntime + state->timeoutDur;
 }
 
 
