@@ -1,5 +1,5 @@
 CC := gcc
-CFLAGS := -std=c17 -Wall -Wextra -Wpedantic -O2 -Iinclude
+CFLAGS := -std=gnu17 -Wall -Wextra -Wpedantic -O2 -Iinclude
 
 .RECIPEPREFIX = >
 .PHONY: all build clean

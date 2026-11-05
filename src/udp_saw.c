@@ -1,5 +1,6 @@
 #include "udp_saw.h"
 
+
 void saw_initState(saw_state_t* state)
 {
     assert(state != NULL);
@@ -7,13 +8,22 @@ void saw_initState(saw_state_t* state)
     state->cSeqNo = (uint8_t)0;
     state->nSeqNo = (uint8_t)0;
     state->rtrans = 0;
+    
+    state->timeout = 0;
+    state->timeoutDur = I_TIMEOUTDUR_MS;
 
-    state->cstatus = INIT;
+    state->cStatus = INIT;
 }
 
-void saw_setTimeout(saw_state_t* state)
+void saw_calcTimeoutDur(saw_state_t* state)
 {
-    assert(state != NULL);
+    state->timeoutDur = I_TIMEOUTDUR_MS; // previous RTTs are not tracked (yet)
+}
+
+void saw_calcTimeout(saw_state_t* state)
+{
+    struct timespec ts = { 0 };
+    clock_gettime(CLOCK_MONOTONIC, &ts);
 }
 
 

@@ -10,51 +10,11 @@
 #include <time.h>
 
 /*
-[WO] udp saw protocol implementation running notes.
-
-Stop and wait requirements:
-    1. introduce a format for messages
-    2. define DATA / ACK message types
-    3. sender emits DATA(n), receiver gets this & transmits ACK(n)
-
-Notes:
-
-> first implement using the alternating ID
-
-> 
-
-
-edge cases
-    1. packet is lost on transmission from the sender
-    2. ack from the receiver
-
+Notes
+- `c17` -> `gnu17` because `time.h` does not define `clock_gettime` syscall
+as this is part of POSIX, which is not part of the strict C ISO
+- 
 */
-
-
-#define MAX_RETRY (3)
-
-typedef enum saw_cstatus {
-    INIT, CON, DISCON,
-} saw_cstatus_t;
-
-/**
-UDP stop-and-wait 'connection' information struct.
-    Storing connection state in a struct like this should help in the future
-    Sliding window implementation when we will have multiple of these 
-    'connections' simultaneously
-
-
-*/
-typedef struct saw_state {
-    uint8_t cSeqNo; // current ack no
-    uint8_t nSeqNo; // next ack no
-    int rtrans;     // connection retransmission counter
-    saw_cstatus_t cStatus;  // connection status
-    int timeoutDur; // timeout duration (should be calculated from RTT)
-    int timeout;    // expiration time
-} saw_state_t;
-
-void saw_initState(saw_state_t* state);
 
 
 #define HEADER_LEN  (6) // why is this 40?
@@ -115,6 +75,43 @@ Reads from the given `netBuf` network buffer & initialzies the given
 */
 void saw_readPacket(saw_header_t* header,
     const char* netBuf, size_t netBufSize);
+
+
+#define M_RETRANS       (3)
+#define I_TIMEOUTDUR_MS (1000)
+
+typedef enum saw_cstatus {
+    INIT, CON, DISCON,
+} saw_cstatus_t;
+
+/**
+SAW (stop-and-wait) "connection" state.
+    Storing connection state in a struct like this should help in the future
+    Sliding window implementation when we will have multiple of these 
+    'connections' simultaneously
+
+the initial timeout duration is 1S or 1000MS (units of `timeoutDur` are MS)
+*/
+typedef struct saw_state {
+    uint8_t cSeqNo; // current ack no
+    uint8_t nSeqNo; // next ack no
+    int rtrans;     // connection retransmission counter
+    saw_cstatus_t cStatus;  // connection status
+    int timeoutDur; // timeout duration (should be calculated from RTT)
+    int timeout;    // expiration time
+} saw_state_t;
+
+void saw_initState(saw_state_t* state);
+
+void saw_calcTimeoutDur(saw_state_t* state);
+void saw_calcTimeout(saw_state_t* state);
+
+/**
+Go through the connection initiation lifecycle on a socket FD w/ handshake
+define in SAW proto
+*/
+int saw_connect(int fd, saw_state_t* state);
+
 
 
 #endif

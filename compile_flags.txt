@@ -1,4 +1,4 @@
--std=c17
+-std=gnu17
 -Wall
 -Wextra
 -Wpedantic
