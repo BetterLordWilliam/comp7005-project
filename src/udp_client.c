@@ -87,6 +87,8 @@ enum saw_loop_codes {
 int saw_loop(struct saw_cstate* cstate)
 {
     char buffer[BUFFER_SIZE];
+    saw_state_t scstate;
+    saw_initState(&scstate);
 
     for (;;) {
         cstate->watched[0].revents = 0;
@@ -108,6 +110,8 @@ int saw_loop(struct saw_cstate* cstate)
             }
 
             size_t length = strlen(buffer);
+
+            // [WO] we send but there is not "connection" at this point
             int send_result = sendto(cstate->client_fd, buffer, length, 0,
                 (struct sockaddr*)&cstate->network, sizeof(cstate->network));
             if (send_result == -1) {

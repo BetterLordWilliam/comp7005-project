@@ -46,12 +46,12 @@ UDP stop-and-wait 'connection' information struct.
 
 */
 typedef struct saw_state {
-    uint8_t cSeqNo;             // current ack no
-    uint8_t nSeqNo;             // next ack no
-    int rtrans;
-    saw_cstatus_t cState;        // connection status
-    struct timespec timeoutDur; // timeout duration (should be calculated from RTT)
-    struct timespec timeout;    // expiration time
+    uint8_t cSeqNo; // current ack no
+    uint8_t nSeqNo; // next ack no
+    int rtrans;     // connection retransmission counter
+    saw_cstatus_t cStatus;  // connection status
+    int timeoutDur; // timeout duration (should be calculated from RTT)
+    int timeout;    // expiration time
 } saw_state_t;
 
 void saw_initState(saw_state_t* state);

@@ -8,7 +8,7 @@ void saw_initState(saw_state_t* state)
     state->nSeqNo = (uint8_t)0;
     state->rtrans = 0;
 
-    state->cState = INIT;
+    state->cstatus = INIT;
 }
 
 void saw_setTimeout(saw_state_t* state)
