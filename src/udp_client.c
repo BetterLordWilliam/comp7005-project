@@ -9,56 +9,57 @@
 
 
 /*      CLIENT STARTER CODE LOOP
-        watched[0].revents = 0;
-        watched[1].revents = 0;
+char buffer[BUFFER_SIZE];
 
-        int ready = poll(watched, 2, -1);
-        if (ready == -1) {
+for (;;) {
+    cstate->watched[0].revents = 0;
+    cstate->watched[1].revents = 0;
+
+    int ready = poll(cstate->watched, 2, -1);
+    if (ready == -1) {
+        if (errno == EINTR) {
+            continue;
+        }
+        perror("poll");
+        return EXIT_FAILURE;
+    }
+
+    if (cstate->watched[0].revents & (POLLIN | POLLHUP)) {
+        if (fgets(buffer, sizeof(buffer), stdin) == NULL) {
+            break;
+        }
+
+        size_t length = strlen(buffer);
+        int send_result = sendto(cstate->client_fd, buffer, length, 0,
+            (struct sockaddr*)&cstate->network, sizeof(cstate->network));
+        if (send_result == -1) {
+            return EXIT_FAILURE;
+        }
+    }
+
+    if (cstate->watched[1].revents & POLLIN) {
+        ssize_t received = recvfrom(cstate->client_fd,
+                                    buffer,
+                                    sizeof(buffer),
+                                    0,
+                                    NULL,
+                                    NULL);
+        if (received == -1) {
             if (errno == EINTR) {
-                continue;
+                return CONTINUE;
             }
-            perror("poll");
-            close(client_fd);
+            perror("recvfrom");
             return EXIT_FAILURE;
         }
 
-        // stdin is independent: send each available line immediately.
-        if (watched[0].revents & (POLLIN | POLLHUP)) {
-            if (fgets(buffer, sizeof(buffer), stdin) == NULL) {
-                break;
-            }
-
-            size_t length = strlen(buffer);
-            if (send_text(client_fd, &network, buffer, length) == -1) {
-                close(client_fd);
-                return EXIT_FAILURE;
-            }
+        printf("echo: ");
+        fwrite(buffer, 1, (size_t)received, stdout);
+        if (received == 0 || buffer[received - 1] != '\n') {
+            putchar('\n');
         }
-
-        // Echo reception is independent and never gates the next send.
-        if (watched[1].revents & POLLIN) {
-            ssize_t received = recvfrom(client_fd,
-                                        buffer,
-                                        sizeof(buffer),
-                                        0,
-                                        NULL,
-                                        NULL);
-            if (received == -1) {
-                if (errno == EINTR) {
-                    continue;
-                }
-                perror("recvfrom");
-                close(client_fd);
-                return EXIT_FAILURE;
-            }
-
-            printf("echo: ");
-            fwrite(buffer, 1, (size_t)received, stdout);
-            if (received == 0 || buffer[received - 1] != '\n') {
-                putchar('\n');
-            }
-            fflush(stdout);
-        }
+        fflush(stdout);
+    }
+}
 */
 
 
@@ -70,26 +71,6 @@ static void usage(const char *program)
 {
     fprintf(stderr, "Usage: %s <network-ip> <network-port>\n", program);
 }
-
-/*
-static int send_text(int client_fd,
-                     const struct sockaddr_in *network,
-                     const char *text,
-                     size_t length)
-{
-    if (sendto(client_fd,
-               text,
-               length,
-               0,
-               (const struct sockaddr *)network,
-               sizeof(*network)) == -1) {
-        perror("sendto");
-        return -1;
-    }
-
-    return 0;
-}
-*/
 
 struct saw_cstate {
     int client_fd;

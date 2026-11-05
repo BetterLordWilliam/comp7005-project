@@ -5,7 +5,7 @@
 #include <unistd.h>
 
 /*      SERVER STARTER CODE LOOP
-
+for (;;) {
     unsigned char buffer[BUFFER_SIZE];
     struct sockaddr_in peer;
     socklen_t peer_length = sizeof(peer);
@@ -17,7 +17,7 @@
                               &peer_length);
     if (length == -1) {
         perror("recvfrom");
-        return CONTINUE;
+        continue;
     }
 
     printf("received: ");
@@ -35,6 +35,8 @@
                peer_length) == -1) {
         perror("sendto");
     }
+    continue;
+}
 */
 
 #include "udp_saw.h"
@@ -117,9 +119,8 @@ int main(int argc, char **argv)
     printf("UDP server listening on 127.0.0.1:%u\n", port);
     fflush(stdout);
 
-    
-    /*      SAW State Setup
-    */
+   
+    // [WO] saw server state
     struct saw_sstate sstate = { 0 };
     sstate.server_fd = server_fd;
 
