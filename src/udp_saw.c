@@ -15,22 +15,24 @@ void saw_initState(saw_state_t* state)
     state->cStatus = INIT;
 }
 
-void saw_calcTimeoutDur(saw_state_t* state)
+int saw_calcTimeoutDur(saw_state_t* state)
 {
     state->timeoutDur = I_TIMEOUTDUR_MS; // previous RTTs are not tracked (yet)
+    return 0;
 }
 
-void saw_calcTimeout(saw_state_t* state)
+int saw_calcTimeout(saw_state_t* state)
 {
     struct timespec ts = { 0 };
     if (clock_gettime(CLOCK_MONOTONIC, &ts) == -1) {
         perror("clock_gettime");
         LERROR("error getting monotonic time.");
-        return;
+        return -1;
     }
     // [WO] normalized to milliseconds
     time_t ntime    = ( ts.tv_sec * 1000 + ( ts.tv_nsec / 1000000 ) );
     state->timeout  = ntime + state->timeoutDur;
+    return 0;
 }
 
 

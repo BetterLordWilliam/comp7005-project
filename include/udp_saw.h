@@ -107,8 +107,8 @@ typedef struct saw_state {
 
 void saw_initState(saw_state_t* state);
 
-void saw_calcTimeoutDur(saw_state_t* state);
-void saw_calcTimeout(saw_state_t* state);
+int saw_calcTimeoutDur(saw_state_t* state);
+int saw_calcTimeout(saw_state_t* state);
 
 /**
 Go through the connection initiation lifecycle on a socket FD w/ handshake
