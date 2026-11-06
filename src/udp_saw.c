@@ -2,6 +2,9 @@
 #include <string.h>
 
 
+atomic_int_fast32_t saw_error;
+
+
 void saw_initHeader(saw_header_t* header)
 {
 #ifdef UDP_DEBUG
@@ -119,13 +122,13 @@ static int saw_genConnId(saw_state_t* state)
     return 0;
 }
 
-int saw_calcTimeoutDur(saw_state_t* state)
+static int saw_calcTimeoutDur(saw_state_t* state)
 {
     state->timeoutDur = I_TIMEOUTDUR_MS; // previous RTTs are not tracked (yet)
     return 0;
 }
 
-int saw_calcTimeout(saw_state_t* state)
+static int saw_calcTimeout(saw_state_t* state)
 {
     struct timespec ts = { 0 };
     if (clock_gettime(CLOCK_MONOTONIC, &ts) == -1) {
@@ -438,4 +441,31 @@ int saw_connect(int fd, saw_state_t* state)
  
     return rcode;
 }
+
+int saw_send(int fd, saw_state_t* state)
+{
+#ifdef UDP_DEBUG
+    assert(state != NULL);
+#endif
+    if (state->cStatus != CON)
+        return (int)SAWENCONN;
+
+    int rcode = 0, r = 0;
+
+    return rcode;
+}
+
+int saw_recv(int fd, saw_state_t* state)
+{
+#ifdef UDP_DEBUG
+    assert(state != NULL);
+#endif
+    if (state->cStatus != CON)
+        return (int)SAWENCONN;
+
+    int rcode = 0, r = 0;
+
+    return rcode;
+}
+
 

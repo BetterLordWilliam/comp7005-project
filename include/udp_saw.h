@@ -2,6 +2,7 @@
 #define UDP_SAW
 
 
+#include <stdatomic.h>
 #include <stdint.h>
 #include <sys/types.h>
 #include <sys/random.h>
@@ -25,7 +26,17 @@ as this is part of POSIX, which is not part of the strict C ISO
 
 Limitations
 - supports only the IPv4 protocol
+- supports only the `SOCK_DGRAM` protocol type / mode
+- use `saw_socket` & `saw_bind` to get a valid socket always
 */
+
+
+typedef enum saw_error {
+    SAWENCONN = -1
+} saw_error_t;
+
+extern atomic_int_fast32_t saw_error;
+
 
 #define BUFFER_SIZE (4096)
 
@@ -128,14 +139,9 @@ typedef struct saw_state {
 void saw_initState(saw_state_t* state);
 
 // int saw_genConnId(saw_state_t* state);
-int saw_calcTimeoutDur(saw_state_t* state);
-int saw_calcTimeout(saw_state_t* state);
+// int saw_calcTimeoutDur(saw_state_t* state);
+// int saw_calcTimeout(saw_state_t* state);
 
-
-/**
-Verify for the client program that the socket is valid for use w/ SAW protocol.
-*/
-int saw_sock_valid(int fd, int proto);
 
 // [TODO]
 int saw_socket();
@@ -156,21 +162,34 @@ for, think a size 1 buffer (saw_state struct size) that is the address passed
     to that entry to that queue.
 
     but we wont worry about that for now
+
+
+    check `saw_error` for errors (-1 return)
 */
 int saw_listen(int fd, saw_state_t* state);
 
 /**
-Accept a queued connection from the list.
-
-meaning the handshake is actually performed with the client (and not just qeued).
-*/
-// int saw_accept(int fd, saw_state_t* state);
-
-/**
 Go through the connection initiation lifecycle on a socket FD w/ handshake
 define in SAW proto.
+
+    check `saw_error` for errors (-1 return)
 */
 int saw_connect(int fd, saw_state_t* state);
+
+
+/**
+Send on a saw connection.
+
+    check `saw_error` for errors (-1 return)
+*/
+int saw_send(int fd, saw_state_t* state);
+
+/**
+Receive from a saw connection.
+
+    check `saw_error` for errors (-1 return)
+*/
+int saw_recv(int fd, saw_state_t* state);
 
 
 #endif

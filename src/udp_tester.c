@@ -59,15 +59,7 @@ int main(int argc, char** argv) {
     // connection & time testing
     saw_state_t state = { 0 };
     saw_initState(&state);
-    saw_calcTimeoutDur(&state);
-    saw_calcTimeout(&state);
-
-    // diff should be ~1000
-    struct timespec t = { 0 };
-    clock_gettime(CLOCK_MONOTONIC, &t);
-    LINFO("now: %ld,\ttimeout: %ld,\tdiff:%ld", 
-        NTIME(t), state.timeout, state.timeout - NTIME(t));
-
 
     return 0;
 }
+
