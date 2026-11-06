@@ -513,7 +513,8 @@ int saw_recv(int fd, saw_state_t* state,
     do {
         memset(netBuf, 0, netBufSize);
         saw_initHeader(&rh);
-        r = poll(&pfd, 1, -1); // initial infinite wait on DATA
+        // initial infinite wait on DATA(?) but once we get one we need to start tracking this I think
+        r = poll(&pfd, 1, -1); 
         if (r == -1 || r == 0) {
             if (errno == EINTR)
                 continue;
