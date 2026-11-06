@@ -122,7 +122,6 @@ int saw_listen(int fd, saw_state_t* state)
     // blocks sets `state` to contain `paddr` & `paddrLen` of the connected
     // peer (breaks for same machine, multiple connections, ppid + paddr?)
 
-
     int rcode = 0, r = 0;
     char buffer[BUFFER_SIZE];
     struct sockaddr_in paddr;
@@ -140,15 +139,14 @@ int saw_listen(int fd, saw_state_t* state)
             if (r == 0) LERROR("poll timeout is impossible");
             LERROR("bonnafide poll error while waiting for client message");
             rcode = -1;
-            break;
+            return rcode;
         }
 
         if (pfd.revents & (POLLERR)) {
             LERROR("poll error");
             rcode = -1;
             break;
-        }
-        if (pfd.revents & ( POLLHUP | POLLIN )) {
+        } else if (pfd.revents & ( POLLHUP | POLLIN )) {
             saw_header_t i; saw_initHeader(&i);
             do {
                 r = recvfrom(fd, buffer, BUFFER_SIZE, 0,
@@ -156,7 +154,7 @@ int saw_listen(int fd, saw_state_t* state)
                 if (r == -1 && errno == EINTR)
                     continue;
                 if (r == -1) {
-                    LERROR("recvfrom error during handshake aborting");
+                    LERROR("recvfrom error aborting handshake");
                     rcode = -1; 
                     return rcode;
                 }
@@ -178,12 +176,16 @@ int saw_listen(int fd, saw_state_t* state)
                 LINFO("not an `I` packet dropping");
                 continue;
             }
+        } else {
+            LERROR("unexpected poll event aborting handshake");
+            rcode = -1;
+            return rcode;
         }
     } while (1);
-    LINFO("`I` received");
+    LINFO("`I` received from peer");
      
     // submit the `IACK` message to the client
-    LINFO("submitting `IACK` reply to the client.");
+    LINFO("submitting `IACK` reply to the peer.");
     memset(buffer, 0, BUFFER_SIZE);
     saw_header_t iack; saw_initHeader(&iack);
     iack.packetType = IACK;
@@ -195,40 +197,38 @@ int saw_listen(int fd, saw_state_t* state)
         if (r == -1 && errno == EINTR)
             continue;
         if (r == -1) {
-            LERROR("sendto error during handshake, aborting");
+            LERROR("sendto error aborting handshake");
             rcode = -1;
             return rcode;
         }
         if (r < HEADER_LEN) {
-            LERROR("sendto transmission dropped part of the message, aborting");
+            LERROR("sendto transmission dropped part of the message aborting handshake");
             rcode = -1;
             return rcode;
         }
         break;
     } while (1);
-    LINFO("`IACK` submitted to the client");
+    LINFO("`IACK` submitted to the peer");
 
     // wait for the `IACK` from the client
     memset(buffer, 0, BUFFER_SIZE);
     LINFO("waiting for client `IACK` to confirm connection.");
     do {
         r = poll(&pfd, 1, -1);
-
         if (r == -1 && errno == EINTR)
             continue;
         else if (r == -1 || r == 0) {
             if (r == 0) LERROR("poll timeout is impossible");
-            LERROR("bonnafide poll error while waiting for client message");
+            LERROR("bonnafide poll error while waiting for peer `IACK`message");
             rcode = -1;
-            break;
+            return rcode;
         }
 
         if (pfd.revents & (POLLERR)) {
             LERROR("poll error");
             rcode = -1;
             break;
-        }
-        if (pfd.revents & ( POLLHUP | POLLIN )) {
+        } else if (pfd.revents & ( POLLHUP | POLLIN )) {
             saw_header_t i; saw_initHeader(&i);
             do {
                 r = recvfrom(fd, buffer, BUFFER_SIZE, 0,
@@ -236,7 +236,7 @@ int saw_listen(int fd, saw_state_t* state)
                 if (r == -1 && errno == EINTR)
                     continue;
                 if (r == -1) {
-                    LERROR("recvfrom error during handshake aborting");
+                    LERROR("recvfrom error aborting handshake");
                     rcode = -1; 
                     return rcode;
                 }
@@ -263,6 +263,10 @@ int saw_listen(int fd, saw_state_t* state)
                 LINFO("not an `IACK` packet dropping");
                 continue;
             }
+        } else {
+            LERROR("unexpected poll event aborting handshake");
+            rcode = -1;
+            return rcode;
         }
     } while (1);
     LINFO("handshake completed.");
@@ -274,6 +278,133 @@ int saw_accept(int fd, saw_state_t* state)
 {
     LINFO("unimplemented");
     int rcode = 0, r = 0;
+    return rcode;
+}
+
+int saw_connect(int fd, saw_state_t* state)
+{
+    LINFO("unimplemented");
+    int rcode = 0, r = 0;
+
+    char buffer[BUFFER_SIZE];
+    struct pollfd pfd = { 0 };
+    struct sockaddr_in paddr;
+    socklen_t paddrLen = sizeof(paddr);
+    pfd.fd      = fd;    
+    pfd.events  = POLLIN;
+   
+    // transmit `I` connection initiation packet
+    LINFO("submitting `I` to peer.");
+    memset(buffer, 0, BUFFER_SIZE);
+    saw_header_t iack; saw_initHeader(&iack);
+    iack.packetType = I;
+    iack.length = 0;
+    saw_writePacket(&iack, buffer, BUFFER_SIZE, NULL, 0);
+    do {
+        r = sendto(fd, buffer, BUFFER_SIZE, 0,
+            (struct sockaddr*)&state->paddr, state->paddrLen);
+        if (r == -1 && errno == EINTR)
+            continue;
+        if (r == -1) {
+            LERROR("sendto error aborting handshake");
+            rcode = -1;
+            return rcode;
+        }
+        if (r < HEADER_LEN) {
+            LERROR("sendto transmission dropped part of the message aborting handshake");
+            rcode = -1;
+            return rcode;
+        }
+        break;
+    } while (1);
+    LINFO("`I` submitted to peer");
+
+    // listen for `IACK` packet
+    LINFO("waiting for peer `IACK` to confirm connection.");
+    memset(buffer, 0, BUFFER_SIZE);
+    do {
+        r = poll(&pfd, 1, -1);
+        if (r == -1 && errno == EINTR)
+            continue;
+        else if (r == -1 || r == 0) {
+            if (r == 0) LERROR("poll timeout is impossible");
+            LERROR("bonnafide poll error while waiting for peer `IACK`message");
+            rcode = -1;
+            return rcode;
+        }
+
+        if (pfd.revents & (POLLERR)) {
+            LERROR("poll error");
+            rcode = -1;
+            break;
+        } else if (pfd.revents & ( POLLHUP | POLLIN )) {
+            saw_header_t i; saw_initHeader(&i);
+            do {
+                r = recvfrom(fd, buffer, BUFFER_SIZE, 0,
+                    (struct sockaddr*)&paddr, &paddrLen);
+                if (r == -1 && errno == EINTR)
+                    continue;
+                if (r == -1) {
+                    LERROR("recvfrom error aborting handshake");
+                    rcode = -1; 
+                    return rcode;
+                }
+                if (r < HEADER_LEN) {
+                    LERROR("invalid saw packet too small");
+                    rcode = -1;
+                    return rcode;
+                }
+                // reply saddr info does not match the peers saddr info
+                if (paddr.sin_addr.s_addr != state->paddr.sin_addr.s_addr 
+                    || paddr.sin_port != state->paddr.sin_port
+                    || paddrLen != state->paddrLen) {
+                    LWARN("peer saddr does not match connection saddr");
+                    continue;
+                }
+                break;
+            } while (1);
+           
+            saw_readPacket(&i, buffer, BUFFER_SIZE);
+            if (i.packetType == IACK) {
+                state->cStatus  = CON;
+                break;
+            } else {
+                LINFO("not an `IACK` packet dropping");
+                continue;
+            }
+        } else {
+            LERROR("unexpected poll event aborting handshake");
+            rcode = -1;
+            return rcode;
+        }
+    } while (1);
+    
+    // transmit `IACK` connection confirmation packet
+    LINFO("submitting `IACK` to peer.");
+    memset(buffer, 0, BUFFER_SIZE);
+    saw_initHeader(&iack);
+    iack.packetType = IACK;
+    iack.length = 0;
+    saw_writePacket(&iack, buffer, BUFFER_SIZE, NULL, 0);
+    do {
+        r = sendto(fd, buffer, BUFFER_SIZE, 0,
+            (struct sockaddr*)&state->paddr, state->paddrLen);
+        if (r == -1 && errno == EINTR)
+            continue;
+        if (r == -1) {
+            LERROR("sendto error aborting handshake");
+            rcode = -1;
+            return rcode;
+        }
+        if (r < HEADER_LEN) {
+            LERROR("sendto transmission dropped part of the message aborting handshake");
+            rcode = -1;
+            return rcode;
+        }
+        break;
+    } while (1);
+    LINFO("`IACK` submitted to peer.");
+ 
     return rcode;
 }
 
