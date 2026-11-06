@@ -96,12 +96,13 @@ void saw_initState(saw_state_t* state)
     assert(state != NULL);
 #endif   
  
-    state->cSeqNo = (uint8_t)0;
-    state->nSeqNo = (uint8_t)0;
-    state->rtrans = 0;
+    state->cSeqNo   = (uint8_t)0;
+    state->nSeqNo   = (uint8_t)0;
     
-    state->timeout = 0;
-    state->timeoutDur = I_TIMEOUTDUR_MS;
+    state->timeout      = (time_t)0;
+    state->rtime        = (time_t)0;
+    state->timeoutDur   = (time_t)I_TIMEOUTDUR_MS;
+    state->timeoutc     = 0;
 
     state->cStatus = INIT;
 
@@ -139,6 +140,19 @@ static int saw_calcTimeout(saw_state_t* state)
     // [WO] normalized to milliseconds
     time_t ntime    = NTIME(ts);
     state->timeout  = ntime + state->timeoutDur;
+    return 0;
+}
+
+static int saw_calcRtime(saw_state_t* state)
+{
+    struct timespec ts = { 0 };
+    if (clock_gettime(CLOCK_MONOTONIC, &ts) == -1) {
+        perror("clock_gettime");
+        LERROR("error getting monotonic time.");
+        return -1;
+    }
+    time_t ntime = NTIME(ts);
+    state->rtime = ntime;
     return 0;
 }
 
@@ -449,10 +463,25 @@ int saw_send(int fd, saw_state_t* state,
     assert(state != NULL);
     assert(netBuf != NULL);
 #endif
+
     if (state->cStatus != CON)
         return (int)SAWENCONN;
-
     int rcode = 0, r = 0;
+
+
+    struct pollfd pfd = {
+        .fd         = 0,
+        .events     = POLLIN,
+        .revents    = 0
+    };
+    
+    // transmit the thing
+    
+    
+    // wait for ACK of the thing
+    // if timeout for `state` occurs, retry
+    // do that
+    // assert that the ACK recevied is ( ACK n + 1 % 1 )
 
     return rcode;
 }
@@ -464,12 +493,82 @@ int saw_recv(int fd, saw_state_t* state,
     assert(state != NULL);
     assert(netBuf != NULL)
 #endif
+
     if (state->cStatus != CON)
         return (int)SAWENCONN;
+    int rcode = 0, r = 0, pr = 0, nr = 0;
 
-    int rcode = 0, r = 0;
+    struct timespec rtime = { 0 };
+    struct pollfd pfd = {
+        .fd         = fd,
+        .events     = POLLIN,
+        .revents    = 0
+    };
 
-    return rcode;
+    saw_header_t rh = { 0 }; saw_initHeader(&rh);
+
+    // wait for DATA for the thing
+    do {
+        memset(netBuf, 0, netBufSize);
+        saw_initHeader(&rh);
+        r = poll(&pfd, 1, -1); // initial infinite wait on DATA
+        if (r == -1 || r == 0) {
+            if (errno == EINTR)
+                continue;
+            if (r == 0)
+                LERROR("timeout not possible");
+            perror("poll");
+            LERROR("bonnafide poll error while waiting for data"); 
+            rcode = -1;
+            return rcode;
+        }
+        if (pfd.revents & POLLERR) {
+            LERROR("poll returned error event.");
+            rcode = -1;
+            return rcode;
+        } else if (pfd.revents & POLLNVAL) {
+            LERROR("poll returned invalid event.");
+            rcode = -1;
+            return rcode;
+        } else if (pfd.revents & ( POLLHUP | POLLIN )) {
+            do {
+                r = recvfrom(fd, netBuf, netBufSize, 0, NULL, NULL);
+                if (r == -1 && errno == EINTR) continue;
+                if (r == -1) {
+                    perror("recvfrom");
+                    LERROR("recvfrom call failed for incoming DATA");
+                    rcode = -1;
+                    return rcode;
+                }
+                break;
+            } while (1);
+            saw_readPacket(&rh, netBuf, netBufSize);
+            if (rh.packetType != DATA) {
+                LWARN("packet should be DATA packet.");
+                continue;
+            }
+            if (rh.connId != state->connId) {
+                LWARN("packet connId does not match specified state connId.");
+                continue;
+            }
+            if (rh.packetType == DATA && rh.connId == state->connId) {
+                nr = r;
+                pr = 1;
+            }
+        }
+        break;
+    } while (1);
+
+    if (pr != 1) {
+        LERROR("didn't receive DATA packet within the specified window");
+        rcode = -1;
+        return rcode;
+    }
+
+    // send the ACK for the data we have now received
+    // ...
+
+    return nr; // number of recevied bytes
 }
 
 

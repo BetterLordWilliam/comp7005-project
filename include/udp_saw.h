@@ -115,6 +115,9 @@ void saw_readPacket(saw_header_t* header,
     timespec.tv_sec * (1000) + ( timespec.tv_nsec / (1000000) ) \
 )
 
+#define SAW_NXACK(ack) \
+    ((ack + (1)) % (1))
+
 typedef enum saw_cstatus {
     NEW, INIT, CON, DISCON
 } saw_cstatus_t;
@@ -131,10 +134,11 @@ typedef struct saw_state {
     uint8_t cSeqNo;             // current ack no
     uint8_t nSeqNo;             // next ack no
     uint16_t connId;            // connection ID
-    int rtrans;                 // retransmission counter
     saw_cstatus_t cStatus;      // connection status
     time_t timeoutDur;          // timeout duration (should be calculated from RTT)
     time_t timeout;             // expiration time
+    time_t rtime;               // running time
+    int timeoutc;               // timeout counter
     struct sockaddr_in paddr;   // [TODO] ditch this, peer ipv4 address
     socklen_t paddrLen;         // [TODO] ditch this, peer ipv4 address length
 } saw_state_t;
