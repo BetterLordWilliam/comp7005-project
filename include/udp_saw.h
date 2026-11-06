@@ -115,8 +115,8 @@ void saw_readPacket(saw_header_t* header,
     timespec.tv_sec * (1000) + ( timespec.tv_nsec / (1000000) ) \
 )
 
-#define SAW_NXACK(ack) \
-    ((ack + (1)) % (1))
+#define SAW_NXID(ack) \
+    ((ack + (1)) % (2))
 
 typedef enum saw_cstatus {
     NEW, INIT, CON, DISCON

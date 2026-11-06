@@ -499,15 +499,17 @@ int saw_recv(int fd, saw_state_t* state,
     int rcode = 0, r = 0, pr = 0, nr = 0;
 
     struct timespec rtime = { 0 };
+    struct sockaddr_in saddr = { 0 };
+    socklen_t saddrlen = sizeof(saddr);
     struct pollfd pfd = {
         .fd         = fd,
         .events     = POLLIN,
         .revents    = 0
     };
 
-    saw_header_t rh = { 0 }; saw_initHeader(&rh);
 
     // wait for DATA for the thing
+    saw_header_t rh = { 0 }; saw_initHeader(&rh);
     do {
         memset(netBuf, 0, netBufSize);
         saw_initHeader(&rh);
@@ -532,7 +534,8 @@ int saw_recv(int fd, saw_state_t* state,
             return rcode;
         } else if (pfd.revents & ( POLLHUP | POLLIN )) {
             do {
-                r = recvfrom(fd, netBuf, netBufSize, 0, NULL, NULL);
+                r = recvfrom(fd, netBuf, netBufSize, 0,
+                    (struct sockaddr*)&saddr, &saddrlen);
                 if (r == -1 && errno == EINTR) continue;
                 if (r == -1) {
                     perror("recvfrom");
@@ -565,8 +568,24 @@ int saw_recv(int fd, saw_state_t* state,
         return rcode;
     }
 
+
     // send the ACK for the data we have now received
-    // ...
+    char buffer[BUFFER_SIZE];
+    memset(buffer, 0, BUFFER_SIZE);
+    saw_header_t rph = { 0 }; saw_initHeader(&rph);
+    rph.packetType = ACK;
+    rph.packetId = SAW_NXID(rh.packetId);
+    rph.length = 0;
+    rph.connId = state->connId;
+    saw_writePacket(&rph, buffer, HEADER_LEN + rph.length, NULL, 0);
+    LINFO("--> DATA %d\tACK %d -->", rh.packetId, rph.packetId);
+    
+    /*
+    do {
+        sendto(fd, )
+        break;
+    } while (1);
+    */
 
     return nr; // number of recevied bytes
 }
