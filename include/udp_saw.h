@@ -5,11 +5,14 @@
 #include <stdint.h>
 #include <sys/types.h>
 #include <string.h>
-#include <assert.h>
 #include <netinet/in.h>
 #include <stdio.h>
 #include <errno.h>
 #include <time.h>
+
+#ifdef UDP_DEBUG
+#include <assert.h>
+#endif
 
 #include "common.h"
 
