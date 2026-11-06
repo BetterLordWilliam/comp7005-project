@@ -22,6 +22,7 @@ void saw_writePacket(const saw_header_t* header,
     assert(netBufSize - HEADER_LEN >= dataBufSize);
     assert(header->length == dataBufSize);
 #endif
+    (void)netBufSize;
 
     int offset = 0;
     uint16_t tChecksum, tLength;
@@ -53,6 +54,7 @@ void saw_readPacket(saw_header_t* header,
     assert(netBuf != NULL);
     assert(netBufSize >= HEADER_LEN);
 #endif
+    (void)netBufSize;
 
     int offset = 0;
 
@@ -121,18 +123,23 @@ int saw_listen(int fd, saw_state_t* state)
     // assumption: the `state` parameter has already been initialized
     // blocks sets `state` to contain `paddr` & `paddrLen` of the connected
     // peer (breaks for same machine, multiple connections, ppid + paddr?)
+    LINFO("fd %d", fd);
 
     int rcode = 0, r = 0;
     char buffer[BUFFER_SIZE];
     struct sockaddr_in paddr;
     socklen_t paddrLen = sizeof(paddr);
-    struct pollfd pfd = { 0 };
-    pfd.fd      = fd;    
-    pfd.events  = POLLIN;
+    struct pollfd pfd = {
+        .fd         = fd,
+        .events     = POLLIN,
+        .revents    = 0
+    };
 
     // await `I` message from the client
+    LINFO("waiting for `I` message from peer");
     do {
         r = poll(&pfd, 1, -1);
+        LINFO("returned %d", r);
         if (r == -1 && errno == EINTR)
             continue;
         else if (r == -1 || r == 0) {
@@ -192,7 +199,7 @@ int saw_listen(int fd, saw_state_t* state)
     iack.length = 0;
     saw_writePacket(&iack, buffer, BUFFER_SIZE, NULL, 0);
     do {
-        r = sendto(fd, buffer, BUFFER_SIZE, 0,
+        r = sendto(fd, buffer, HEADER_LEN + iack.length, 0,
             (struct sockaddr*)&state->paddr, state->paddrLen);
         if (r == -1 && errno == EINTR)
             continue;
@@ -274,24 +281,29 @@ int saw_listen(int fd, saw_state_t* state)
     return rcode;
 }
 
+/*
 int saw_accept(int fd, saw_state_t* state)
 {
     LINFO("unimplemented");
     int rcode = 0, r = 0;
     return rcode;
 }
+*/
 
 int saw_connect(int fd, saw_state_t* state)
 {
-    LINFO("unimplemented");
+    LINFO("%d", state->paddr.sin_addr.s_addr);
+
     int rcode = 0, r = 0;
 
     char buffer[BUFFER_SIZE];
-    struct pollfd pfd = { 0 };
+    struct pollfd pfd = {
+        .fd = fd,
+        .events = POLLIN,
+        .revents = 0
+    };
     struct sockaddr_in paddr;
     socklen_t paddrLen = sizeof(paddr);
-    pfd.fd      = fd;    
-    pfd.events  = POLLIN;
    
     // transmit `I` connection initiation packet
     LINFO("submitting `I` to peer.");
@@ -301,7 +313,7 @@ int saw_connect(int fd, saw_state_t* state)
     iack.length = 0;
     saw_writePacket(&iack, buffer, BUFFER_SIZE, NULL, 0);
     do {
-        r = sendto(fd, buffer, BUFFER_SIZE, 0,
+        r = sendto(fd, buffer, HEADER_LEN + iack.length, 0,
             (struct sockaddr*)&state->paddr, state->paddrLen);
         if (r == -1 && errno == EINTR)
             continue;
@@ -387,7 +399,7 @@ int saw_connect(int fd, saw_state_t* state)
     iack.length = 0;
     saw_writePacket(&iack, buffer, BUFFER_SIZE, NULL, 0);
     do {
-        r = sendto(fd, buffer, BUFFER_SIZE, 0,
+        r = sendto(fd, buffer, HEADER_LEN + iack.length, 0,
             (struct sockaddr*)&state->paddr, state->paddrLen);
         if (r == -1 && errno == EINTR)
             continue;

@@ -84,9 +84,15 @@ enum saw_loop_codes {
 
 int saw_loop(struct saw_cstate* cstate)
 {
+    LINFO("fd %d", cstate->client_fd);
+
     char buffer[BUFFER_SIZE];
-    saw_state_t scstate;
-    saw_initState(&scstate);
+    saw_state_t scstate; saw_initState(&scstate);
+    scstate.paddr       = cstate->network;
+    scstate.paddrLen    = sizeof(cstate->network);
+    LINFO("%d, %ld", cstate->network.sin_addr.s_addr, sizeof(cstate->network));
+    int conn_r = saw_connect(cstate->client_fd, &scstate);
+    LINFO("connect return code: %d", conn_r);
 
     for (;;) {
         cstate->watched[0].revents = 0;

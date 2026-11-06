@@ -151,15 +151,13 @@ Accept a queued connection from the list.
 
 meaning the handshake is actually performed with the client (and not just qeued).
 */
-int saw_accept(int fd, saw_state_t* state);
+// int saw_accept(int fd, saw_state_t* state);
 
 /**
 Go through the connection initiation lifecycle on a socket FD w/ handshake
 define in SAW proto.
 */
 int saw_connect(int fd, saw_state_t* state);
-
-
 
 
 #endif
