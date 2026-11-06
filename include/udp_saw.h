@@ -9,6 +9,7 @@
 #include <stdio.h>
 #include <errno.h>
 #include <time.h>
+#include <poll.h>
 
 #ifdef UDP_DEBUG
 #include <assert.h>
@@ -20,9 +21,12 @@
 Notes
 - `c17` -> `gnu17` because `time.h` does not define `clock_gettime` syscall
 as this is part of POSIX, which is not part of the strict C ISO
-- 
+
+Limitations
+- supports only the IPv4 protocol
 */
 
+#define BUFFER_SIZE (4096)
 
 #define HEADER_LEN  (6) // why is this 40?
 
@@ -92,7 +96,7 @@ void saw_readPacket(saw_header_t* header,
 )
 
 typedef enum saw_cstatus {
-    INIT, CON, DISCON,
+    NEW, INIT, CON, DISCON
 } saw_cstatus_t;
 
 /**
@@ -106,10 +110,12 @@ the initial timeout duration is 1S or 1000MS (units of `timeoutDur` are MS)
 typedef struct saw_state {
     uint8_t cSeqNo; // current ack no
     uint8_t nSeqNo; // next ack no
-    int rtrans;     // connection retransmission counter
-    saw_cstatus_t cStatus;  // connection status
-    time_t timeoutDur; // timeout duration (should be calculated from RTT)
-    time_t timeout;    // expiration time
+    int rtrans;     // retransmission counter
+    saw_cstatus_t cStatus;      // connection status
+    time_t timeoutDur;          // timeout duration (should be calculated from RTT)
+    time_t timeout;             // expiration time
+    struct sockaddr_in paddr;   // peer ipv4 address
+    socklen_t paddrLen;         // peer ipv4 address length
 } saw_state_t;
 
 void saw_initState(saw_state_t* state);
@@ -119,15 +125,31 @@ int saw_calcTimeout(saw_state_t* state);
 
 
 /**
+Verify for the client program that the socket is valid for use w/ SAW protocol.
+*/
+int saw_sock_valid(int fd, int proto);
+
+/**
 Listen for incoming SAW proto connection handshakes.
 
-this will have to initialize a shared state to track queued connections for
-applications which are supporting multiple saw clients.
+wait for I message types, init the state of the passed connection struct
+
+[WO] this mechanism is valid only if there is 1 client that we are listening
+for, think a size 1 buffer (saw_state struct size) that is the address passed
+
+    for a greater number of clients, this would have to write to a buffer that is
+    allocated, like the actual `listen` call, it should accept a parameter which
+    specifies the number of allowed incoming connections, then write the details
+    to that entry to that queue.
+
+    but we wont worry about that for now
 */
 int saw_listen(int fd, saw_state_t* state);
 
 /**
 Accept a queued connection from the list.
+
+meaning the handshake is actually performed with the client (and not just qeued).
 */
 int saw_accept(int fd, saw_state_t* state);
 

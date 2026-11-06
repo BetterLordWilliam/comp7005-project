@@ -4,6 +4,8 @@
 #include <errno.h>
 #include <time.h>
 
+#include <assert.h>
+
 #include "common.h"
 #include "udp_saw.h"
 

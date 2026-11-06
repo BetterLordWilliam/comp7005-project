@@ -65,8 +65,6 @@ for (;;) {
 
 #include "udp_saw.h"
 
-#define BUFFER_SIZE 4096
-
 static void usage(const char *program)
 {
     fprintf(stderr, "Usage: %s <network-ip> <network-port>\n", program);

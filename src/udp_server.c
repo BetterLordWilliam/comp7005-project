@@ -41,8 +41,6 @@ for (;;) {
 
 #include "udp_saw.h"
 
-#define BUFFER_SIZE 4096
-
 struct saw_sstate {
     int server_fd;
 };
