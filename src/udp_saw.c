@@ -2,7 +2,7 @@
 #include <string.h>
 
 
-atomic_int_fast32_t saw_error;
+atomic_int saw_error = SAWENONE;
 
 
 void saw_initHeader(saw_header_t* header)
@@ -442,10 +442,12 @@ int saw_connect(int fd, saw_state_t* state)
     return rcode;
 }
 
-int saw_send(int fd, saw_state_t* state)
+int saw_send(int fd, saw_state_t* state,
+    const char* netBuf, size_t netBufSize)
 {
 #ifdef UDP_DEBUG
     assert(state != NULL);
+    assert(netBuf != NULL);
 #endif
     if (state->cStatus != CON)
         return (int)SAWENCONN;
@@ -455,10 +457,12 @@ int saw_send(int fd, saw_state_t* state)
     return rcode;
 }
 
-int saw_recv(int fd, saw_state_t* state)
+int saw_recv(int fd, saw_state_t* state,
+    char* netBuf, size_t netBufSize)
 {
 #ifdef UDP_DEBUG
     assert(state != NULL);
+    assert(netBuf != NULL)
 #endif
     if (state->cStatus != CON)
         return (int)SAWENCONN;

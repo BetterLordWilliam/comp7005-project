@@ -22,7 +22,9 @@
 /*
 Notes
 - `c17` -> `gnu17` because `time.h` does not define `clock_gettime` syscall
-as this is part of POSIX, which is not part of the strict C ISO
+as this is part of POSIX, which is not part of the strict C ISO 
+- `atomic_int_fast32_t`
+    - 
 
 Limitations
 - supports only the IPv4 protocol
@@ -32,10 +34,11 @@ Limitations
 
 
 typedef enum saw_error {
-    SAWENCONN = -1
+    SAWENONE    = 0,
+    SAWENCONN   = -1
 } saw_error_t;
 
-extern atomic_int_fast32_t saw_error;
+extern atomic_int saw_error;
 
 
 #define BUFFER_SIZE (4096)
@@ -180,16 +183,22 @@ int saw_connect(int fd, saw_state_t* state);
 /**
 Send on a saw connection.
 
+    send up to `netBufSize` bytes from `netBuf`
+
     check `saw_error` for errors (-1 return)
 */
-int saw_send(int fd, saw_state_t* state);
+int saw_send(int fd, saw_state_t* state,
+    const char* netBuf, size_t netBufSize);
 
 /**
 Receive from a saw connection.
+    
+    receive up to `netBufSize` bytes from `netbuf`
 
     check `saw_error` for errors (-1 return)
 */
-int saw_recv(int fd, saw_state_t* state);
+int saw_recv(int fd, saw_state_t* state,
+    char* netBuf, size_t netBufSize);
 
 
 #endif
