@@ -10,8 +10,9 @@ void saw_initHeader(saw_header_t* header)
 
     header->packetId    = 0;
     header->packetType  = (uint8_t)DATA;
-    header->checksum    = 0;
-    header->length      = 0;
+    header->connId      = (uint16_t)0;
+    header->checksum    = (uint16_t)0;
+    header->length      = (uint16_t)0;
 }
 
 void saw_writePacket(const saw_header_t* header,
@@ -25,14 +26,18 @@ void saw_writePacket(const saw_header_t* header,
     (void)netBufSize;
 
     int offset = 0;
-    uint16_t tChecksum, tLength;
+    uint16_t tConnId, tChecksum, tLength;
 
     memcpy((netBuf + offset), &header->packetId, PACKETID_L);
     offset += PACKETID_L;       // 1 byte, no `hton*`
 
     memcpy((netBuf + offset), &header->packetType, PACKETTYPE_L);
     offset += PACKETTYPE_L;     // 1 byte, no `hton*`
-   
+  
+    tConnId = htons(header->connId);
+    memcpy((netBuf + offset), &tConnId, CONNID_L);
+    offset += CONNID_L;
+ 
     tChecksum = htons(header->checksum);
     memcpy((netBuf + offset), &tChecksum, CHECKSUM_L);
     offset += CHECKSUM_L;
@@ -63,6 +68,10 @@ void saw_readPacket(saw_header_t* header,
     
     memcpy(&header->packetType, netBuf + offset, PACKETTYPE_L);
     offset += PACKETTYPE_L; // 1 byte
+
+    memcpy(&header->connId, netBuf + offset, CONNID_L);
+    header->connId = ntohs(header->connId);
+    offset += CONNID_L;
 
     memcpy(&header->checksum, netBuf + offset, CHECKSUM_L);
     header->checksum = ntohs(header->checksum);
@@ -97,6 +106,19 @@ void saw_initState(saw_state_t* state)
     state->paddrLen = sizeof(state->paddr);
 }
 
+// [WO] does this need to be presented as an external API?
+static int saw_genConnId(saw_state_t* state)
+{
+    uint16_t rconnId;
+    if (getrandom(&rconnId, sizeof(rconnId), 0) == -1) {
+        perror(""); 
+        LERROR("error generating connection id.");
+        return -1;
+    }
+    state->connId = rconnId;
+    return 0;
+}
+
 int saw_calcTimeoutDur(saw_state_t* state)
 {
     state->timeoutDur = I_TIMEOUTDUR_MS; // previous RTTs are not tracked (yet)
@@ -123,7 +145,6 @@ int saw_listen(int fd, saw_state_t* state)
     // assumption: the `state` parameter has already been initialized
     // blocks sets `state` to contain `paddr` & `paddrLen` of the connected
     // peer (breaks for same machine, multiple connections, ppid + paddr?)
-    LINFO("fd %d", fd);
 
     int rcode = 0, r = 0;
     char buffer[BUFFER_SIZE];
@@ -175,8 +196,7 @@ int saw_listen(int fd, saw_state_t* state)
            
             saw_readPacket(&i, buffer, BUFFER_SIZE);
             if (i.packetType == I) {
-                state->paddr    = paddr;
-                state->paddrLen = paddrLen;
+                state->connId   = i.connId;
                 state->cStatus  = INIT;
                 break;
             } else {
@@ -195,12 +215,13 @@ int saw_listen(int fd, saw_state_t* state)
     LINFO("submitting `IACK` reply to the peer.");
     memset(buffer, 0, BUFFER_SIZE);
     saw_header_t iack; saw_initHeader(&iack);
+    iack.connId = state->connId;
     iack.packetType = IACK;
     iack.length = 0;
     saw_writePacket(&iack, buffer, BUFFER_SIZE, NULL, 0);
     do {
         r = sendto(fd, buffer, HEADER_LEN + iack.length, 0,
-            (struct sockaddr*)&state->paddr, state->paddrLen);
+            (struct sockaddr*)&paddr, paddrLen);
         if (r == -1 && errno == EINTR)
             continue;
         if (r == -1) {
@@ -252,17 +273,15 @@ int saw_listen(int fd, saw_state_t* state)
                     rcode = -1;
                     return rcode;
                 }
-                // reply saddr info does not match the peers saddr info
-                if (paddr.sin_addr.s_addr != state->paddr.sin_addr.s_addr 
-                    || paddr.sin_port != state->paddr.sin_port
-                    || paddrLen != state->paddrLen) {
-                    LWARN("peer saddr does not match connection saddr");
-                    continue;
-                }
                 break;
             } while (1);
            
             saw_readPacket(&i, buffer, BUFFER_SIZE);
+            // reply saddr info does not match the peers saddr info
+            if (i.connId != state->connId) {
+                LWARN("peer connection id does not match");
+                continue;
+            }
             if (i.packetType == IACK) {
                 state->cStatus  = CON;
                 break;
@@ -292,8 +311,6 @@ int saw_accept(int fd, saw_state_t* state)
 
 int saw_connect(int fd, saw_state_t* state)
 {
-    LINFO("%d", state->paddr.sin_addr.s_addr);
-
     int rcode = 0, r = 0;
 
     char buffer[BUFFER_SIZE];
@@ -304,12 +321,16 @@ int saw_connect(int fd, saw_state_t* state)
     };
     struct sockaddr_in paddr;
     socklen_t paddrLen = sizeof(paddr);
+
+    // generate connection ID
+    saw_genConnId(state);
    
     // transmit `I` connection initiation packet
     LINFO("submitting `I` to peer.");
     memset(buffer, 0, BUFFER_SIZE);
     saw_header_t iack; saw_initHeader(&iack);
     iack.packetType = I;
+    iack.connId = state->connId;
     iack.length = 0;
     saw_writePacket(&iack, buffer, BUFFER_SIZE, NULL, 0);
     do {
@@ -366,17 +387,14 @@ int saw_connect(int fd, saw_state_t* state)
                     rcode = -1;
                     return rcode;
                 }
-                // reply saddr info does not match the peers saddr info
-                if (paddr.sin_addr.s_addr != state->paddr.sin_addr.s_addr 
-                    || paddr.sin_port != state->paddr.sin_port
-                    || paddrLen != state->paddrLen) {
-                    LWARN("peer saddr does not match connection saddr");
-                    continue;
-                }
                 break;
             } while (1);
            
             saw_readPacket(&i, buffer, BUFFER_SIZE);
+            if (i.connId != state->connId) {
+                LWARN("peer connId does not match connection connId");
+                continue;
+            }
             if (i.packetType == IACK) {
                 state->cStatus  = CON;
                 break;
@@ -395,6 +413,7 @@ int saw_connect(int fd, saw_state_t* state)
     LINFO("submitting `IACK` to peer.");
     memset(buffer, 0, BUFFER_SIZE);
     saw_initHeader(&iack);
+    iack.connId = state->connId;
     iack.packetType = IACK;
     iack.length = 0;
     saw_writePacket(&iack, buffer, BUFFER_SIZE, NULL, 0);

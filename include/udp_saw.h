@@ -4,6 +4,7 @@
 
 #include <stdint.h>
 #include <sys/types.h>
+#include <sys/random.h>
 #include <string.h>
 #include <netinet/in.h>
 #include <stdio.h>
@@ -28,7 +29,7 @@ Limitations
 
 #define BUFFER_SIZE (4096)
 
-#define HEADER_LEN  (6) // why is this 40?
+#define HEADER_LEN  (8) // why is this 40?
 
 #define PACKETID_M  (0xFF0000000000)
 #define PACKETID_IM (0x00FFFFFFFFFF)
@@ -38,12 +39,16 @@ Limitations
 #define PACKETTYPE_IM   (0xFF00FFFFFFFF)
 #define PACKETTYPE_L    (1)
 
-#define CHECKSUM_M  (0x0000FFFF0000)
-#define CHECKSUM_IM (0xFFFF0000FFFF)
+#define CONNID_M    (0x0000FFFF00000000)
+#define CONNID_IM   (0xFFFF0000FFFFFFFF)
+#define CONNID_L    (2)
+
+#define CHECKSUM_M  (0x00000000FFFF0000)
+#define CHECKSUM_IM (0xFFFFFFFF0000FFFF)
 #define CHECKSUM_L  (2)
 
-#define LENGTH_M    (0x00000000FFFF)
-#define LENGTH_IM   (0xFFFFFFFF0000)
+#define LENGTH_M    (0x000000000000FFFF)
+#define LENGTH_IM   (0xFFFFFFFFFFFF0000)
 #define LENGTH_L    (2)
 
 #define PLEN(len) (HEADER_LEN + (len))
@@ -65,8 +70,9 @@ Store all info such that this packet is as a window into the buffer
     this in any significant way other than passing it back and forth
 */
 typedef struct saw_header {
-    uint8_t     packetId;
+    uint8_t     packetId;       // PACKET ID -> SEQ
     uint8_t     packetType;
+    uint16_t    connId;
     uint16_t    checksum;
     uint16_t    length;         // length of the packet contents
 } saw_header_t;
@@ -108,18 +114,20 @@ SAW (stop-and-wait) "connection" state.
 the initial timeout duration is 1S or 1000MS (units of `timeoutDur` are MS)
 */
 typedef struct saw_state {
-    uint8_t cSeqNo; // current ack no
-    uint8_t nSeqNo; // next ack no
-    int rtrans;     // retransmission counter
+    uint8_t cSeqNo;             // current ack no
+    uint8_t nSeqNo;             // next ack no
+    uint16_t connId;            // connection ID
+    int rtrans;                 // retransmission counter
     saw_cstatus_t cStatus;      // connection status
     time_t timeoutDur;          // timeout duration (should be calculated from RTT)
     time_t timeout;             // expiration time
-    struct sockaddr_in paddr;   // peer ipv4 address
-    socklen_t paddrLen;         // peer ipv4 address length
+    struct sockaddr_in paddr;   // [TODO] ditch this, peer ipv4 address
+    socklen_t paddrLen;         // [TODO] ditch this, peer ipv4 address length
 } saw_state_t;
 
 void saw_initState(saw_state_t* state);
 
+// int saw_genConnId(saw_state_t* state);
 int saw_calcTimeoutDur(saw_state_t* state);
 int saw_calcTimeout(saw_state_t* state);
 
@@ -128,6 +136,11 @@ int saw_calcTimeout(saw_state_t* state);
 Verify for the client program that the socket is valid for use w/ SAW protocol.
 */
 int saw_sock_valid(int fd, int proto);
+
+// [TODO]
+int saw_socket();
+// [TODO]
+int saw_bind();
 
 /**
 Listen for incoming SAW proto connection handshakes.

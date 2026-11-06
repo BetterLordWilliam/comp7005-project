@@ -54,8 +54,6 @@ SAW specific application loop
 */
 int saw_loop(struct saw_sstate* sstate)
 {
-    LINFO("fd %d", sstate->server_fd);
-
     saw_state_t ssstate; saw_initState(&ssstate);
     int listen_r = saw_listen(sstate->server_fd, &ssstate);
     LINFO("listen return code: %d", listen_r);
