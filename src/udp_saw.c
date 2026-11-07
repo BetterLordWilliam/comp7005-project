@@ -498,79 +498,50 @@ int saw_recv(int fd, saw_state_t* state,
         return (int)SAWENCONN;
     int rcode = 0, r = 0, pr = 0, nr = 0;
 
-    struct timespec rtime = { 0 };
+    // struct timespec rtime = { 0 };
     struct sockaddr_in saddr = { 0 };
     socklen_t saddrlen = sizeof(saddr);
+    /*
     struct pollfd pfd = {
         .fd         = fd,
         .events     = POLLIN,
         .revents    = 0
     };
+    */
 
-
-    // wait for DATA for the thing
-    saw_header_t rh = { 0 }; saw_initHeader(&rh);
+    // read from socket store the number of bytes read
+    memset(netBuf, 0, netBufSize);
     do {
-        memset(netBuf, 0, netBufSize);
-        saw_initHeader(&rh);
-        // initial infinite wait on DATA(?) but once we get one we need to start tracking this I think
-        r = poll(&pfd, 1, -1); 
-        if (r == -1 || r == 0) {
-            if (errno == EINTR)
-                continue;
-            if (r == 0)
-                LERROR("timeout not possible");
-            perror("poll");
-            LERROR("bonnafide poll error while waiting for data"); 
+        r = recvfrom(fd, netBuf, netBufSize, 0,
+            (struct sockaddr*)&saddr, &saddrlen);
+        if (r == -1 && errno == EINTR) continue;
+        if (r == -1) {
+            perror("recvfrom");
+            LERROR("recvfrom call failed for incoming DATA");
             rcode = -1;
             return rcode;
-        }
-        if (pfd.revents & POLLERR) {
-            LERROR("poll returned error event.");
-            rcode = -1;
-            return rcode;
-        } else if (pfd.revents & POLLNVAL) {
-            LERROR("poll returned invalid event.");
-            rcode = -1;
-            return rcode;
-        } else if (pfd.revents & ( POLLHUP | POLLIN )) {
-            do {
-                r = recvfrom(fd, netBuf, netBufSize, 0,
-                    (struct sockaddr*)&saddr, &saddrlen);
-                if (r == -1 && errno == EINTR) continue;
-                if (r == -1) {
-                    perror("recvfrom");
-                    LERROR("recvfrom call failed for incoming DATA");
-                    rcode = -1;
-                    return rcode;
-                }
-                break;
-            } while (1);
-            saw_readPacket(&rh, netBuf, netBufSize);
-            if (rh.packetType != DATA) {
-                LWARN("packet should be DATA packet.");
-                continue;
-            }
-            if (rh.connId != state->connId) {
-                LWARN("packet connId does not match specified state connId.");
-                continue;
-            }
-            if (rh.packetType == DATA && rh.connId == state->connId) {
-                nr = r;
-                pr = 1;
-            }
         }
         break;
     } while (1);
-
-    if (pr != 1) {
-        LERROR("didn't receive DATA packet within the specified window");
+    saw_header_t rh = { 0 }; saw_initHeader(&rh);
+    saw_initHeader(&rh);
+    saw_readPacket(&rh, netBuf, netBufSize);
+    if (rh.packetType != DATA) {
+        LWARN("packet should be DATA packet.");
+        return rcode;
+    }
+    if (rh.connId != state->connId) {
+        LWARN("packet connId does not match specified state connId.");
         rcode = -1;
         return rcode;
     }
-
-
-    // send the ACK for the data we have now received
+    if (rh.packetType == DATA && rh.connId == state->connId) {
+        LINFO("DATA %d received", rh.packetId);
+        nr = r;
+        pr = 1;
+    }
+    
+    // then transmit the ACK
     char buffer[BUFFER_SIZE];
     memset(buffer, 0, BUFFER_SIZE);
     saw_header_t rph = { 0 }; saw_initHeader(&rph);
@@ -580,14 +551,22 @@ int saw_recv(int fd, saw_state_t* state,
     rph.connId = state->connId;
     saw_writePacket(&rph, buffer, HEADER_LEN + rph.length, NULL, 0);
     LINFO("--> DATA %d\tACK %d -->", rh.packetId, rph.packetId);
-    
-    /*
+
     do {
-        sendto(fd, )
+        r = sendto(fd, buffer, HEADER_LEN + rph.length, 0,
+            (struct sockaddr*)&saddr, saddrlen);
+        if (r == -1 && errno == EINTR) continue;
+        if (r == -1) {
+            perror("sendto");
+            LERROR("sendto call failed for outgoing ACK");
+            rcode = -1;
+            return rcode;
+        }
         break;
     } while (1);
-    */
-
+    
+    // then return to the client the number of bytes sent
+    
     return nr; // number of recevied bytes
 }
 
