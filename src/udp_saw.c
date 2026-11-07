@@ -476,10 +476,8 @@ int saw_send(int fd, saw_state_t* state,
     };
     char wbuffer[BUFFER_SIZE];
     char rbuffer[BUFFER_SIZE];
+
     
-    // transmit the thing (segment)
-    // segment across buffer size (yes this will need to be done)
-    // I'm not doing this at the moment
     memset(wbuffer, 0, BUFFER_SIZE);
     saw_header_t reqh = { 0 }; saw_initHeader(&reqh);
     reqh.packetId   = state->cSeqNo;
@@ -488,70 +486,85 @@ int saw_send(int fd, saw_state_t* state,
     saw_writePacket(&reqh, wbuffer, BUFFER_SIZE, netBuf, netBufSize);
 
     state->timeoutc = 0;
+    int ackr = 0;
 
-    // think of this as a segment transmission loop
+    // segment transmission loop
     // for both saw & sliding window this entire process needs to be looped
     do {
         if (state->timeoutc >= M_RETRANS) {
             LERROR("maximum retransmissions reached for packet %d", state->cSeqNo);
             return -1;
         }
-
-        r = cpd = sendto(fd, wbuffer, HEADER_LEN + reqh.length, 0,
-            (struct sockaddr*)&state->paddr, state->paddrLen);
-        if (r == -1 && errno == EINTR) continue;
-        if (r == -1) {
-            LERROR("sendto syscall error transmitting DATA segment %d", state->cSeqNo);
-            return -1;
-        }
-
-        // wait for ACK of the segment this should involve `poll`
-        // if timeout for `state` occurs, retry (retry on the outer loop that doesnt exist yet)
-        // do that
+    
+        do {
+            r = cpd = sendto(fd, wbuffer, HEADER_LEN + reqh.length, 0,
+                (struct sockaddr*)&state->paddr, state->paddrLen);
+            if (r == -1 && errno == EINTR) continue;
+            if (r == -1) {
+                LERROR("sendto syscall error transmitting DATA segment %d", state->cSeqNo);
+                return -1;
+            }
+            break;
+        } while (1);
+    
+        // ACK wait loop
+        // read message & determine if its the ACK we are expecting
         // assert that the ACK recevied is ( ( ACK n + 1 ) % 2 )
-        r = poll(&pfd, 1, state->timeoutDur);
-        if (r == -1) {
-            if (errno == EINTR) continue;
-            LERROR("poll syscall error waiting for ACK %d",
-                SAW_NXID(state->cSeqNo));
-            return -1;
-        }
-        if (r == 0) {
-            LERROR("connId %d timeout %d ACK %d not received",
-                state->connId, state->timeoutc, SAW_NXID(state->cSeqNo));
-            state->timeoutc++;
-            continue;
-        }
-        if (!(pfd.revents & (POLLIN))) {
-            LERROR("poll returned an unexpected event");
-            return -1;
-        }
+        do {
+            r = poll(&pfd, 1, state->timeoutDur);
+            if (r == -1) {
+                if (errno == EINTR) continue;
+                LERROR("poll syscall error waiting for ACK %d",
+                    SAW_NXID(state->cSeqNo));
+                return -1;
+            }
 
-        memset(rbuffer, 0, BUFFER_SIZE);
-        r = recvfrom(fd, rbuffer, BUFFER_SIZE, 0, NULL, NULL);
-        if (r == -1) {
-            if (errno == EINTR) continue;
-            LERROR("recvfrom syscall error attempting to read possible ACK %d",
-                SAW_NXID(state->cSeqNo));
-            return -1;
-        }
-        saw_header_t reph = { 0 }; saw_initHeader(&reph);
-        saw_readPacket(&reph, rbuffer, BUFFER_SIZE);
-        if (reph.connId != state->connId || reph.packetId != SAW_NXID(state->cSeqNo)) {
-            LWARN("recevied unrelated packet while waiting for ACK %d",
-                SAW_NXID(state->cSeqNo));
-            continue;
-        }
+            if (r == 0) {
+                LERROR("connId %d timeout %d ACK %d not received",
+                    state->connId, state->timeoutc, SAW_NXID(state->cSeqNo));
+                state->timeoutc++;
+                break;
+            }
+            if (!(pfd.revents & (POLLIN))) {
+                LERROR("poll returned an unexpected event");
+                return -1;
+            }
+
+            memset(rbuffer, 0, BUFFER_SIZE);
+            do {
+                r = recvfrom(fd, rbuffer, BUFFER_SIZE, 0, NULL, NULL);
+                if (r == -1) {
+                    if (errno == EINTR) continue;
+                    LERROR("recvfrom syscall error attempting to read possible ACK %d",
+                        SAW_NXID(state->cSeqNo));
+                    return -1;
+                }
+                break;
+            } while (1);
+
+            saw_header_t reph = { 0 }; saw_initHeader(&reph);
+            saw_readPacket(&reph, rbuffer, BUFFER_SIZE);
+            if (reph.connId != state->connId || reph.packetId != SAW_NXID(state->cSeqNo)) {
+                LWARN("recevied unrelated packet while waiting for ACK %d",
+                    SAW_NXID(state->cSeqNo));
+                continue;
+            }
+
+            // ACK received increment the counter
+            // if there were multiple segments we loop again so some outer loop
+            // would be involved
+            // accumulate the number of sent bytes (excluding saw proto header bytes)
+            ns += (cpd - HEADER_LEN);
+            state->cSeqNo = SAW_NXID(state->cSeqNo);
+            ackr = 1;
+            break;
+
+        } while (1); // ACK wait loop end
         
-        // ACK received increment the counter
-        // if there were multiple segments we loop again so some outer loop
-        // would be involved
-        // accumulate the number of sent bytes (excluding saw proto header bytes)
-        ns += (cpd - HEADER_LEN);
-        state->cSeqNo = SAW_NXID(state->cSeqNo);
+        if (ackr == 1 ) break;
 
-        break;
-    } while (1);
+    } while (1); // segment transmission loop end
+
 
     return ns;
 }
