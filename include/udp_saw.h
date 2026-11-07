@@ -139,8 +139,8 @@ typedef struct saw_state {
     time_t timeout;             // expiration time
     time_t rtime;               // running time
     int timeoutc;               // timeout counter
-    struct sockaddr_in paddr;   // [TODO] ditch this, peer ipv4 address
-    socklen_t paddrLen;         // [TODO] ditch this, peer ipv4 address length
+    struct sockaddr_in paddr;
+    socklen_t paddrLen;
 } saw_state_t;
 
 void saw_initState(saw_state_t* state);

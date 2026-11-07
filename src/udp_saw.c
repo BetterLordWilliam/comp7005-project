@@ -466,24 +466,93 @@ int saw_send(int fd, saw_state_t* state,
 
     if (state->cStatus != CON)
         return (int)SAWENCONN;
-    int rcode = 0, r = 0;
+    int rcode = 0, r = 0, cpd = 0, ns = 0;
 
-
+    // struct timespec rtime = { 0 };
     struct pollfd pfd = {
-        .fd         = 0,
+        .fd         = fd,
         .events     = POLLIN,
         .revents    = 0
     };
     
-    // transmit the thing
-    
-    
-    // wait for ACK of the thing
-    // if timeout for `state` occurs, retry
-    // do that
-    // assert that the ACK recevied is ( ACK n + 1 % 1 )
+    // transmit the thing (segment)
+    // segment across buffer size (yes this will need to be done)
+    // I'm not doing this at the moment
+    char wbuffer[BUFFER_SIZE];
+    char rbuffer[BUFFER_SIZE];
+    saw_header_t reqh = { 0 }; saw_initHeader(&reqh);
+    reqh.packetId   = state->cSeqNo;
+    reqh.connId     = state->connId;
+    reqh.length     = netBufSize;
+    saw_writePacket(&reqh, wbuffer, BUFFER_SIZE, netBuf, netBufSize);
 
-    return rcode;
+    // think of this as a segment transmission loop
+    // for both saw & sliding window this entire process needs to be looped
+    do {
+        if (state->timeoutc >= M_RETRANS) break;
+
+        r = cpd = sendto(fd, wbuffer, HEADER_LEN + reqh.length, 0,
+            (struct sockaddr*)&state->paddr, state->paddrLen);
+        // if (r == -1 && errno == EINTR) continue;    // this doesn't make sense
+        if (r == -1) {
+            LERROR("sendto syscall error transmitting DATA segment %d", state->cSeqNo);
+            rcode = -1;
+            return rcode;
+        }
+
+        // wait for ACK of the segment this should involve `poll`
+        // if timeout for `state` occurs, retry (retry on the outer loop that doesnt exist yet)
+        // do that
+        // assert that the ACK recevied is ( ( ACK n + 1 ) % 2 )
+        r = poll(&pfd, 1, state->timeoutDur);
+        // if (r == -1 && errno == EINTR) continue;        // this doesn't make sense
+        if (r == -1) {
+            LERROR("poll syscall error waiting for ACK %d",
+                SAW_NXID(state->cSeqNo));
+            rcode = -1;
+            return rcode;
+        }
+        if (r == 0) {
+            LERROR("connId %d timeout %d ACK %d not received",
+                state->connId, state->timeoutc, SAW_NXID(state->cSeqNo));
+            state->timeoutc++;
+            continue;
+        }
+        if (!(pfd.revents & (POLLHUP | POLLIN))) {
+            LERROR("poll returned an unexpected event");
+            rcode = -1;
+            return rcode;
+        }
+
+        memset(wbuffer, 0, BUFFER_SIZE);
+        r = recvfrom(fd, rbuffer, BUFFER_SIZE, 0, NULL, NULL);
+        // if (r == -1 && errno == EINTR) continue;        // this doesn't make sense
+        if (r == -1) {
+            LERROR("recvfrom syscall error attempting to read possible ACK %d",
+                SAW_NXID(state->cSeqNo));
+            rcode = -1;
+            return rcode;
+        }
+        saw_header_t reph = { 0 }; saw_initHeader(&reph);
+        saw_readPacket(&reph, rbuffer, BUFFER_SIZE);
+        if (reph.connId != state->connId || reph.packetId != SAW_NXID(state->cSeqNo)) {
+            LERROR("recevied a packet but it was not ACK %d",
+                SAW_NXID(state->cSeqNo));
+            rcode = -1;
+            return rcode;
+        }
+        
+        // ACK received increment the counter
+        // if there were multiple segments we loop again so some outer loop
+        // would be involved
+        // accumulate the number of sent bytes
+        ns += cpd;
+        state->cSeqNo = SAW_NXID(state->cSeqNo);
+
+        break;
+    } while (1);
+
+    return ns;
 }
 
 int saw_recv(int fd, saw_state_t* state,
@@ -499,8 +568,6 @@ int saw_recv(int fd, saw_state_t* state,
     int rcode = 0, r = 0, pr = 0, nr = 0;
 
     // struct timespec rtime = { 0 };
-    struct sockaddr_in saddr = { 0 };
-    socklen_t saddrlen = sizeof(saddr);
     /*
     struct pollfd pfd = {
         .fd         = fd,
@@ -512,8 +579,7 @@ int saw_recv(int fd, saw_state_t* state,
     // read from socket store the number of bytes read
     memset(netBuf, 0, netBufSize);
     do {
-        r = recvfrom(fd, netBuf, netBufSize, 0,
-            (struct sockaddr*)&saddr, &saddrlen);
+        r = recvfrom(fd, netBuf, netBufSize, 0, NULL, NULL);
         if (r == -1 && errno == EINTR) continue;
         if (r == -1) {
             perror("recvfrom");
@@ -546,7 +612,7 @@ int saw_recv(int fd, saw_state_t* state,
     memset(buffer, 0, BUFFER_SIZE);
     saw_header_t rph = { 0 }; saw_initHeader(&rph);
     rph.packetType = ACK;
-    rph.packetId = SAW_NXID(rh.packetId);
+    rph.packetId = SAW_NXID(state->cSeqNo);
     rph.length = 0;
     rph.connId = state->connId;
     saw_writePacket(&rph, buffer, HEADER_LEN + rph.length, NULL, 0);
@@ -554,7 +620,7 @@ int saw_recv(int fd, saw_state_t* state,
 
     do {
         r = sendto(fd, buffer, HEADER_LEN + rph.length, 0,
-            (struct sockaddr*)&saddr, saddrlen);
+            (struct sockaddr*)&state->paddr, state->paddrLen);
         if (r == -1 && errno == EINTR) continue;
         if (r == -1) {
             perror("sendto");
@@ -565,6 +631,7 @@ int saw_recv(int fd, saw_state_t* state,
         break;
     } while (1);
     
+    state->cSeqNo = rph.packetId;
     // then return to the client the number of bytes sent
     
     return nr; // number of recevied bytes
