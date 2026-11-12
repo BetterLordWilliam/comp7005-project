@@ -59,15 +59,19 @@ int saw_loop(struct saw_sstate* sstate)
     LINFO("listen return code: %d", listen_r);
 
     for (;;) {
-        unsigned char buffer[BUFFER_SIZE];
+        char buffer[BUFFER_SIZE];
         struct sockaddr_in peer;
         socklen_t peer_length = sizeof(peer);
+        /*
         ssize_t length = recvfrom(sstate->server_fd,
                                   buffer,
                                   sizeof(buffer),
                                   0,
                                   (struct sockaddr *)&peer,
                                   &peer_length);
+        */
+        int length = saw_recv(sstate->server_fd, &ssstate,
+            buffer, sizeof(buffer));
         if (length == -1) {
             perror("recvfrom");
             continue;
@@ -80,6 +84,7 @@ int saw_loop(struct saw_sstate* sstate)
         }
         fflush(stdout);
 
+        /*
         if (sendto(sstate->server_fd,
                    buffer,
                    (size_t)length,
@@ -87,6 +92,10 @@ int saw_loop(struct saw_sstate* sstate)
                    (struct sockaddr *)&peer,
                    peer_length) == -1) {
             perror("sendto");
+        }*/
+        if (saw_send(sstate->server_fd, &ssstate,
+                buffer, length) == -1) {
+            LINFO("error sending the echo message");
         }
         continue;
     }
