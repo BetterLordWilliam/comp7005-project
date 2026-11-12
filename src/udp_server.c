@@ -60,8 +60,8 @@ int saw_loop(struct saw_sstate* sstate)
 
     for (;;) {
         char buffer[BUFFER_SIZE];
-        struct sockaddr_in peer;
-        socklen_t peer_length = sizeof(peer);
+        //struct sockaddr_in peer;
+        //socklen_t peer_length = sizeof(peer);
         /*
         ssize_t length = recvfrom(sstate->server_fd,
                                   buffer,
