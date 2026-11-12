@@ -301,6 +301,8 @@ int saw_listen(int fd, saw_state_t* state)
             }
             if (i.packetType == IACK) {
                 state->cStatus  = CON;
+                state->paddr = paddr;           // save peer address
+                state->paddrLen = paddrLen;     // save peer address length
                 break;
             } else {
                 LINFO("not an `IACK` packet dropping");
@@ -626,12 +628,14 @@ int saw_recv(int fd, saw_state_t* state,
     rph.connId      = state->connId;
     saw_writePacket(&rph, wbuffer, HEADER_LEN + rph.length, NULL, 0);
     LINFO("--> DATA %d\tACK %d -->", rh.packetId, rph.packetId);
+    LINFO("DEBUG { peer address length: %d, peer address: %d } ", state->paddrLen, state->paddr.sin_addr.s_addr);
 
     do {
         r = sendto(fd, wbuffer, HEADER_LEN + rph.length, 0,
             (struct sockaddr*)&state->paddr, state->paddrLen);
         if (r == -1) {
             if (errno == EINTR) continue;
+            perror("sendto");
             LERROR("sendto call failed for outgoing ACK");
             return -1;
         }
