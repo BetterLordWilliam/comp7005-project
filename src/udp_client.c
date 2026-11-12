@@ -120,7 +120,9 @@ int saw_loop(struct saw_cstate* cstate)
             int send_result = saw_send(cstate->client_fd, &scstate,
                 buffer, length);
             if (send_result == -1) {
-                return EXIT_FAILURE;
+                LERROR("failed to send message.");
+                continue;
+                // return EXIT_FAILURE;
             }
         }
 

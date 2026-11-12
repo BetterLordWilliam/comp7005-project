@@ -623,7 +623,7 @@ int saw_recv(int fd, saw_state_t* state,
     memset(wbuffer, 0, BUFFER_SIZE);
     saw_header_t rph = { 0 }; saw_initHeader(&rph);
     rph.packetType  = ACK;
-    rph.packetId    = SAW_NXID(state->cSeqNo);
+    rph.packetId    = SAW_NXID(state->nSeqNo);
     rph.length      = 0;
     rph.connId      = state->connId;
     saw_writePacket(&rph, wbuffer, HEADER_LEN + rph.length, NULL, 0);
@@ -642,7 +642,7 @@ int saw_recv(int fd, saw_state_t* state,
         break;
     } while (1);
     
-    state->cSeqNo = rph.packetId;
+    state->nSeqNo = SAW_NXID(rph.packetId);
 
     return nr; // number of recevied bytes
 }
