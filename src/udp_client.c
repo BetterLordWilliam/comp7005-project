@@ -113,8 +113,12 @@ int saw_loop(struct saw_cstate* cstate)
             size_t length = strlen(buffer);
 
             // [WO] we send but there is not "connection" at this point
+            /*
             int send_result = sendto(cstate->client_fd, buffer, length, 0,
                 (struct sockaddr*)&cstate->network, sizeof(cstate->network));
+            */
+            int send_result = saw_send(cstate->client_fd, &scstate,
+                buffer, length);
             if (send_result == -1) {
                 return EXIT_FAILURE;
             }
@@ -122,12 +126,16 @@ int saw_loop(struct saw_cstate* cstate)
 
         /* Echo reception is independent and never gates the next send. */
         if (cstate->watched[1].revents & POLLIN) {
+            /*
             ssize_t received = recvfrom(cstate->client_fd,
                                         buffer,
                                         sizeof(buffer),
                                         0,
                                         NULL,
                                         NULL);
+            */
+            int received = saw_recv(cstate->client_fd, &scstate,
+                buffer, sizeof(buffer));
             if (received == -1) {
                 if (errno == EINTR) {
                     return CONTINUE;
