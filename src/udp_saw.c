@@ -156,6 +156,15 @@ static int saw_calcRtime(saw_state_t* state)
     return 0;
 }
 
+static int saw_calcChecksum(const char* netBuf, size_t netBufSize) {
+    // use a simple checksum
+    int sum = 0;
+    for (size_t i = 0; i < netBufSize; i++) {
+        sum += (int)*(netBuf + i);
+    }
+    return sum;
+}
+
 int saw_listen(int fd, saw_state_t* state)
 {
     // Simplified implementation for now with 1 client
@@ -485,6 +494,7 @@ int saw_send(int fd, saw_state_t* state,
     reqh.packetId   = state->cSeqNo;
     reqh.connId     = state->connId;
     reqh.length     = netBufSize;
+    reqh.checksum   = saw_calcChecksum(netBuf, netBufSize);
     saw_writePacket(&reqh, wbuffer, BUFFER_SIZE, netBuf, netBufSize);
 
     state->timeoutc = 0;
@@ -607,6 +617,14 @@ int saw_recv(int fd, saw_state_t* state,
     saw_header_t rh = { 0 }; saw_initHeader(&rh);
     saw_initHeader(&rh);
     saw_readPacket(&rh, rbuffer, BUFFER_SIZE);
+
+    // recompute checksum
+    int rsum = saw_calcChecksum(rbuffer + HEADER_LEN, rh.length);
+    if (rsum != rh.checksum) {
+        LWARN("checksums do not match corrupted packet should be retransmitted.");
+        return 0;
+    }
+
     if (rh.packetType != DATA) {
         LWARN("packet should be DATA packet.");
         return 0;
