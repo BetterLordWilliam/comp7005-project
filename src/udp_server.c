@@ -57,7 +57,7 @@ int saw_loop(struct saw_sstate* sstate)
     saw_state_t ssstate; saw_initState(&ssstate);
     int listen_r = saw_listen(sstate->server_fd, &ssstate);
     LINFO("listen return code: %d", listen_r);
-    LINFO("DEBUG: { peer address: %d }", ssstate.paddr.sin_addr.s_addr);
+    // LINFO("DEBUG: { peer address: %d }", ssstate.paddr.sin_addr.s_addr);
 
     for (;;) {
         char buffer[BUFFER_SIZE];

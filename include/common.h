@@ -17,7 +17,7 @@
         EY "WARN" ENONE " %s:%s:%d\t" fmt "\n", \
             __FILE__, __func__, __LINE__, ##__VA_ARGS__)
 #define LERROR(fmt, ...) \
-    (fprintf)(stderr, __FILE__ ":" \
+    (fprintf)(stderr, \
         ER "ERROR" ENONE " %s:%s:%d\t" fmt "\n", \
             __FILE__, __func__, __LINE__, ##__VA_ARGS__)
 

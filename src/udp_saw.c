@@ -546,10 +546,16 @@ int saw_send(int fd, saw_state_t* state,
 
             saw_header_t reph = { 0 }; saw_initHeader(&reph);
             saw_readPacket(&reph, rbuffer, BUFFER_SIZE);
-            if (reph.connId != state->connId || reph.packetId != SAW_NXID(state->cSeqNo)) {
-                LWARN("recevied unrelated packet while waiting for ACK %d",
+            if (reph.connId != state->connId) {
+                LWARN("received packet connId does not match specified state connId while waiting for send ack %d",
                     SAW_NXID(state->cSeqNo));
                 continue;
+            }
+            if (reph.packetId != SAW_NXID(state->cSeqNo)) {
+                LWARN("prev ACK recieved %d, while waiting for ACK %d",
+                    reph.packetId, SAW_NXID(state->cSeqNo));
+                continue;
+                // break;
             }
 
             // ACK received increment the counter
@@ -606,16 +612,33 @@ int saw_recv(int fd, saw_state_t* state,
         return 0;
     }
     if (rh.connId != state->connId) {
-        LWARN("packet connId does not match specified state connId.");
+        LWARN("packet connId, %d, does not match specified state connId %d",
+            rh.connId, state->connId);
         return -1;
     }
     if (rh.length > netBufSize) {
         LERROR("buffer too small for incoming data payload.");
         return -1;
     }
+    if (rh.packetId != state->nSeqNo) {
+        LWARN("recieved unexpected packetId %d, expected %d",
+            rh.packetId, state->nSeqNo);
+
+        saw_header_t prph = { 0 }; saw_initHeader(&prph);
+        prph.connId     = state->connId;
+        prph.packetId   = state->nSeqNo;
+        prph.packetType = ACK;
+        prph.length     = 0;
+        saw_writePacket(&prph, wbuffer, HEADER_LEN + prph.length, NULL, 0);
+        LINFO("dup retransmit prev ACK %d", state->nSeqNo);
+        
+        r = sendto(fd, wbuffer, HEADER_LEN + prph.length, 0,
+            (struct sockaddr*)&state->paddr, state->paddrLen);
+
+        return 0;
+    }
 
     // copy the data bytes for the caller
-    LINFO("DATA %d received", rh.packetId);
     memcpy(netBuf, rbuffer + HEADER_LEN, rh.length);
     nr = rh.length;
     
@@ -628,7 +651,6 @@ int saw_recv(int fd, saw_state_t* state,
     rph.connId      = state->connId;
     saw_writePacket(&rph, wbuffer, HEADER_LEN + rph.length, NULL, 0);
     LINFO("--> DATA %d\tACK %d -->", rh.packetId, rph.packetId);
-    LINFO("DEBUG { peer address length: %d, peer address: %d } ", state->paddrLen, state->paddr.sin_addr.s_addr);
 
     do {
         r = sendto(fd, wbuffer, HEADER_LEN + rph.length, 0,
@@ -642,7 +664,7 @@ int saw_recv(int fd, saw_state_t* state,
         break;
     } while (1);
     
-    state->nSeqNo = SAW_NXID(rph.packetId);
+    state->nSeqNo = SAW_NXID(state->nSeqNo);
 
     return nr; // number of recevied bytes
 }
