@@ -145,8 +145,6 @@ int saw_loop(struct saw_cstate* cstate)
                 perror("recvfrom");
                 return EXIT_FAILURE;
             }
-            if (received == 0)
-                continue;
 
             printf("echo: ");
             fwrite(buffer, 1, (size_t)received, stdout);

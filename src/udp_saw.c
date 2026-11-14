@@ -568,17 +568,26 @@ int saw_send(int fd, saw_state_t* state,
 
             saw_header_t reph = { 0 }; saw_initHeader(&reph);
             saw_readPacket(&reph, rbuffer, BUFFER_SIZE);
+            int asum = (
+                saw_calcHeaderChecksum(reph)
+                + saw_calcChecksum(rbuffer, HEADER_LEN + reph.length)
+            );
+            if (asum != reph.checksum) {
+                LWARN("recevied ACK checksum does not match retransmit.");
+                break;
+            }
             if (reph.connId != state->connId) {
                 LWARN("received packet connId does not match specified state connId while waiting for send ack %d",
                     SAW_NXID(state->cSeqNo));
                 continue;
             }
             if (reph.packetId != SAW_NXID(state->cSeqNo)) {
-                LWARN("prev ACK recieved %d, while waiting for ACK %d",
+                LWARN("prev ACK recieved %d, while waiting for ACK %d, retransmit.",
                     reph.packetId, SAW_NXID(state->cSeqNo));
                 state->timeoutc++;
                 break;  // dont increment the ACK & dont set `ackr`
                         // retransmit previous message
+                        // should this increment this?
             }
 
             // ACK received increment the counter
@@ -612,90 +621,137 @@ int saw_recv(int fd, saw_state_t* state,
         return (int)SAWENCONN;
     int rcode = 0, r = 0, nr = 0;
 
+    struct pollfd pfd = {
+        .fd         = fd,
+        .events     = POLLIN,
+        .revents    = 0
+    };
     char rbuffer[BUFFER_SIZE];
     char wbuffer[BUFFER_SIZE];
 
-    // read from socket store the number of bytes read
+    // receive segment loop
     do {
-        memset(rbuffer, 0, BUFFER_SIZE);
-        r = recvfrom(fd, rbuffer, BUFFER_SIZE, 0, NULL, NULL);
-        if (r == -1) {
-            if (errno == EINTR) continue;
-            LERROR("recvfrom call failed for incoming DATA");
+
+        // poll
+        do {
+            r = poll(&pfd, 1, -1);
+            if (r == -1) {
+                if (errno == EINTR) continue;
+                LERROR("poll call failed");
+                return -1;
+            }
+            break;
+        } while (1);
+
+        // check the poll events
+        if (!(pfd.revents & (POLLHUP | POLLIN))) {
+            LERROR("poll returned an unexpected event");
             return -1;
         }
-        break;
-    } while (1);
 
-    saw_header_t rh = { 0 }; saw_initHeader(&rh);
-    saw_initHeader(&rh);
-    saw_readPacket(&rh, rbuffer, BUFFER_SIZE);
+        // if there's data do this stuff
+        // read from socket store the number of bytes read
+        do {
+            memset(rbuffer, 0, BUFFER_SIZE);
+            r = recvfrom(fd, rbuffer, BUFFER_SIZE, 0, NULL, NULL);
+            if (r == -1) {
+                if (errno == EINTR) continue;
+                LERROR("recvfrom call failed for incoming DATA");
+                return -1;
+            }
+            break;
+        } while (1);
 
-    // recompute checksum
-    int rsum = (
-        saw_calcHeaderChecksum(rh) + saw_calcChecksum(rbuffer + HEADER_LEN, rh.length)
-    );
-    if (rsum != rh.checksum) {
-        LWARN("checksums do not match corrupted packet should be retransmitted.");
-        return 0; // must submit previous ACK so that the sender knows to retransmit
-    }
+        saw_header_t rh = { 0 }; saw_initHeader(&rh);
+        saw_initHeader(&rh);
+        saw_readPacket(&rh, rbuffer, BUFFER_SIZE);
 
-    if (rh.packetType != DATA) {
-        LWARN("packet should be DATA packet.");
-        return 0;
-    }
-    if (rh.connId != state->connId) {
-        LWARN("packet connId, %d, does not match specified state connId %d",
-            rh.connId, state->connId);
-        return -1;
-    }
-    if (rh.length > netBufSize) {
-        LERROR("buffer too small for incoming data payload.");
-        return -1;
-    }
-    if (rh.packetId != state->nSeqNo) {
-        LWARN("recieved unexpected packetId %d, expected %d",
-            rh.packetId, state->nSeqNo);
-        saw_header_t prph = { 0 }; saw_initHeader(&prph);
-        prph.connId     = state->connId;
-        prph.packetId   = state->nSeqNo;
-        prph.packetType = ACK;
-        prph.length     = 0;
-        saw_writePacket(&prph, wbuffer, HEADER_LEN + prph.length, NULL, 0);
-        LINFO("dup retransmit prev ACK %d", state->nSeqNo);
+        // recompute checksum
+        int rsum = (
+            saw_calcHeaderChecksum(rh) + saw_calcChecksum(rbuffer + HEADER_LEN, rh.length)
+        );
+        if (rsum != rh.checksum) {
+            LWARN("checksums do not match corrupted packet should be retransmitted (dropping packet).");
+            continue;
+        }
+        if (rh.packetType != DATA) {
+            LWARN("packet should be DATA packet.");
+            continue;
+        }
+        if (rh.connId != state->connId) {
+            LWARN("packet connId, %d, does not match specified state connId %d",
+                rh.connId, state->connId);
+            return -1;
+        }
+        if (rh.length > netBufSize) {
+            LERROR("buffer too small for incoming data payload.");
+            return -1;
+        }
+        if (rh.packetId != state->nSeqNo) {
+            LWARN("recieved unexpected packetId %d, expected %d",
+                rh.packetId, state->nSeqNo);
+
+            // transmit previous ACK
+            saw_header_t prph = { 0 }; saw_initHeader(&prph);
+            prph.connId     = state->connId;
+            prph.packetId   = state->nSeqNo;
+            prph.packetType = ACK;
+            prph.length     = 0;
+            prph.checksum    = (
+                saw_calcHeaderChecksum(prph)
+                + saw_calcChecksum(wbuffer, HEADER_LEN + prph.length)
+            );
+            saw_writePacket(&prph, wbuffer, HEADER_LEN + prph.length, NULL, 0);
+            LWARN("dup packet retransmit prev ACK to confirm this is recevied %d", state->nSeqNo);
+            do {
+                r = sendto(fd, wbuffer, HEADER_LEN + prph.length, 0,
+                    (struct sockaddr*)&state->paddr, state->paddrLen);
+                if (r == -1) {
+                    if (errno == EINTR) continue;
+                    perror("sendto");
+                    LERROR("sendto call failed for outgoing ACK");
+                    return -1;
+                }
+                break;
+            } while (1);
+
+            return 0;
+        }
+
+        // copy the data bytes for the caller
+        memcpy(netBuf, rbuffer + HEADER_LEN, rh.length);
+        nr += rh.length;
         
-        r = sendto(fd, wbuffer, HEADER_LEN + prph.length, 0,
-            (struct sockaddr*)&state->paddr, state->paddrLen);
-        return 0;
-    }
+        // transmit ACK
+        memset(wbuffer, 0, BUFFER_SIZE);
+        saw_header_t rph = { 0 }; saw_initHeader(&rph);
+        rph.packetType  = ACK;
+        rph.packetId    = SAW_NXID(state->nSeqNo);
+        rph.length      = 0;
+        rph.connId      = state->connId;
+        rph.checksum    = (
+            saw_calcHeaderChecksum(rph)
+            + saw_calcChecksum(wbuffer, HEADER_LEN + rph.length)
+        );
+        saw_writePacket(&rph, wbuffer, HEADER_LEN + rph.length, NULL, 0);
+        LINFO("--> DATA %d\tACK %d -->", rh.packetId, rph.packetId);
+        do {
+            r = sendto(fd, wbuffer, HEADER_LEN + rph.length, 0,
+                (struct sockaddr*)&state->paddr, state->paddrLen);
+            if (r == -1) {
+                if (errno == EINTR) continue;
+                perror("sendto");
+                LERROR("sendto call failed for outgoing ACK");
+                return -1;
+            }
+            break;
+        } while (1);
+        
+        state->nSeqNo = SAW_NXID(state->nSeqNo);
 
-    // copy the data bytes for the caller
-    memcpy(netBuf, rbuffer + HEADER_LEN, rh.length);
-    nr = rh.length;
-    
-    // transmit ACK
-    memset(wbuffer, 0, BUFFER_SIZE);
-    saw_header_t rph = { 0 }; saw_initHeader(&rph);
-    rph.packetType  = ACK;
-    rph.packetId    = SAW_NXID(state->nSeqNo);
-    rph.length      = 0;
-    rph.connId      = state->connId;
-    saw_writePacket(&rph, wbuffer, HEADER_LEN + rph.length, NULL, 0);
-    LINFO("--> DATA %d\tACK %d -->", rh.packetId, rph.packetId);
-
-    do {
-        r = sendto(fd, wbuffer, HEADER_LEN + rph.length, 0,
-            (struct sockaddr*)&state->paddr, state->paddrLen);
-        if (r == -1) {
-            if (errno == EINTR) continue;
-            perror("sendto");
-            LERROR("sendto call failed for outgoing ACK");
-            return -1;
-        }
         break;
-    } while (1);
-    
-    state->nSeqNo = SAW_NXID(state->nSeqNo);
+
+    } while (1); // receive segment loop end
 
     return nr; // number of recevied bytes
 }
