@@ -577,6 +577,7 @@ int saw_send(int fd, saw_state_t* state,
                 LWARN("prev ACK recieved %d, while waiting for ACK %d",
                     reph.packetId, SAW_NXID(state->cSeqNo));
                 continue;
+                // IF ACK number equals the current ACK number, we must re transmit
                 // break;
             }
 
