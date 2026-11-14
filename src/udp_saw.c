@@ -576,9 +576,9 @@ int saw_send(int fd, saw_state_t* state,
             if (reph.packetId != SAW_NXID(state->cSeqNo)) {
                 LWARN("prev ACK recieved %d, while waiting for ACK %d",
                     reph.packetId, SAW_NXID(state->cSeqNo));
-                continue;
-                // IF ACK number equals the current ACK number, we must re transmit
-                // break;
+                state->timeoutc++;
+                break;  // dont increment the ACK & dont set `ackr`
+                        // retransmit previous message
             }
 
             // ACK received increment the counter
@@ -656,7 +656,6 @@ int saw_recv(int fd, saw_state_t* state,
     if (rh.packetId != state->nSeqNo) {
         LWARN("recieved unexpected packetId %d, expected %d",
             rh.packetId, state->nSeqNo);
-
         saw_header_t prph = { 0 }; saw_initHeader(&prph);
         prph.connId     = state->connId;
         prph.packetId   = state->nSeqNo;
@@ -667,7 +666,6 @@ int saw_recv(int fd, saw_state_t* state,
         
         r = sendto(fd, wbuffer, HEADER_LEN + prph.length, 0,
             (struct sockaddr*)&state->paddr, state->paddrLen);
-
         return 0;
     }
 
