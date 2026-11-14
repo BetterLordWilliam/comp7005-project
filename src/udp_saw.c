@@ -636,7 +636,7 @@ int saw_recv(int fd, saw_state_t* state,
     );
     if (rsum != rh.checksum) {
         LWARN("checksums do not match corrupted packet should be retransmitted.");
-        return 0;
+        return 0; // must submit previous ACK so that the sender knows to retransmit
     }
 
     if (rh.packetType != DATA) {
