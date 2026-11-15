@@ -60,10 +60,14 @@ $(BUILD_DIR):
 
 # utilities
 
-clean: clean_obj
+clean: clean_obj clean_bin
+
+clean_bin:
+>- rm $(BUILD_DIR)/udp_server
+>- rm $(BUILD_DIR)/udp_client
 
 clean_obj:
-> rm $(BUILD_DIR)/*.o
+>- rm $(BUILD_DIR)/*.o
 
 # kinda dangerous
 dclean:
