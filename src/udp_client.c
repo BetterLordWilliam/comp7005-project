@@ -109,14 +109,7 @@ int saw_loop(struct saw_cstate* cstate)
             if (fgets(buffer, sizeof(buffer), stdin) == NULL) {
                 break;
             }
-
             size_t length = strlen(buffer);
-
-            // [WO] we send but there is not "connection" at this point
-            /*
-            int send_result = sendto(cstate->client_fd, buffer, length, 0,
-                (struct sockaddr*)&cstate->network, sizeof(cstate->network));
-            */
             int send_result = saw_send(cstate->client_fd, &scstate,
                 buffer, length);
             if (send_result == -1) {
