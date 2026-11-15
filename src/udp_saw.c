@@ -574,11 +574,11 @@ int saw_send(int fd, saw_state_t* state,
             } while (1);
             saw_header_t reph = { 0 }; saw_initHeader(&reph);
             saw_readPacket(&reph, rbuffer, BUFFER_SIZE);
-            LINFO("%d %d %d %d", reph.packetId, reph.packetType, reph.length, reph.checksum);
+            // LINFO("%d %d %d %d", reph.packetId, reph.packetType, reph.length, reph.checksum);
             int asum = (
                 saw_calcHeaderChecksum(reph)
             );
-            LINFO("recevied ACK packet with following checksum %d, calculated %d", reph.checksum, asum);
+            // LINFO("recevied ACK packet with following checksum %d, calculated %d", reph.checksum, asum);
             if (asum != reph.checksum) {
                 LWARN("recevied ACK checksum does not match retransmit.");
                 state->timeoutDur *= 2; // dumb timeout strategy
@@ -696,7 +696,7 @@ int saw_recv(int fd, saw_state_t* state,
             saw_calcHeaderChecksum(rh)
             + saw_calcChecksum(rbuffer + HEADER_LEN, BUFFER_SIZE - HEADER_LEN)
         );
-        LINFO("recevied packet with following checksum %d, calculated %d", rh.checksum, rsum);
+        // LINFO("recevied packet with following checksum %d, calculated %d", rh.checksum, rsum);
         if (rsum != rh.checksum) {
             LWARN("checksums do not match corrupted packet should be retransmitted (dropping packet).");
             // state->timeoutDur *= 2;
@@ -766,7 +766,7 @@ int saw_recv(int fd, saw_state_t* state,
             saw_calcHeaderChecksum(rph)
         );
         saw_writePacket(&rph, wbuffer, HEADER_LEN + rph.length, NULL, 0);
-        LINFO("--> DATA %d\tACK %d -->\tchecksum %d", rh.packetId, rph.packetId, rph.checksum);
+        LINFO("--> DATA %d\tACK %d -->", rh.packetId, rph.packetId);
         do {
             r = sendto(fd, wbuffer, HEADER_LEN + rph.length, 0,
                 (struct sockaddr*)&state->paddr, state->paddrLen);
