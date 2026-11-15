@@ -1,0 +1,7 @@
+-std=gnu17
+-Wall
+-Wextra
+-Wpedantic
+-O2
+-Iinclude
+

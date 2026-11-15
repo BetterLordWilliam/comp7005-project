@@ -4,7 +4,108 @@
 #include <sys/socket.h>
 #include <unistd.h>
 
-#define BUFFER_SIZE 4096
+/*      SERVER STARTER CODE LOOP
+for (;;) {
+    unsigned char buffer[BUFFER_SIZE];
+    struct sockaddr_in peer;
+    socklen_t peer_length = sizeof(peer);
+    ssize_t length = recvfrom(sstate->server_fd,
+                              buffer,
+                              sizeof(buffer),
+                              0,
+                              (struct sockaddr *)&peer,
+                              &peer_length);
+    if (length == -1) {
+        perror("recvfrom");
+        continue;
+    }
+
+    printf("received: ");
+    fwrite(buffer, 1, (size_t)length, stdout);
+    if (length == 0 || buffer[length - 1] != '\n') {
+        putchar('\n');
+    }
+    fflush(stdout);
+
+    if (sendto(sstate->server_fd,
+               buffer,
+               (size_t)length,
+               0,
+               (struct sockaddr *)&peer,
+               peer_length) == -1) {
+        perror("sendto");
+    }
+    continue;
+}
+*/
+
+#include "udp_saw.h"
+
+struct saw_sstate {
+    int server_fd;
+};
+
+enum saw_loop_codes {
+    CONTINUE
+};
+
+/**
+SAW specific application loop
+*/
+int saw_loop(struct saw_sstate* sstate)
+{
+    saw_state_t ssstate; saw_initState(&ssstate);
+    int listen_r = saw_listen(sstate->server_fd, &ssstate);
+    LINFO("listen return code: %d", listen_r);
+    // LINFO("DEBUG: { peer address: %d }", ssstate.paddr.sin_addr.s_addr);
+
+    for (;;) {
+        char buffer[BUFFER_SIZE];
+        //struct sockaddr_in peer;
+        //socklen_t peer_length = sizeof(peer);
+        /*
+        ssize_t length = recvfrom(sstate->server_fd,
+                                  buffer,
+                                  sizeof(buffer),
+                                  0,
+                                  (struct sockaddr *)&peer,
+                                  &peer_length);
+        */
+        int length = saw_recv(sstate->server_fd, &ssstate,
+            buffer, sizeof(buffer));
+        if (length == -1) {
+            LWARN("dropped incoming message.");
+            continue;
+        }
+        if (length == 0) {
+            LWARN("nothing to read rn");
+            continue;
+        }
+
+        printf("received: ");
+        fwrite(buffer, 1, (size_t)length, stdout);
+        if (length == 0 || buffer[length - 1] != '\n') {
+            putchar('\n');
+        }
+        fflush(stdout);
+
+        /*
+        if (sendto(sstate->server_fd,
+                   buffer,
+                   (size_t)length,
+                   0,
+                   (struct sockaddr *)&peer,
+                   peer_length) == -1) {
+            perror("sendto");
+        }*/
+        if (saw_send(sstate->server_fd, &ssstate,
+                buffer, length) == -1) {
+            LINFO("error sending the echo message");
+        }
+        continue;
+    }
+}
+
 
 int main(int argc, char **argv)
 {
@@ -34,35 +135,15 @@ int main(int argc, char **argv)
     printf("UDP server listening on 127.0.0.1:%u\n", port);
     fflush(stdout);
 
-    for (;;) {
-        unsigned char buffer[BUFFER_SIZE];
-        struct sockaddr_in peer;
-        socklen_t peer_length = sizeof(peer);
-        ssize_t length = recvfrom(server_fd,
-                                  buffer,
-                                  sizeof(buffer),
-                                  0,
-                                  (struct sockaddr *)&peer,
-                                  &peer_length);
-        if (length == -1) {
-            perror("recvfrom");
-            continue;
-        }
+   
+    // [WO] saw server state
+    struct saw_sstate sstate = { 0 };
+    sstate.server_fd = server_fd;
 
-        printf("received: ");
-        fwrite(buffer, 1, (size_t)length, stdout);
-        if (length == 0 || buffer[length - 1] != '\n') {
-            putchar('\n');
-        }
-        fflush(stdout);
-
-        if (sendto(server_fd,
-                   buffer,
-                   (size_t)length,
-                   0,
-                   (struct sockaddr *)&peer,
-                   peer_length) == -1) {
-            perror("sendto");
-        }
-    }
+    int r = saw_loop(&sstate);
+    (void)r;
+    
+    close(server_fd);
+    
+    return 0;
 }
