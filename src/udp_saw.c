@@ -578,6 +578,7 @@ int saw_send(int fd, saw_state_t* state,
             // LINFO("%d %d %d %d", reph.packetId, reph.packetType, reph.length, reph.checksum);
             int asum = (
                 saw_calcHeaderChecksum(reph)
+                + saw_calcChecksum(rbuffer + HEADER_LEN, BUFFER_SIZE - HEADER_LEN)
             );
             // LINFO("recevied ACK packet with following checksum %d, calculated %d", reph.checksum, asum);
             if (asum != reph.checksum) {
@@ -590,6 +591,9 @@ int saw_send(int fd, saw_state_t* state,
                 LWARN("received packet connId does not match specified state connId while waiting for send ack %d",
                     SAW_NXID(state->cSeqNo));
                 continue;
+            }
+            if (reph.packetType != ACK) {
+                LWARN("recevied a packet that was not ACK");
             }
             if (reph.packetId != SAW_NXID(state->cSeqNo)) {
                 LWARN("prev ACK recieved %d, while waiting for ACK %d, retransmit.",
@@ -643,8 +647,8 @@ int saw_recv(int fd, saw_state_t* state,
     memset(rbuffer, 0, BUFFER_SIZE);
     memset(wbuffer, 0, BUFFER_SIZE);
 
-    // state->rtimeoutc = 0;
-    // state->timeoutDur = I_TIMEOUTDUR_MS;
+    state->rtimeoutc = 0;
+    state->timeoutDur = I_TIMEOUTDUR_MS;
 
     // receive segment loop
     do {
@@ -653,7 +657,6 @@ int saw_recv(int fd, saw_state_t* state,
             break;
         }
 
-        // poll
         /*
         do {
             r = poll(&pfd, 1, (state->rtimeoutc > 0) ? state->rtimeoutc : -1);
@@ -700,9 +703,9 @@ int saw_recv(int fd, saw_state_t* state,
         // LINFO("recevied packet with following checksum %d, calculated %d", rh.checksum, rsum);
         if (rsum != rh.checksum) {
             LWARN("checksums do not match corrupted packet should be retransmitted (dropping packet).");
-            // state->timeoutDur *= 2;
-            // state->rtimeoutc++;
-            // continue;
+            //state->timeoutDur *= 2;
+            //state->rtimeoutc++;
+            //continue;
             return 0;
         }
         if (rh.packetType != DATA) {

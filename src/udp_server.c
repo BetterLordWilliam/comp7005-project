@@ -98,10 +98,11 @@ int saw_loop(struct saw_sstate* sstate)
                    peer_length) == -1) {
             perror("sendto");
         }*/
+        /*
         if (saw_send(sstate->server_fd, &ssstate,
                 buffer, length) == -1) {
             LINFO("error sending the echo message");
-        }
+        }*/
         continue;
     }
 }
