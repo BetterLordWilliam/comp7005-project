@@ -8,6 +8,9 @@
 #define EY      "\033[33m"
 #define ENONE   "\033[0m"
 
+// [WO] segment size not to be configurable
+#define BUFFER_SIZE (4096)
+
 #define LINFO(fmt, ...) \
     (fprintf)(stderr, \
         EG "INFO" ENONE " %s:%s:%d\t" fmt "\n", \
