@@ -511,7 +511,7 @@ int saw_send(int fd, saw_state_t* state,
         saw_calcHeaderChecksum(reqh) + saw_calcChecksum(netBuf, netBufSize)
     );
     saw_writePacket(&reqh, wbuffer, BUFFER_SIZE, netBuf, netBufSize);
-    LINFO("transmitting packet w/ checksum %d", reqh.checksum);
+    // LINFO("transmitting packet w/ checksum %d", reqh.checksum);
 
     state->timeoutc = 0;
     state->timeoutDur = I_TIMEOUTDUR_MS;
@@ -552,6 +552,7 @@ int saw_send(int fd, saw_state_t* state,
             if (r == 0) {
                 LERROR("connId %d timeout %d ACK %d not received",
                     state->connId, state->timeoutc, SAW_NXID(state->cSeqNo));
+                state->timeoutDur *= 2; // dumb timeout strategy
                 state->timeoutc++;
                 break;
             }
