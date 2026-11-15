@@ -575,12 +575,11 @@ int saw_send(int fd, saw_state_t* state,
             } while (1);
             saw_header_t reph = { 0 }; saw_initHeader(&reph);
             saw_readPacket(&reph, rbuffer, BUFFER_SIZE);
-            // LINFO("%d %d %d %d", reph.packetId, reph.packetType, reph.length, reph.checksum);
             int asum = (
                 saw_calcHeaderChecksum(reph)
                 + saw_calcChecksum(rbuffer + HEADER_LEN, BUFFER_SIZE - HEADER_LEN)
             );
-            // LINFO("recevied ACK packet with following checksum %d, calculated %d", reph.checksum, asum);
+            LINFO("recevied ACK packet with following checksum %d, calculated %d", reph.checksum, asum);
             if (asum != reph.checksum) {
                 LWARN("recevied ACK checksum does not match retransmit.");
                 state->timeoutDur *= 2; // dumb timeout strategy
@@ -592,8 +591,12 @@ int saw_send(int fd, saw_state_t* state,
                     SAW_NXID(state->cSeqNo));
                 continue;
             }
-            if (reph.packetType != ACK) {
-                LWARN("recevied a packet that was not ACK");
+            if (reph.packetType == DATA) {
+                LWARN("recevied next data packet implies that sending was successful");
+                ackr = 1;
+                ns += (cpd - HEADER_LEN);
+                state->cSeqNo = SAW_NXID(state->cSeqNo);
+                break;
             }
             if (reph.packetId != SAW_NXID(state->cSeqNo)) {
                 LWARN("prev ACK recieved %d, while waiting for ACK %d, retransmit.",
@@ -652,35 +655,6 @@ int saw_recv(int fd, saw_state_t* state,
 
     // receive segment loop
     do {
-        if (state->rtimeoutc > M_RETRANS) {
-            LWARN("maximum re-reads for packet %d", state->cSeqNo);
-            break;
-        }
-
-        /*
-        do {
-            r = poll(&pfd, 1, (state->rtimeoutc > 0) ? state->rtimeoutc : -1);
-            if (r == -1) {
-                if (errno == EINTR) continue;
-                LERROR("poll call failed");
-                return -1;
-            }
-            break;
-        } while (1);
-        // poll timeout
-        if (r == 0) {
-            state->rtimeoutc++;
-            continue;
-        }
-
-        // check the poll events
-        if (!(pfd.revents & (POLLHUP | POLLIN))) {
-            LERROR("poll returned an unexpected event");
-            return -1;
-        }
-        */
-
-        // if there's data do this stuff
         // read from socket store the number of bytes read
         memset(rbuffer, 0, BUFFER_SIZE);
         do {
