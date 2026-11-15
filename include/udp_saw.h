@@ -131,14 +131,16 @@ SAW (stop-and-wait) "connection" state.
 the initial timeout duration is 1S or 1000MS (units of `timeoutDur` are MS)
 */
 typedef struct saw_state {
-    uint8_t cSeqNo;             // current packet ID no
-    uint8_t nSeqNo;             // expected incoming packet ID no
+    uint8_t cSeqNo;             // [W] current packet ID no
+    uint8_t nSeqNo;             // [W] expected incoming packet ID no
     uint16_t connId;            // connection ID
     saw_cstatus_t cStatus;      // connection status
-    time_t timeoutDur;          // timeout duration (should be calculated from RTT)
-    time_t timeout;             // expiration time
+    time_t timeoutDur;          // [W] timeout duration (should be calculated from RTT)
+    time_t timeout;             // [W] expiration time
+    time_t rtimeoutDur;         // [W] reading timeout duration
     time_t rtime;               // running time
-    int timeoutc;               // timeout counter
+    int timeoutc;               // [W] timeout counter
+    int rtimeoutc;              // [W] reading timeout counter
     struct sockaddr_in paddr;
     socklen_t paddrLen;
 } saw_state_t;

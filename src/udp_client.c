@@ -142,8 +142,11 @@ int saw_loop(struct saw_cstate* cstate)
                 if (errno == EINTR) {
                     return CONTINUE;
                 }
-                perror("recvfrom");
                 return EXIT_FAILURE;
+            }
+            if (received == 0) {
+                LWARN("nothing to read now");
+                continue;
             }
 
             printf("echo: ");

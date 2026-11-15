@@ -1,4 +1,5 @@
 #include "udp_saw.h"
+#include <stdint.h>
 #include <string.h>
 
 
@@ -102,7 +103,9 @@ void saw_initState(saw_state_t* state)
     state->timeout      = (time_t)0;
     state->rtime        = (time_t)0;
     state->timeoutDur   = (time_t)I_TIMEOUTDUR_MS;
+    state->rtimeoutDur  = (time_t)I_TIMEOUTDUR_MS;
     state->timeoutc     = 0;
+    state->rtimeoutc    = 0;
 
     state->cStatus = INIT;
 
@@ -158,19 +161,19 @@ static int saw_calcRtime(saw_state_t* state)
 
 static int saw_calcChecksum(const char* netBuf, size_t netBufSize) {
     // use a simple checksum
-    int sum = 0;
+    uint16_t sum = 0;
     for (size_t i = 0; i < netBufSize; i++) {
-        sum += (int)*(netBuf + i);
+        sum += (uint8_t)*(netBuf + i);
     }
     return sum;
 }
 
 static int saw_calcHeaderChecksum(saw_header_t header) {
-    int sum = 0;
+    uint16_t sum = 0;
     header.checksum = 0; // exclude the checksum when calculating the checksum
     char* fbuf = (char*)&header;
     for (size_t i = 0; i < sizeof(header); i++) {
-        sum += (int)*(fbuf + i);
+        sum += (uint8_t)*(fbuf + i);
     }
     return sum;
 }
@@ -508,16 +511,19 @@ int saw_send(int fd, saw_state_t* state,
         saw_calcHeaderChecksum(reqh) + saw_calcChecksum(netBuf, netBufSize)
     );
     saw_writePacket(&reqh, wbuffer, BUFFER_SIZE, netBuf, netBufSize);
+    LINFO("transmitting packet w/ checksum %d", reqh.checksum);
 
     state->timeoutc = 0;
+    state->timeoutDur = I_TIMEOUTDUR_MS;
     int ackr = 0;
 
     // segment transmission loop
     // for both saw & sliding window this entire process needs to be looped
     do {
         if (state->timeoutc >= M_RETRANS) {
-            LERROR("maximum retransmissions reached for packet %d", state->cSeqNo);
-            return -1;
+            LWARN("maximum retransmissions reached for packet %d", state->cSeqNo);
+            // return -1;
+            break;
         }
     
         do {
@@ -554,6 +560,7 @@ int saw_send(int fd, saw_state_t* state,
                 return -1;
             }
 
+            // read the ACK
             memset(rbuffer, 0, BUFFER_SIZE);
             do {
                 r = recvfrom(fd, rbuffer, BUFFER_SIZE, 0, NULL, NULL);
@@ -565,15 +572,17 @@ int saw_send(int fd, saw_state_t* state,
                 }
                 break;
             } while (1);
-
             saw_header_t reph = { 0 }; saw_initHeader(&reph);
             saw_readPacket(&reph, rbuffer, BUFFER_SIZE);
+            LINFO("%d %d %d %d", reph.packetId, reph.packetType, reph.length, reph.checksum);
             int asum = (
                 saw_calcHeaderChecksum(reph)
-                + saw_calcChecksum(rbuffer, HEADER_LEN + reph.length)
             );
+            LINFO("recevied ACK packet with following checksum %d, calculated %d", reph.checksum, asum);
             if (asum != reph.checksum) {
                 LWARN("recevied ACK checksum does not match retransmit.");
+                state->timeoutDur *= 2; // dumb timeout strategy
+                state->timeoutc++;
                 break;
             }
             if (reph.connId != state->connId) {
@@ -584,6 +593,7 @@ int saw_send(int fd, saw_state_t* state,
             if (reph.packetId != SAW_NXID(state->cSeqNo)) {
                 LWARN("prev ACK recieved %d, while waiting for ACK %d, retransmit.",
                     reph.packetId, SAW_NXID(state->cSeqNo));
+                state->timeoutDur *= 2; // dumb timeout strategy
                 state->timeoutc++;
                 break;  // dont increment the ACK & dont set `ackr`
                         // retransmit previous message
@@ -629,12 +639,23 @@ int saw_recv(int fd, saw_state_t* state,
     char rbuffer[BUFFER_SIZE];
     char wbuffer[BUFFER_SIZE];
 
+    memset(rbuffer, 0, BUFFER_SIZE);
+    memset(wbuffer, 0, BUFFER_SIZE);
+
+    // state->rtimeoutc = 0;
+    // state->timeoutDur = I_TIMEOUTDUR_MS;
+
     // receive segment loop
     do {
+        if (state->rtimeoutc > M_RETRANS) {
+            LWARN("maximum re-reads for packet %d", state->cSeqNo);
+            break;
+        }
 
         // poll
+        /*
         do {
-            r = poll(&pfd, 1, -1);
+            r = poll(&pfd, 1, (state->rtimeoutc > 0) ? state->rtimeoutc : -1);
             if (r == -1) {
                 if (errno == EINTR) continue;
                 LERROR("poll call failed");
@@ -642,17 +663,23 @@ int saw_recv(int fd, saw_state_t* state,
             }
             break;
         } while (1);
+        // poll timeout
+        if (r == 0) {
+            state->rtimeoutc++;
+            continue;
+        }
 
         // check the poll events
         if (!(pfd.revents & (POLLHUP | POLLIN))) {
             LERROR("poll returned an unexpected event");
             return -1;
         }
+        */
 
         // if there's data do this stuff
         // read from socket store the number of bytes read
+        memset(rbuffer, 0, BUFFER_SIZE);
         do {
-            memset(rbuffer, 0, BUFFER_SIZE);
             r = recvfrom(fd, rbuffer, BUFFER_SIZE, 0, NULL, NULL);
             if (r == -1) {
                 if (errno == EINTR) continue;
@@ -661,22 +688,28 @@ int saw_recv(int fd, saw_state_t* state,
             }
             break;
         } while (1);
-
         saw_header_t rh = { 0 }; saw_initHeader(&rh);
-        saw_initHeader(&rh);
         saw_readPacket(&rh, rbuffer, BUFFER_SIZE);
 
         // recompute checksum
         int rsum = (
-            saw_calcHeaderChecksum(rh) + saw_calcChecksum(rbuffer + HEADER_LEN, rh.length)
+            saw_calcHeaderChecksum(rh)
+            + saw_calcChecksum(rbuffer + HEADER_LEN, BUFFER_SIZE - HEADER_LEN)
         );
+        LINFO("recevied packet with following checksum %d, calculated %d", rh.checksum, rsum);
         if (rsum != rh.checksum) {
             LWARN("checksums do not match corrupted packet should be retransmitted (dropping packet).");
-            continue;
+            // state->timeoutDur *= 2;
+            // state->rtimeoutc++;
+            // continue;
+            return 0;
         }
         if (rh.packetType != DATA) {
             LWARN("packet should be DATA packet.");
-            continue;
+            // state->timeoutDur *= 2;
+            // state->rtimeoutc++;
+            // continue;
+            return 0;
         }
         if (rh.connId != state->connId) {
             LWARN("packet connId, %d, does not match specified state connId %d",
@@ -692,6 +725,7 @@ int saw_recv(int fd, saw_state_t* state,
                 rh.packetId, state->nSeqNo);
 
             // transmit previous ACK
+            memset(wbuffer, 0, BUFFER_SIZE);
             saw_header_t prph = { 0 }; saw_initHeader(&prph);
             prph.connId     = state->connId;
             prph.packetId   = state->nSeqNo;
@@ -699,7 +733,6 @@ int saw_recv(int fd, saw_state_t* state,
             prph.length     = 0;
             prph.checksum    = (
                 saw_calcHeaderChecksum(prph)
-                + saw_calcChecksum(wbuffer, HEADER_LEN + prph.length)
             );
             saw_writePacket(&prph, wbuffer, HEADER_LEN + prph.length, NULL, 0);
             LWARN("dup packet retransmit prev ACK to confirm this is recevied %d", state->nSeqNo);
@@ -731,10 +764,9 @@ int saw_recv(int fd, saw_state_t* state,
         rph.connId      = state->connId;
         rph.checksum    = (
             saw_calcHeaderChecksum(rph)
-            + saw_calcChecksum(wbuffer, HEADER_LEN + rph.length)
         );
         saw_writePacket(&rph, wbuffer, HEADER_LEN + rph.length, NULL, 0);
-        LINFO("--> DATA %d\tACK %d -->", rh.packetId, rph.packetId);
+        LINFO("--> DATA %d\tACK %d -->\tchecksum %d", rh.packetId, rph.packetId, rph.checksum);
         do {
             r = sendto(fd, wbuffer, HEADER_LEN + rph.length, 0,
                 (struct sockaddr*)&state->paddr, state->paddrLen);

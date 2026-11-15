@@ -77,6 +77,10 @@ int saw_loop(struct saw_sstate* sstate)
             LWARN("dropped incoming message.");
             continue;
         }
+        if (length == 0) {
+            LWARN("nothing to read rn");
+            continue;
+        }
 
         printf("received: ");
         fwrite(buffer, 1, (size_t)length, stdout);
