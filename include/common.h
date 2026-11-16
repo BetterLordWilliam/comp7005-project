@@ -2,6 +2,12 @@
 #define UDP_COMMON
 
 #include <stdio.h>
+#include <sys/socket.h>
+#include <netinet/ip.h>
+#include <arpa/inet.h>
+#include <errno.h>
+#include <poll.h>
+
 
 #define ER      "\033[31m"
 #define EG      "\033[32m"
@@ -25,6 +31,17 @@
             __FILE__, __func__, __LINE__, ##__VA_ARGS__)
 
 int doNothing(void);
+
+
+extern inline int poll_s(struct pollfd *fds, nfds_t nfds, int timeout);
+
+extern inline ssize_t recvfrom_s(int sockfd, void* buf, size_t size,
+                        int flags,
+                        struct sockaddr* src_addr,
+                        socklen_t* addrlen);
+
+extern inline ssize_t sendto_s(int sockfd, const void *buf, size_t size, int flags,
+                      const struct sockaddr *dest_addr, socklen_t addrlen);
 
 #endif
 

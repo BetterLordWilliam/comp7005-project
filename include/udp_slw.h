@@ -26,7 +26,7 @@ typedef enum slw_error_code {
     SLW_ERROR       = -1,
     SLW_EWOULDBLOCK = -3,
     SLW_EBUFSIZE    = -2
-} slw_error_code_t;
+} slw_code_t;
 
 
 typedef struct slw_packet {
@@ -66,6 +66,10 @@ typedef struct slw_state {
 
 int slw_init(slw_state_t* state, int fd, int window_slots, int timeoutdur);
 
+void slw_free(slw_state_t* state);
+
+
+
 int slw_send(slw_state_t* state, const char* buf, size_t bufsize,
     const struct sockaddr* socka, socklen_t sockalen);
 
@@ -73,6 +77,7 @@ int slw_recv(slw_state_t* state, char* buf, size_t bufSize);
 
 int slw_process(slw_state_t* state,
     const struct sockaddr* socka, socklen_t sockalen);
+
 
 #endif
 
