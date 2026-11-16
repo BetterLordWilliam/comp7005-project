@@ -40,13 +40,10 @@ for (;;) {
 */
 
 #include "udp_saw.h"
+#include "udp_slw.h"
 
 struct saw_sstate {
     int server_fd;
-};
-
-enum saw_loop_codes {
-    CONTINUE
 };
 
 /**
@@ -106,6 +103,39 @@ int saw_loop(struct saw_sstate* sstate)
     }
 }
 
+int slw_loop(slw_state_t* state, struct sockaddr* addr, socklen_t addrlen)
+{
+
+    for (;;) {
+        char buffer[BUFFER_SIZE];
+        struct sockaddr_in peer;
+        socklen_t peer_length = sizeof(peer);
+
+        /*
+        int length = saw_recv(sstate->server_fd, &ssstate,
+            buffer, sizeof(buffer));
+        */
+
+        /* APPLICATION
+        printf("received: ");
+        fwrite(buffer, 1, (size_t)length, stdout);
+        if (length == 0 || buffer[length - 1] != '\n') {
+            putchar('\n');
+        }
+        fflush(stdout);
+        */
+
+        /*
+        if (saw_send(sstate->server_fd, &ssstate,
+                buffer, length) == -1) {
+            LINFO("error sending the echo message");
+        }
+        */
+    }
+
+    return 0;
+}
+
 
 int main(int argc, char **argv)
 {
@@ -137,12 +167,22 @@ int main(int argc, char **argv)
 
    
     // [WO] saw server state
-    struct saw_sstate sstate = { 0 };
+    /*struct saw_sstate sstate = { 0 };
     sstate.server_fd = server_fd;
 
     int r = saw_loop(&sstate);
+    (void)r;*/
+
+
+    // [WO] slw server state
+    int slots = 5;
+    slw_state_t state = { 0 };
+    slw_init(&state, server_fd, slots, 1000);
+
+    int r = slw_loop(&state, (struct sockaddr*)&local, sizeof(local));
     (void)r;
-    
+   
+    slw_free(&state); 
     close(server_fd);
     
     return 0;

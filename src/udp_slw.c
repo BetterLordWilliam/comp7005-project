@@ -236,18 +236,20 @@ static int slw_retransmit(
 }
 
 
-int slw_send() {
+ssize_t slw_send(slw_state_t* state, const char* buf, size_t bufsize,
+    const struct sockaddr* socka, socklen_t sockalen
+) {
     return SLW_OK;
 }
 
-
-int slw_recv() {
+ssize_t slw_recv(slw_state_t* state, char* buf, size_t bufSize
+) {
     return SLW_OK;
 }
 
-
-int slw_process() {
+int slw_process(slw_state_t* state,
+    const struct sockaddr* socka, socklen_t sockalen
+) {
     return SLW_OK;
 }
-
 

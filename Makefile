@@ -23,9 +23,9 @@ debug_test: CFLAGS += -DUDP_DEBUG
 debug_test: build_project_tester
 
 
-build_project: $(BUILD_DIR) common udp_saw network udp_server udp_client
+build_project: $(BUILD_DIR) common udp_saw udp_slw network udp_server udp_client
 
-build_project_tester: $(BUILD_DIR) common udp_saw udp_tester
+build_project_tester: $(BUILD_DIR) common udp_saw udp_slw udp_tester
 
 
 # "libraries"

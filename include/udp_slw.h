@@ -70,10 +70,10 @@ void slw_free(slw_state_t* state);
 
 
 
-int slw_send(slw_state_t* state, const char* buf, size_t bufsize,
+ssize_t slw_send(slw_state_t* state, const char* buf, size_t bufsize,
     const struct sockaddr* socka, socklen_t sockalen);
 
-int slw_recv(slw_state_t* state, char* buf, size_t bufSize);
+ssize_t slw_recv(slw_state_t* state, char* buf, size_t bufSize);
 
 int slw_process(slw_state_t* state,
     const struct sockaddr* socka, socklen_t sockalen);
