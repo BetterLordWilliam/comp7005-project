@@ -328,45 +328,44 @@ ssize_t slw_recv(slw_state_t* state, char* buf, size_t bufSize
 
     // return would block if the receive queue is empty
     // the receive queue is empty if next == base
-    if (rcvwind->base == rcvwind->next) {
+    if (!rcvwind->slot_filled[rcvwind->base]) {
 #ifdef UDP_DEBUG
         LWARN("no packets to receive");
 #endif
         return SLW_EWOULDBLOCK;
     }
 
-    // calculate if the receiving buffer is big enough
-    size_t recv = 0;
+    size_t total_copied = 0;
+    uint8_t last_ack = rcvwind->ack;
     int curr = rcvwind->base;
-    while (curr != rcvwind->next) {
-        recv += rcvwind->packets[curr].length;
-        curr = slw_advance(curr, rcvwind);
-    }
-    if (bufSize < recv) {
-#ifdef UDP_DEBUG
-        LERROR("user supplied buffer is not large enough");
-#endif
-        return SLW_ERROR;
-    }
 
-    // rcvwind packets in order only because we are using go back n
-    //      iterating is techincally not required because whatever base is
-    //      will be the only packet in the window
-    // copy packet data into the user supplied buffer & advance the rcvwind base
-    // save ACK number
-    size_t offset = 0;
-    uint8_t ack = 0;
-    curr = rcvwind->base;
-    while (curr != rcvwind->next) {
+    // copy what can fit into the users supplied buffer
+    while (rcvwind->slot_filled[curr]) {
         slw_packet_t* pkt = &rcvwind->packets[curr];
-        memcpy(buf + offset, pkt->data, pkt->length);
-        offset += pkt->length;
-        ack = slw_advance(pkt->id, sndwind); // predicated on the peers having the same window size
+        if (total_copied + pkt->length > bufSize) {
+            break;
+        }
+        memcpy(buf + total_copied, pkt->data, pkt->length);
+        total_copied += pkt->length;
+        last_ack = pkt->ack;
         curr = slw_advance(curr, rcvwind);
     }
-    rcvwind->ack = ack;
 
-    return recv;
+    // edge case where nothing was copied, the buffer was too small for even 1 packet
+    if (total_copied == 0) {
+#ifdef UDP_DEBUG
+        LERROR("the user supplied buffer is too small for the next packet");
+#endif
+        return SLW_EBUFSIZE;
+    }
+
+    while(rcvwind->base != curr) {
+        rcvwind->slot_filled[rcvwind->base] = 0;
+        rcvwind->base = slw_advance(rcvwind->base, rcvwind);
+    }
+    rcvwind->ack = last_ack;
+
+    return (ssize_t)total_copied;
 }
 
 

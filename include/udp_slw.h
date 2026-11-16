@@ -21,7 +21,6 @@
 #define SLW_HEADER      ((uint16_t)7)
 #define SLW_MAX_PAYLOAD (BUFFER_SIZE - SLW_HEADER)
 
-
 typedef enum slw_error_code {
     SLW_OK = 0,
     SLW_ERROR       = -1,
