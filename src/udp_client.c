@@ -286,6 +286,12 @@ int main(int argc, char **argv)
     slw_state_t state = { 0 };
     slw_init(&state, client_fd, slots, 1000);
 
+    LINFO("SLW STATE: { fd: %d, slots: %d }", state.fd, state.slots);
+    LINFO("SLW SNDWIND STATE: { slots: %d, length: %d }",
+        state.sndwind.slots, state.sndwind.length);
+    LINFO("SLW RCVWIND STATE: { slots: %d, length: %d }",
+        state.rcvwind.slots, state.rcvwind.length);
+
     int r = slw_loop(&state, (struct sockaddr*)&network, sizeof(network));
     (void)r;
 
