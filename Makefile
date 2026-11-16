@@ -36,6 +36,8 @@ common: $(SRC_DIR)/common.c
 udp_saw: $(SRC_DIR)/udp_saw.c
 > $(CC) $(CFLAGS) $(SRC_DIR)/udp_saw.c -c -o $(BUILD_DIR)/udp_saw.o
 
+udp_slw: $(SRC_DIR)/udp_slw.c
+> $(CC) $(CFLAGS) $(SRC_DIR)/udp_slw.c -c -o $(BUILD_DIR)/udp_slw.o
 
 # binaries
 
