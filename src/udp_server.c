@@ -40,13 +40,10 @@ for (;;) {
 */
 
 #include "udp_saw.h"
+#include "udp_slw.h"
 
 struct saw_sstate {
     int server_fd;
-};
-
-enum saw_loop_codes {
-    CONTINUE
 };
 
 /**
@@ -104,6 +101,41 @@ int saw_loop(struct saw_sstate* sstate)
         }
         continue;
     }
+}
+
+int slw_loop(int fd, struct sockaddr addr, socklen_t addrlen, int slots)
+{
+    slw_state_t state = { 0 };
+    slw_init(&state, fd, slots, 1000);      // initial timeout of 1000ms or 1s
+
+    for (;;) {
+        char buffer[BUFFER_SIZE];
+        struct sockaddr_in peer;
+        socklen_t peer_length = sizeof(peer);
+
+        /*
+        int length = saw_recv(sstate->server_fd, &ssstate,
+            buffer, sizeof(buffer));
+        */
+
+        /* APPLICATION
+        printf("received: ");
+        fwrite(buffer, 1, (size_t)length, stdout);
+        if (length == 0 || buffer[length - 1] != '\n') {
+            putchar('\n');
+        }
+        fflush(stdout);
+        */
+
+        /*
+        if (saw_send(sstate->server_fd, &ssstate,
+                buffer, length) == -1) {
+            LINFO("error sending the echo message");
+        }
+        */
+    }
+
+    return 0;
 }
 
 

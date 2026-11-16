@@ -63,7 +63,10 @@ for (;;) {
 */
 
 
+#include "common.h"
 #include "udp_saw.h"
+#include "udp_slw.h"
+
 
 static void usage(const char *program)
 {
@@ -74,11 +77,6 @@ struct saw_cstate {
     int client_fd;
     struct pollfd* watched;
     struct sockaddr_in network;
-};
-
-enum saw_loop_codes {
-    CONTINUE,
-    END
 };
 
 
@@ -133,7 +131,7 @@ int saw_loop(struct saw_cstate* cstate)
                 buffer, sizeof(buffer));
             if (received == -1) {
                 if (errno == EINTR) {
-                    return CONTINUE;
+                    return 0;
                 }
                 return EXIT_FAILURE;
             }
@@ -152,6 +150,83 @@ int saw_loop(struct saw_cstate* cstate)
     }
     return 0;
 }
+
+
+int slw_loop(int fd, struct sockaddr addr, socklen_t, int slots) {
+    slw_state_t state = { 0 };
+    slw_init(&state, fd, slots, 1000);
+
+    struct pollfd watched[2] = {
+        {
+            .fd = STDIN_FILENO,
+            .events = POLLIN,
+            .revents = 0,
+        },
+        {
+            .fd = fd,
+            .events = POLLIN,
+            .revents = 0,
+        },
+    };
+
+    char buffer[BUFFER_SIZE];
+    for (;;) {
+        watched[0].revents = 0;
+        watched[1].revents = 0;
+
+        int ready = poll_s(watched, 2, -1);
+        if (ready == -1) {
+            return EXIT_FAILURE;
+        }
+
+        /* stdin is independent: send each available line immediately. */
+        if (watched[0].revents & (POLLIN | POLLHUP)) {
+            if (fgets(buffer, sizeof(buffer), stdin) == NULL) {
+                break;
+            }
+            size_t length = strlen(buffer);
+            /*
+            int send_result = saw_send(cstate->client_fd, &scstate,
+                buffer, length);
+            if (send_result == -1) {
+                LERROR("failed to send message.");
+                continue;
+                // return EXIT_FAILURE;
+            }
+            */
+        }
+
+        /* Echo reception is independent and never gates the next send. */
+        if (watched[1].revents & POLLIN) {
+            /*
+            int received = saw_recv(cstate->client_fd, &scstate,
+                buffer, sizeof(buffer));
+            if (received == -1) {
+                if (errno == EINTR) {
+                    return 0;
+                }
+                return EXIT_FAILURE;
+            }
+            if (received == 0) {
+                LWARN("nothing to read now");
+                continue;
+            }
+            */
+
+        
+            /* APPLICATION
+            printf("echo: ");
+            fwrite(buffer, 1, (size_t)received, stdout);
+            if (received == 0 || buffer[received - 1] != '\n') {
+                putchar('\n');
+            }
+            fflush(stdout);
+            */
+        }
+    }
+    return 0;
+}
+
 
 int main(int argc, char **argv)
 {
