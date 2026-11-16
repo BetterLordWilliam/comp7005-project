@@ -133,8 +133,6 @@ int slw_loop(slw_state_t* state, struct sockaddr* addr, socklen_t addrlen)
         */
     }
 
-    slw_free(&state);
-
     return 0;
 }
 
