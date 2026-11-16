@@ -109,7 +109,7 @@ static void slw_init_packet(
     pkt->flags = flags;
     pkt->length = len;
     pkt->checksum = 0; // computed when written to the network segment
-    memcpy(pkt->data, buf, len);
+    memcpy(pkt->data, buf, len); // should init also check that the data is the correct size?
     /*
     uint8_t raw_hdr[SLW_HEADER];
     raw_hdr[0] = pkt->id;
@@ -132,6 +132,10 @@ static void slw_init_packet(
 
 static inline int slw_advance(int idx, slw_window_t* win) {
     return (idx + 1) % win->slots;
+}
+
+static inline int slw_advancen(int idx, int n, slw_window_t* win) {
+    return (idx + n) % win->slots;
 }
 
 static inline int slw_packet_size(slw_packet_t* pkt) {
@@ -249,17 +253,102 @@ static int slw_retransmit(
 ssize_t slw_send(slw_state_t* state, const char* buf, size_t bufsize,
     const struct sockaddr* socka, socklen_t sockalen
 ) {
-    return SLW_OK;
+    // cannot send if the send window is full ie. next > base + length
+    if (state->sndwind.next > slw_advancen(
+            state->sndwind.base, state->sndwind.length, &state->sndwind)) {
+#ifdef UDP_DEBUG
+        LWARN("send window is full");
+#endif
+        return SLW_EWOULDBLOCK;
+    }
+
+    slw_window_t* sndwind = &state->sndwind;
+    slw_window_t* rcvwind = &state->rcvwind;
+
+    // create a packet for the data, put it at next, advance next
+    //      the packets ACK depends if there is and ACK that needs to be send
+    slw_packet_t pkt = { 0 };
+    slw_init_packet(&pkt, sndwind->next, rcvwind->ack, 0, buf, bufsize);
+    sndwind->packets[sndwind->next] = pkt;
+    sndwind->slot_filled[sndwind->next] = 1;
+    sndwind->next = slw_advance(sndwind->next, sndwind);
+
+    // write the packet to a network segment buffer
+    char net_segment[BUFFER_SIZE];
+    int write_ok = slw_write_packet(net_segment, BUFFER_SIZE, &pkt);
+    if (!write_ok) {
+#ifdef UDP_DEBUG
+        LERROR("faild to write packet to network segment");
+#endif
+        return SLW_ERROR;
+    }
+
+    // send the packet
+    ssize_t sent = sendto_s(state->fd, net_segment, BUFFER_SIZE, 0, socka, sockalen);
+    if (sent < 0) {
+#ifdef UDP_DEBUG
+        LERROR("faild to send packet");
+#endif
+        return SLW_ERROR;
+    }
+
+    return sent;
 }
 
 ssize_t slw_recv(slw_state_t* state, char* buf, size_t bufSize
 ) {
-    return SLW_OK;
+    slw_window_t* rcvwind = &state->rcvwind;
+    slw_window_t* sndwind = &state->sndwind;
+
+    // return would block if the receive queue is empty
+    // the receive queue is empty if next == base
+    if (rcvwind->base == rcvwind->next) {
+#ifdef UDP_DEBUG
+        LWARN("no packets to receive");
+#endif
+        return SLW_EWOULDBLOCK;
+    }
+
+    // calculate if the receiving buffer is big enough
+    size_t recv = 0;
+    int curr = rcvwind->base;
+    while (curr != rcvwind->next) {
+        recv += rcvwind->packets[curr].length;
+        curr = slw_advance(curr, rcvwind);
+    }
+    if (bufSize < recv) {
+#ifdef UDP_DEBUG
+        LERROR("user supplied buffer is not large enough");
+#endif
+        return SLW_ERROR;
+    }
+
+    // rcvwind packets in order only because we are using go back n
+    //      iterating is techincally not required because whatever base is
+    //      will be the only packet in the window
+    // copy packet data into the user supplied buffer & advance the rcvwind base
+    // save ACK number
+    size_t offset = 0;
+    uint8_t ack = 0;
+    curr = rcvwind->base;
+    while (curr != rcvwind->next) {
+        slw_packet_t* pkt = &rcvwind->packets[curr];
+        memcpy(buf + offset, pkt->data, pkt->length);
+        offset += pkt->length;
+        ack = slw_advance(pkt->id, sndwind); // predicated on the peers having the same window size
+        curr = slw_advance(curr, rcvwind);
+    }
+    rcvwind->ack = ack;
+
+    return recv;
 }
+
 
 int slw_process(slw_state_t* state,
     const struct sockaddr* socka, socklen_t sockalen
 ) {
+
+
     return SLW_OK;
 }
 
