@@ -75,6 +75,7 @@ static int slw_parse_packet(
 static void slw_write_packet(
    char* raw_buf, ssize_t raw_buf_bytes, slw_packet_t* pkt
 ) {
+    memset(raw_buf, 0, SLW_HEADER);
     raw_buf[0] = pkt->id;
     raw_buf[1] = pkt->ack;
     raw_buf[2] = pkt->flags;
@@ -88,6 +89,7 @@ static void slw_write_packet(
         (uint8_t*)raw_buf, SLW_HEADER, raw_buf + SLW_HEADER, pkt->length);
     uint16_t nchecksum = htons(checksum);
     memcpy(raw_buf + 3, &nchecksum, sizeof(uint16_t));
+    memcpy(raw_buf + SLW_HEADER, pkt->data, pkt->length);
 }
 
 
@@ -219,7 +221,8 @@ static int slw_retransmit(
         if (win->slot_filled[curr]) {
             char raw_buf[BUFFER_SIZE];
             slw_write_packet(raw_buf, BUFFER_SIZE, &win->packets[curr]);
-            ssize_t r = sendto_s(state->fd, raw_buf, BUFFER_SIZE, 0, dest_addr, addrlen);
+            ssize_t r = sendto_s(
+                state->fd, raw_buf, slw_packet_size(&win->packets[curr]), 0, dest_addr, addrlen);
             if (r == -1) {
 #ifdef UDP_DEBUG
                 LERROR("retransmission failed");
