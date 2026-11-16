@@ -5,10 +5,6 @@ static uint16_t slw_compute_checksum(
     const uint8_t* header, uint16_t header_len,
     const char* body, uint16_t body_len
 ) {
-#ifndef UDP_DEBUG
-    //assert(header != NULL);
-    //assert(body != NULL);
-#endif
     uint32_t sum = 0;
     for (int i = 0; i < header_len; i++) {
         if (i == 3 || i == 4) continue;
@@ -24,7 +20,7 @@ static uint16_t slw_compute_checksum(
 }
 
 
-static int slw_parse_packet(
+static int slw_read_packet(
    const char* raw_buf, ssize_t raw_buf_bytes, slw_packet_t* pkt
 ) {
     if (raw_buf_bytes < SLW_HEADER) {
@@ -72,9 +68,15 @@ static int slw_parse_packet(
 }
 
 
-static void slw_write_packet(
+static int slw_write_packet(
    char* raw_buf, ssize_t raw_buf_bytes, slw_packet_t* pkt
 ) {
+    if (raw_buf_bytes < SLW_HEADER + pkt->length) {
+#ifdef UDP_DEBUG
+        LERROR("supplied buffer was too small must be large enough for slw heeader & packet length");
+#endif
+        return 0;
+    }
     memset(raw_buf, 0, SLW_HEADER);
     raw_buf[0] = pkt->id;
     raw_buf[1] = pkt->ack;
@@ -87,9 +89,14 @@ static void slw_write_packet(
 
     uint16_t checksum = slw_compute_checksum(
         (uint8_t*)raw_buf, SLW_HEADER, raw_buf + SLW_HEADER, pkt->length);
+#ifdef UDP_DEBUG
+    LINFO("writing packet produced following checksum %d", checksum);
+#endif
     uint16_t nchecksum = htons(checksum);
     memcpy(raw_buf + 3, &nchecksum, sizeof(uint16_t));
     memcpy(raw_buf + SLW_HEADER, pkt->data, pkt->length);
+
+    return 1;
 }
 
 
@@ -120,6 +127,7 @@ static void slw_init_packet(
     );
     */
 }
+
 
 
 static inline int slw_advance(int idx, slw_window_t* win) {
@@ -211,6 +219,7 @@ void slw_free(slw_state_t* state) {
 }
 
 
+
 static int slw_retransmit(
     slw_state_t* state, const struct sockaddr* dest_addr, socklen_t addrlen
 ) {
@@ -234,6 +243,7 @@ static int slw_retransmit(
     }
     return SLW_OK;
 }
+
 
 
 ssize_t slw_send(slw_state_t* state, const char* buf, size_t bufsize,
