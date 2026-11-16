@@ -152,10 +152,7 @@ int saw_loop(struct saw_cstate* cstate)
 }
 
 
-int slw_loop(int fd, struct sockaddr addr, socklen_t, int slots) {
-    slw_state_t state = { 0 };
-    slw_init(&state, fd, slots, 1000);
-
+int slw_loop(slw_state_t* state, struct sockaddr* addr, socklen_t addrlen) {
     struct pollfd watched[2] = {
         {
             .fd = STDIN_FILENO,
@@ -163,7 +160,7 @@ int slw_loop(int fd, struct sockaddr addr, socklen_t, int slots) {
             .revents = 0,
         },
         {
-            .fd = fd,
+            .fd = state->fd,
             .events = POLLIN,
             .revents = 0,
         },
@@ -268,7 +265,8 @@ int main(int argc, char **argv)
         },
     };
 
-    // [WO] client state
+    // [WO] saw client state
+    /*
     struct saw_cstate cstate = { 0 };
     cstate.client_fd = client_fd;
     cstate.watched   = watched;
@@ -280,8 +278,18 @@ int main(int argc, char **argv)
     if (r == EXIT_FAILURE) {
         close(client_fd);
         return EXIT_FAILURE;
-    }
+    }*/
 
+
+    // [WO] slw client state
+    int slots = 5;
+    slw_state_t state = { 0 };
+    slw_init(&state, client_fd, slots, 1000);
+
+    int r = slw_loop(&state, (struct sockaddr*)&network, sizeof(network));
+    (void)r;
+
+    slw_free(&state);
     close(client_fd);
 
     return EXIT_SUCCESS;
