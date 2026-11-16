@@ -9,6 +9,7 @@
 #include <sys/socket.h>
 #include <netinet/ip.h>
 #include <arpa/inet.h>
+#include <math.h>
 
 #ifdef UDP_DEBUG
 #include <assert.h>

@@ -9,6 +9,12 @@
 #include <poll.h>
 
 
+#define min(x,y) \
+    (((x)<(y)) ? (x) : (y))
+#define max(x,y) \
+    (((x)>(y)) ? (x) : (y))
+
+
 #define ER      "\033[31m"
 #define EG      "\033[32m"
 #define EY      "\033[33m"

@@ -131,7 +131,11 @@ static void slw_init_packet(
 
 
 static inline int slw_advance(int idx, slw_window_t* win) {
-    return (idx + 1) % win->slots;
+    return abs(idx + 1) % win->slots;
+}
+
+static inline int slw_retreat(int idx, slw_window_t* win) {
+    return abs(idx - 1) % win->slots;
 }
 
 static inline int slw_advancen(int idx, int n, slw_window_t* win) {
@@ -253,46 +257,58 @@ static int slw_retransmit(
 ssize_t slw_send(slw_state_t* state, const char* buf, size_t bufsize,
     const struct sockaddr* socka, socklen_t sockalen
 ) {
+    slw_window_t* sndwind = &state->sndwind;
+    slw_window_t* rcvwind = &state->rcvwind;
+
     // cannot send if the send window is full ie. next > base + length
-    if (state->sndwind.next > slw_advancen(
-            state->sndwind.base, state->sndwind.length, &state->sndwind)) {
+    if (sndwind->next > slw_advancen(
+            sndwind->base, sndwind->length, sndwind)) {
 #ifdef UDP_DEBUG
         LWARN("send window is full");
 #endif
         return SLW_EWOULDBLOCK;
     }
 
-    slw_window_t* sndwind = &state->sndwind;
-    slw_window_t* rcvwind = &state->rcvwind;
+    // calculate the number of required packets
+    size_t packets          = ceil(1.0 * bufsize / SLW_MAX_PAYLOAD);
+    size_t offset           = 0;
+    size_t sent_count = 0;
+    size_t unsent           = bufsize;
+    while ((sndwind->next > slw_advancen(sndwind->base, sndwind->length, sndwind))
+            && (sent_count < packets)) {
+        // create a packet for the data, put it at next, advance next
+        //      the packets ACK depends if there is and ACK that needs to be send
+        slw_packet_t pkt = { 0 };
+        slw_init_packet(&pkt, sndwind->next, rcvwind->ack, 0,
+            buf + offset, min(SLW_MAX_PAYLOAD, bufsize - offset)); // if the remaining number of user bytes < max payload
+        sndwind->packets[sndwind->next] = pkt;
+        sndwind->slot_filled[sndwind->next] = 1;
+        sndwind->next = slw_advance(sndwind->next, sndwind);
 
-    // create a packet for the data, put it at next, advance next
-    //      the packets ACK depends if there is and ACK that needs to be send
-    slw_packet_t pkt = { 0 };
-    slw_init_packet(&pkt, sndwind->next, rcvwind->ack, 0, buf, bufsize);
-    sndwind->packets[sndwind->next] = pkt;
-    sndwind->slot_filled[sndwind->next] = 1;
-    sndwind->next = slw_advance(sndwind->next, sndwind);
 
-    // write the packet to a network segment buffer
-    char net_segment[BUFFER_SIZE];
-    int write_ok = slw_write_packet(net_segment, BUFFER_SIZE, &pkt);
-    if (!write_ok) {
+        // write the packet to a network segment buffer
+        char net_segment[BUFFER_SIZE];
+        int write_ok = slw_write_packet(net_segment, BUFFER_SIZE, &pkt);
+        if (!write_ok) {
 #ifdef UDP_DEBUG
-        LERROR("faild to write packet to network segment");
+            LERROR("faild to write packet to network segment");
 #endif
-        return SLW_ERROR;
-    }
+            break;
+        }
 
-    // send the packet
-    ssize_t sent = sendto_s(state->fd, net_segment, BUFFER_SIZE, 0, socka, sockalen);
-    if (sent < 0) {
+        // send the packet
+        ssize_t sent_bytes = sendto_s(state->fd, net_segment, BUFFER_SIZE, 0, socka, sockalen);
+        if (sent_bytes < 0) {
 #ifdef UDP_DEBUG
-        LERROR("faild to send packet");
+            LERROR("faild to send packet");
 #endif
-        return SLW_ERROR;
+            break;
+        }   
+        unsent -= sent_bytes; // should be entire packet cause underlying UDP
+        offset += sent_bytes;
+        sent_count++;
     }
-
-    return sent;
+    return offset;
 }
 
 ssize_t slw_recv(slw_state_t* state, char* buf, size_t bufSize
