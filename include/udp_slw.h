@@ -10,6 +10,7 @@ Useful Resources
 - https://www.rfc-editor.org/info/rfc1982/
     - serial number arithmetic
     - comparison of ACK / SEQ numbers useful to simplify window operations
+    - example 5.2 is my exact use case regarding serial arithmetic
 */
 
 #include <stdint.h>

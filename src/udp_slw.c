@@ -2,6 +2,46 @@
 #include <bits/time.h>
 
 
+static inline int slw_advance(int idx, slw_window_t* win) {
+    return abs(idx + 1) % win->slots;
+}
+
+static inline int slw_retreat(int idx, slw_window_t* win) {
+    return abs(idx - 1) % win->slots;
+}
+
+static inline int slw_advancen(int idx, int n, slw_window_t* win) {
+    return (idx + n) % win->slots;
+}
+
+static inline int slw_seq_less(uint8_t a, uint8_t b) {
+    return ((uint8_t)(b - a) < (SLW_MAX_SLOTS/2)) && a != b;
+}
+
+static inline int slw_seq_greater(uint8_t a, uint8_t b) {
+    return ((uint8_t)(a - b) < (SLW_MAX_SLOTS/2)) && a != b;
+}
+
+static inline int slw_packet_size(slw_packet_t* pkt) {
+    return SLW_HEADER + pkt->length;
+}
+
+static inline time_t slw_nmtime_ms(struct timespec ts) {
+    return ( ts.tv_sec * 1000 ) + ( ts.tv_nsec / 1000000 );
+}
+
+static inline time_t slw_time_ms(void) {
+    struct timespec ts;
+    clock_gettime(CLOCK_MONOTONIC, &ts);
+    return slw_nmtime_ms(ts);
+}
+
+static inline time_t slw_calc_timeout(slw_state_t* state) {
+    time_t time_ms = slw_time_ms();
+    return time_ms + state->timeoutdur;
+}
+
+
 static uint16_t slw_compute_checksum(
     const uint8_t* header, uint16_t header_len,
     const char* body, uint16_t body_len
@@ -82,11 +122,10 @@ static int slw_write_packet(
     raw_buf[0] = pkt->id;
     raw_buf[1] = pkt->ack;
     raw_buf[2] = pkt->flags;
-    raw_buf[3] = pkt->checksum;  // initially 0
-    raw_buf[5] = pkt->length;
     
     uint16_t nlength = htons(pkt->length);
     memcpy(raw_buf + 5, &nlength, sizeof(uint16_t));
+    memcpy(raw_buf + SLW_HEADER, pkt->data, pkt->length);
 
     uint16_t checksum = slw_compute_checksum(
         (uint8_t*)raw_buf, SLW_HEADER, raw_buf + SLW_HEADER, pkt->length);
@@ -95,7 +134,6 @@ static int slw_write_packet(
 #endif
     uint16_t nchecksum = htons(checksum);
     memcpy(raw_buf + 3, &nchecksum, sizeof(uint16_t));
-    memcpy(raw_buf + SLW_HEADER, pkt->data, pkt->length);
 
     return 1;
 }
@@ -130,52 +168,12 @@ static void slw_init_packet(
 }
 
 
-
-static inline int slw_advance(int idx, slw_window_t* win) {
-    return abs(idx + 1) % win->slots;
-}
-
-static inline int slw_retreat(int idx, slw_window_t* win) {
-    return abs(idx - 1) % win->slots;
-}
-
-static inline int slw_advancen(int idx, int n, slw_window_t* win) {
-    return (idx + n) % win->slots;
-}
-
-static inline int slw_seq_less(uint8_t a, uint8_t b) {
-    return ((uint8_t)(b - a) < (SLW_MAX_SLOTS/2)) && a != b;
-}
-
-static inline int slw_seq_greater(uint8_t a, uint8_t b) {
-    return ((uint8_t)(a - b) < (SLW_MAX_SLOTS/2)) && a != b;
-}
-
-static inline int slw_packet_size(slw_packet_t* pkt) {
-    return SLW_HEADER + pkt->length;
-}
-
-static inline time_t slw_nmtime_ms(struct timespec ts) {
-    return ( ts.tv_sec * 1000 ) + ( ts.tv_nsec / 1000000 );
-}
-
-static inline time_t slw_time_ms(void) {
-    struct timespec ts;
-    clock_gettime(CLOCK_MONOTONIC, &ts);
-    return slw_nmtime_ms(ts);
-}
-
-static inline time_t slw_calc_timeout(slw_state_t* state) {
-    time_t time_ms = slw_time_ms();
-    return time_ms + state->timeoutdur;
-}
-
-
 int slw_init(slw_state_t* state, int fd, int window_slots, int timeoutdur)
 {
     state->fd           = fd;
     state->slots        = window_slots;
     state->timeoutdur   = timeoutdur;
+    state->timeout      = 0;
 
     state->rcvwind = (slw_window_t){
         .slots  = min(state->slots, SLW_MAX_SLOTS),
