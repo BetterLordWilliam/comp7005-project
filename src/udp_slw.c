@@ -192,19 +192,6 @@ int slw_init(slw_state_t* state, int fd, int window_slots, int timeoutdur)
         .ack    = 0,
     };
 
-    if (state->rcvwind.slot_filled == NULL) {
-#ifdef UDP_DEBUG
-        LERROR("error allocating slot_filled for rcvwind");
-#endif
-        return -1;
-    }
-    if (state->rcvwind.packets == NULL) {
-#ifdef UDP_DEBUG
-        LERROR("error allocating packets for rcvwind");
-#endif
-        return -1;
-    }
-    
     state->rcvwind.slot_filled  = (int*)calloc(
         state->rcvwind.slots, sizeof(int)
     );
