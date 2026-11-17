@@ -192,18 +192,12 @@ int slw_init(slw_state_t* state, int fd, int window_slots, int timeoutdur)
         .ack    = 0,
     };
 
-    state->rcvwind.slot_filled  = (int*)calloc(
-        state->rcvwind.slots, sizeof(int)
-    );
     if (state->rcvwind.slot_filled == NULL) {
 #ifdef UDP_DEBUG
         LERROR("error allocating slot_filled for rcvwind");
 #endif
         return -1;
     }
-    state->rcvwind.packets      = (slw_packet_t*)calloc(
-        state->rcvwind.slots, sizeof(slw_packet_t)
-    );
     if (state->rcvwind.packets == NULL) {
 #ifdef UDP_DEBUG
         LERROR("error allocating packets for rcvwind");
@@ -211,23 +205,26 @@ int slw_init(slw_state_t* state, int fd, int window_slots, int timeoutdur)
         return -1;
     }
     
+    state->rcvwind.slot_filled  = (int*)calloc(
+        state->rcvwind.slots, sizeof(int)
+    );
+    state->rcvwind.packets      = (slw_packet_t*)calloc(
+        state->rcvwind.slots, sizeof(slw_packet_t)
+    );
     state->sndwind.slot_filled = (int*)calloc(
         state->sndwind.slots, sizeof(int)
     );
-    if (state->sndwind.slot_filled == NULL) {
-#ifdef UDP_DEBUG
-        LERROR("error allocating slot_filled for sndwind");
-#endif
-        return -1;
-    }
     state->sndwind.packets = (slw_packet_t*)calloc(
         state->sndwind.slots, sizeof(slw_packet_t)
     );
-    if (state->sndwind.packets == NULL) {
+
+    if (state->sndwind.slot_filled == NULL || state->sndwind.packets == NULL
+            || state->rcvwind.slot_filled == NULL || state->rcvwind.packets == NULL) {
 #ifdef UDP_DEBUG
-        LERROR("error allocating packets for sndwind");
+        LERROR("error allocating memory for sliding windows");
 #endif
-        return -1;
+        slw_free(state);
+        return -1; 
     }
 
     return 0;
