@@ -1,6 +1,16 @@
 #ifndef UDP_SLW
 #define UDP_SLW
 
+/*
+Useful Resources
+
+- https://www.rfc-editor.org/info/rfc1982/
+    - serial numbers / sequence arithmetic
+    - comparison of ACK / SEQ numbers useful to simplify window operations
+    - 
+
+*/
+
 #include <stdint.h>
 #include <time.h>
 #include <unistd.h>
@@ -20,6 +30,7 @@
 
 #define SLW_HEADER      ((uint16_t)7)
 #define SLW_MAX_PAYLOAD (BUFFER_SIZE - SLW_HEADER)
+#define SLW_MAX_SLOTS   (256)
 
 typedef enum slw_error_code {
     SLW_OK = 0,

@@ -1,4 +1,5 @@
 #include "udp_slw.h"
+#include <bits/time.h>
 
 
 static uint16_t slw_compute_checksum(
@@ -142,6 +143,14 @@ static inline int slw_advancen(int idx, int n, slw_window_t* win) {
     return (idx + n) % win->slots;
 }
 
+static inline int slw_seq_less(uint8_t a, uint8_t b) {
+    return (uint8_t)(b - a) < (SLW_MAX_SLOTS/2) && a != b;
+}
+
+static inline int slw_seq_greater(uint8_t a, uint8_t b) {
+    return (uint8_t)(a - b) < (SLW_MAX_SLOTS/2) && a != b;
+}
+
 static inline int slw_packet_size(slw_packet_t* pkt) {
     return SLW_HEADER + pkt->length;
 }
@@ -150,10 +159,15 @@ static inline time_t slw_nmtime_ms(struct timespec ts) {
     return ( ts.tv_sec * 1000 ) + ( ts.tv_nsec / 1000000 );
 }
 
-static inline void slw_calc_timeout(slw_state_t* state) {
+static inline time_t slw_time_ms(void) {
     struct timespec ts;
     clock_gettime(CLOCK_MONOTONIC, &ts);
-    state->timeout = slw_nmtime_ms(ts) + state->timeoutdur;
+    return slw_nmtime_ms(ts);
+}
+
+static inline time_t slw_calc_timeout(slw_state_t* state) {
+    time_t time_ms = slw_time_ms();
+    return time_ms + state->timeoutdur;
 }
 
 
@@ -270,7 +284,7 @@ ssize_t slw_send(slw_state_t* state, const char* buf, size_t bufsize,
     }
 
     // calculate the number of required packets
-    size_t packets          = bufsize + SLW_MAX_PAYLOAD - 1 / SLW_MAX_PAYLOAD;
+    size_t packets          = (bufsize + SLW_MAX_PAYLOAD) - 1 / SLW_MAX_PAYLOAD;
     size_t offset           = 0;
     size_t sent_count       = 0;
 
@@ -300,7 +314,7 @@ ssize_t slw_send(slw_state_t* state, const char* buf, size_t bufsize,
 
         // if first unacked packet calculate the timeout
         if (curr == sndwind->base)
-            slw_calc_timeout(state);
+            state->timeout = slw_calc_timeout(state);
 
         // write the packet to a network segment buffer
         char net_segment[BUFFER_SIZE];
@@ -372,7 +386,35 @@ ssize_t slw_recv(slw_state_t* state, char* buf, size_t bufSize
 int slw_process(slw_state_t* state,
     const struct sockaddr* socka, socklen_t sockalen
 ) {
+    slw_window_t* sndwind = &state->sndwind;
+    slw_window_t* rcvwind = &state->rcvwind;
 
+    // check if the timeout has expired & trigger retransmission if so
+
+    // receive an incoming packet
+
+    // parse the packet
+    //      drop the packet if checksum validation fails
+
+    // if the ACK is populated (send window updates)
+    //      determine that the ACK is valid (ie its actually in the send window)
+    //      advance the base of the send window
+    //      calculate a new timeout for the new base (oldest unacked packet)
+
+    // if the length of the packet is zero it would be a control packet of sorts
+    //      nothing to add to the receive window in that case & right now the only control
+    //      packet that the protocol specifies is the pure ACK so do nothing
+    //      since pure ACK is handled by the prior block of logic.
+    //
+    //      in short -> drop 0 length packets
+
+    // if the packet id matches the next expected packet && rcvwind is not full
+    //      packet id matches next pointer of the receive window
+    //      append the packet to the rcvwind
+    //      advance the rcvwind next pointer
+    //
+    // else if the packet id has already been acknowledge (< base)
+    //      transmit a pure ACK for that packet 
 
     return SLW_OK;
 }
