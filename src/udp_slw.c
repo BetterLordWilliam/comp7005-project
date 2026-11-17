@@ -178,15 +178,15 @@ int slw_init(slw_state_t* state, int fd, int window_slots, int timeoutdur)
     state->timeoutdur   = timeoutdur;
 
     state->rcvwind = (slw_window_t){
-        .slots  = 2,
+        .slots  = min(state->slots, SLW_MAX_SLOTS),
         .length = 1,
         .base   = 0,
         .next   = 0,
         .ack    = 0
     };
     state->sndwind = (slw_window_t){
-        .slots  = state->slots,
-        .length = state->slots - 1,
+        .slots  = min(state->slots, SLW_MAX_SLOTS),
+        .length = min((state->slots - 1), SLW_MAX_WIND_LEN),
         .base   = 0,
         .next   = 0,
         .ack    = 0,
