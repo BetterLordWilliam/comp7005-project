@@ -144,11 +144,11 @@ static inline int slw_advancen(int idx, int n, slw_window_t* win) {
 }
 
 static inline int slw_seq_less(uint8_t a, uint8_t b) {
-    return (uint8_t)(b - a) < (SLW_MAX_SLOTS/2) && a != b;
+    return ((uint8_t)(b - a) < (SLW_MAX_SLOTS/2)) && a != b;
 }
 
 static inline int slw_seq_greater(uint8_t a, uint8_t b) {
-    return (uint8_t)(a - b) < (SLW_MAX_SLOTS/2) && a != b;
+    return ((uint8_t)(a - b) < (SLW_MAX_SLOTS/2)) && a != b;
 }
 
 static inline int slw_packet_size(slw_packet_t* pkt) {
