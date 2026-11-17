@@ -1,5 +1,7 @@
 #include "udp_slw.h"
+#include <asm-generic/errno.h>
 #include <bits/time.h>
+#include <sys/socket.h>
 
 
 static inline int slw_advance(int idx, slw_window_t* win) {
@@ -171,29 +173,29 @@ static void slw_init_packet(
 int slw_init(slw_state_t* state, int fd, int window_slots, int timeoutdur)
 {
     state->fd           = fd;
-    state->slots        = window_slots;
+    state->slots        = min(window_slots, SLW_MAX_SLOTS);
     state->timeoutdur   = timeoutdur;
     state->timeout      = 0;
 
     state->rcvwind = (slw_window_t){
-        .slots  = min(state->slots, SLW_MAX_SLOTS),
+        .slots  = state->slots,
         .length = 1,
         .base   = 0,
         .next   = 0,
         .ack    = 0
     };
     state->sndwind = (slw_window_t){
-        .slots  = min(state->slots, SLW_MAX_SLOTS),
+        .slots  = state->slots,
         .length = min((state->slots - 1), SLW_MAX_WIND_LEN),
         .base   = 0,
         .next   = 0,
         .ack    = 0,
     };
 
-    state->rcvwind.slot_filled  = (int*)calloc(
+    state->rcvwind.slot_filled = (int*)calloc(
         state->rcvwind.slots, sizeof(int)
     );
-    state->rcvwind.packets      = (slw_packet_t*)calloc(
+    state->rcvwind.packets = (slw_packet_t*)calloc(
         state->rcvwind.slots, sizeof(slw_packet_t)
     );
     state->sndwind.slot_filled = (int*)calloc(
@@ -216,10 +218,12 @@ int slw_init(slw_state_t* state, int fd, int window_slots, int timeoutdur)
 }
 
 void slw_free(slw_state_t* state) {
-    free(state->rcvwind.slot_filled);
-    free(state->rcvwind.packets);
-    free(state->sndwind.slot_filled);
-    free(state->sndwind.packets);
+    if (state) {
+        free(state->rcvwind.slot_filled);
+        free(state->rcvwind.packets);
+        free(state->sndwind.slot_filled);
+        free(state->sndwind.packets);
+    }
 }
 
 
@@ -266,7 +270,7 @@ ssize_t slw_send(slw_state_t* state, const char* buf, size_t bufsize,
     }
 
     // calculate the number of required packets
-    size_t packets          = (bufsize + SLW_MAX_PAYLOAD) - 1 / SLW_MAX_PAYLOAD;
+    size_t packets          = (bufsize + SLW_MAX_PAYLOAD - 1) / SLW_MAX_PAYLOAD;
     size_t offset           = 0;
     size_t sent_count       = 0;
 
@@ -279,7 +283,7 @@ ssize_t slw_send(slw_state_t* state, const char* buf, size_t bufsize,
 
         // create a packet for the data, put it at next, advance next
         //      the packets ACK depends if there is and ACK that needs to be send
-        uint16_t chunk_len = (uint16_t)((bufsize - offset < SLW_MAX_PAYLOAD)
+        uint16_t chunk_len = (uint16_t)(((bufsize - offset) < SLW_MAX_PAYLOAD)
             ? bufsize - offset : SLW_MAX_PAYLOAD);
         slw_packet_t* pkt = &sndwind->packets[sndwind->next];
         slw_init_packet(pkt,
@@ -359,7 +363,7 @@ ssize_t slw_recv(slw_state_t* state, char* buf, size_t bufSize
         rcvwind->slot_filled[rcvwind->base] = 0;
         rcvwind->base = slw_advance(rcvwind->base, rcvwind);
     }
-    rcvwind->ack = last_ack;
+    rcvwind->ack = last_ack; // advanced by 1?
 
     return (ssize_t)total_copied;
 }
@@ -372,24 +376,67 @@ int slw_process(slw_state_t* state,
     slw_window_t* rcvwind = &state->rcvwind;
 
     // check if the timeout has expired & trigger retransmission if so
+    //      base != next, packets are in flight
+    if (sndwind->base != sndwind->next) {
+        time_t curr_time = slw_time_ms();
+        if (curr_time >= state->timeout) {
+#ifdef UDP_DEBUG
+            LWARN("time %ld greater than timeout %ld triggering retransmission",
+                curr_time, state->timeout);
+#endif
+            slw_retransmit(state, socka, sockalen);
+            state->timeout = slw_calc_timeout(state);
+        }
+    }
 
     // receive an incoming packet
+    char raw_buf[BUFFER_SIZE];
+    struct sockaddr_in peer;
+    socklen_t peer_len = sizeof(peer);
+    ssize_t bytes = recvfrom_s(
+        state->fd, raw_buf, BUFFER_SIZE, MSG_DONTWAIT,
+        (struct sockaddr*)&peer, &peer_len);
+    if (bytes < 0 && (errno == EWOULDBLOCK || errno == EAGAIN)) {
+        return SLW_EWOULDBLOCK;
+    }
+    if (bytes < 0 || bytes < SLW_HEADER)
+        return SLW_ERROR;
 
     // parse the packet
     //      drop the packet if checksum validation fails
+    slw_packet_t pkt;
+    if (!slw_read_packet(raw_buf, bytes, &pkt)) {
+#ifdef UDP_DEBUG
+        LWARN("invalid packet dropped");
+#endif
+        return 0;
+    }
 
-    // if the ACK is populated (send window updates)
+    // send window updates
+    // if the ACK is populated
     //      determine that the ACK is valid (ie its actually in the send window)
     //      advance the base of the send window
     //      calculate a new timeout for the new base (oldest unacked packet)
-
+    int ack_in_window = (sndwind->base != sndwind->next)
+        && !slw_seq_less(pkt.ack, sndwind->base)
+        &&  slw_seq_less(pkt.ack, sndwind->next);
+    if (ack_in_window) {
+        while (sndwind->base != pkt.ack) {
+            sndwind->slot_filled[sndwind->base] = 0;
+            sndwind->base = slw_advance(sndwind->base, sndwind);
+        }
+        if (sndwind->base != sndwind->next) {
+            state->timeout = slw_calc_timeout(state);
+        }
+    }
+   
+    // read window updates 
     // if the length of the packet is zero it would be a control packet of sorts
     //      nothing to add to the receive window in that case & right now the only control
     //      packet that the protocol specifies is the pure ACK so do nothing
     //      since pure ACK is handled by the prior block of logic.
     //
     //      in short -> drop 0 length packets
-
     // if the packet id matches the next expected packet && rcvwind is not full
     //      packet id matches next pointer of the receive window
     //      append the packet to the rcvwind
@@ -397,6 +444,19 @@ int slw_process(slw_state_t* state,
     //
     // else if the packet id has already been acknowledge (< base)
     //      transmit a pure ACK for that packet 
+    if (pkt.id == rcvwind->base) {
+        rcvwind->packets[rcvwind->base] = pkt;
+        rcvwind->slot_filled[rcvwind->base] = 1;
+        rcvwind->base = slw_advance(rcvwind->base, rcvwind);
+        rcvwind->ack = rcvwind->base; // the next packet ID, go back N
+    } else if (slw_seq_less(pkt.id, rcvwind->base)){
+        rcvwind->ack = pkt.id;  // the next packet ID, go back N
+        // ACK
+        return 0;
+    } else {
+        // the packets ID is not valid, drop it
+        return 0;
+    }
 
     return SLW_OK;
 }
