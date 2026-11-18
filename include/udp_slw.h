@@ -90,7 +90,7 @@ ssize_t slw_send(slw_state_t* state, const char* buf, size_t bufsize,
 ssize_t slw_recv(slw_state_t* state, char* buf, size_t bufSize);
 
 int slw_process(slw_state_t* state,
-    const struct sockaddr* socka, socklen_t* sockalen);
+    struct sockaddr* socka, socklen_t* sockalen);
 
 
 
