@@ -240,6 +240,8 @@ int slw_loop(slw_state_t* state, struct sockaddr* addr, socklen_t addrlen) {
 #ifdef UDP_DEBUG
                     LWARN("buffer not large enough to contain at least 1 packet data\n\trecommend resize the buffer");
 #endif
+                    // [WO] this is not a great 'solution' to this issue because this will lead to
+                    // a lot of retransmissions
                     continue;
                 }
             }
