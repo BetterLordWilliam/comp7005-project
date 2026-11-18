@@ -93,5 +93,8 @@ int slw_process(slw_state_t* state,
     const struct sockaddr* socka, socklen_t sockalen);
 
 
+
+int slw_window_empty(slw_window_t* wind);
+
 #endif
 

@@ -105,7 +105,6 @@ int saw_loop(struct saw_sstate* sstate)
 
 int slw_loop(slw_state_t* state, struct sockaddr* addr, socklen_t addrlen)
 {
-
     for (;;) {
         char buffer[BUFFER_SIZE];
         struct sockaddr_in peer;

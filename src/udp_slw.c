@@ -226,6 +226,13 @@ void slw_free(slw_state_t* state) {
     }
 }
 
+int slw_window_empty(slw_window_t* wind) {
+    // a window is empty if the base pointer equals the next pointer
+    if (wind->base == wind->next) 
+        return 1;
+    else
+        return 0;
+}
 
 
 static int slw_retransmit(

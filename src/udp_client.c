@@ -171,7 +171,13 @@ int slw_loop(slw_state_t* state, struct sockaddr* addr, socklen_t addrlen) {
         watched[0].revents = 0;
         watched[1].revents = 0;
 
-        int ready = poll_s(watched, 2, -1);
+        // if sndwind is not empty
+        //      infinite poll waiting for data from stdin
+        // otherwise
+        //      poll duration should be the timeout duration
+        int ready = poll_s(watched, 2, (slw_window_empty(&state->sndwind))
+            ? -1
+            : state->timeoutdur);
         if (ready == -1) {
             return EXIT_FAILURE;
         }
