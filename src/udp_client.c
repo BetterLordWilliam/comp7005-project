@@ -224,7 +224,7 @@ int slw_loop(slw_state_t* state, struct sockaddr* addr, socklen_t addrlen) {
         /* Echo reception is independent and never gates the next send. */
         if (watched[1].revents & POLLIN) {
             // sliding window processing
-            int process_result = slw_process(state, addr, addrlen);
+            int process_result = slw_process(state, addr, &addrlen);
             if (process_result != SLW_OK) {
                 if (process_result == SLW_EWOULDBLOCK) {
 #ifdef UDP_DEBUG

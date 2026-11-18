@@ -131,7 +131,7 @@ int slw_loop(slw_state_t* state, struct sockaddr* addr, socklen_t addrlen)
         if (pfd.revents & (POLLIN)) {
 
             // process the sliding windows
-            int process_result = slw_process(state, (struct sockaddr*)&peer, peer_length);
+            int process_result = slw_process(state, (struct sockaddr*)&peer, &peer_length);
             if (!(process_result == SLW_OK)) {
                 if (process_result == SLW_EWOULDBLOCK) {
 #ifdef UDP_DEBUG                

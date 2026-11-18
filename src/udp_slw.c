@@ -381,7 +381,7 @@ ssize_t slw_recv(slw_state_t* state, char* buf, size_t bufSize
 
 
 int slw_process(slw_state_t* state,
-    const struct sockaddr* socka, socklen_t sockalen
+    const struct sockaddr* socka, socklen_t* sockalen
 ) {
     slw_window_t* sndwind = &state->sndwind;
     slw_window_t* rcvwind = &state->rcvwind;
@@ -395,18 +395,15 @@ int slw_process(slw_state_t* state,
             LWARN("time %ld greater than timeout %ld triggering retransmission",
                 curr_time, state->timeout);
 #endif
-            slw_retransmit(state, socka, sockalen);
+            slw_retransmit(state, socka, *sockalen);
             state->timeout = slw_calc_timeout(state);
         }
     }
 
     // receive an incoming packet
     char raw_buf[BUFFER_SIZE];
-    struct sockaddr_in peer;
-    socklen_t peer_len = sizeof(peer);
     ssize_t bytes = recvfrom_s(
-        state->fd, raw_buf, BUFFER_SIZE, MSG_DONTWAIT,
-        (struct sockaddr*)&peer, &peer_len);
+        state->fd, raw_buf, BUFFER_SIZE, MSG_DONTWAIT, socka, sockalen);
     if (bytes < 0 && (errno == EWOULDBLOCK || errno == EAGAIN)) {
 #ifdef UDP_DEBUG
         LWARN("`recvfrom` call would block");
