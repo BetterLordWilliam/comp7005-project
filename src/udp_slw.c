@@ -381,7 +381,7 @@ ssize_t slw_recv(slw_state_t* state, char* buf, size_t bufSize
 
 
 int slw_process(slw_state_t* state,
-    const struct sockaddr* socka, socklen_t* sockalen
+    struct sockaddr* socka, socklen_t* sockalen
 ) {
     slw_window_t* sndwind = &state->sndwind;
     slw_window_t* rcvwind = &state->rcvwind;
