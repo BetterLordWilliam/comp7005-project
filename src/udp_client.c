@@ -191,10 +191,53 @@ int slw_loop(slw_state_t* state, struct sockaddr* addr, socklen_t addrlen) {
                 // return EXIT_FAILURE;
             }
             */
+
+            // submit new messages to the server
+            ssize_t send_result = slw_send(state, buffer, length, addr, addrlen);
+            if (send_result == SLW_EWOULDBLOCK) {
+#ifdef UDP_DEBUG
+                LWARN("new message dropped send window is full");
+#endif
+                continue;
+            } else if (send_result < 0) {
+#ifdef UDP_DEBUG
+                LERROR("send failed");
+#endif
+                return EXIT_FAILURE;
+            }
         }
 
         /* Echo reception is independent and never gates the next send. */
         if (watched[1].revents & POLLIN) {
+            // sliding window processing
+            int process_result = slw_process(state, addr, addrlen);
+            if (process_result != SLW_OK) {
+                if (process_result == SLW_EWOULDBLOCK) {
+#ifdef UDP_DEBUG
+                    LWARN("poll returned but there was nothing to process on the socket");
+#endif
+                    continue;
+                } else if (process_result == SLW_ERROR) {
+                    break;
+                }
+            }
+
+            // receive any server replies
+            ssize_t receive_result = slw_recv(state, buffer, sizeof(buffer));
+            if (!(receive_result > 0)) {
+                if (receive_result == SLW_EWOULDBLOCK) {
+#ifdef UDP_DEBUG
+                    LWARN("rcvwind is empty nothing to receive");
+#endif
+                    continue;
+                } else if (receive_result == SLW_EBUFSIZE) {
+#ifdef UDP_DEBUG
+                    LWARN("buffer not large enough to contain at least 1 packet data\n\trecommend resize the buffer");
+#endif
+                    continue;
+                }
+            }
+
             /*
             int received = saw_recv(cstate->client_fd, &scstate,
                 buffer, sizeof(buffer));
@@ -211,14 +254,13 @@ int slw_loop(slw_state_t* state, struct sockaddr* addr, socklen_t addrlen) {
             */
 
         
-            /* APPLICATION
+            /* APPLICATION */
             printf("echo: ");
-            fwrite(buffer, 1, (size_t)received, stdout);
-            if (received == 0 || buffer[received - 1] != '\n') {
+            fwrite(buffer, 1, (size_t)receive_result, stdout);
+            if (receive_result == 0 || buffer[receive_result - 1] != '\n') {
                 putchar('\n');
             }
             fflush(stdout);
-            */
         }
     }
     return 0;

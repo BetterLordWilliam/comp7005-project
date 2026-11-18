@@ -318,7 +318,7 @@ ssize_t slw_send(slw_state_t* state, const char* buf, size_t bufsize,
         offset += chunk_len;
         sent_count++;
     }
-    return offset;
+    return (ssize_t)offset;
 }
 
 ssize_t slw_recv(slw_state_t* state, char* buf, size_t bufSize
@@ -397,19 +397,30 @@ int slw_process(slw_state_t* state,
         state->fd, raw_buf, BUFFER_SIZE, MSG_DONTWAIT,
         (struct sockaddr*)&peer, &peer_len);
     if (bytes < 0 && (errno == EWOULDBLOCK || errno == EAGAIN)) {
+#ifdef UDP_DEBUG
+        LWARN("`recvfrom` call would block");
+#endif
         return SLW_EWOULDBLOCK;
-    }
-    if (bytes < 0 || bytes < SLW_HEADER)
+    } else if (bytes < 0) {
+#ifdef UDP_DEBUG
+        LERROR("`recvfrom` call returned an error");
+#endif
         return SLW_ERROR;
+    } else if (bytes < 0 || bytes < SLW_HEADER) {
+#ifdef UDP_DEBUG
+        LWARN("invalid packet dropped\n\tpacket size was less than slw header size");
+#endif
+        return SLW_OK;
+    }
 
     // parse the packet
     //      drop the packet if checksum validation fails
     slw_packet_t pkt;
     if (!slw_read_packet(raw_buf, bytes, &pkt)) {
 #ifdef UDP_DEBUG
-        LWARN("invalid packet dropped");
+        LWARN("invalid packet dropped\n\tpacket parse failed");
 #endif
-        return 0;
+        return SLW_OK;
     }
 
     // send window updates
@@ -452,11 +463,9 @@ int slw_process(slw_state_t* state,
     } else if (slw_seq_less(pkt.id, rcvwind->base)){
         rcvwind->ack = pkt.id;  // the next packet ID, go back N
         // ACK
-        return 0;
-    } else {
-        // the packets ID is not valid, drop it
-        return 0;
     }
+    // the packets ID is not valid, drop it
+    //      dont do anything special for now
 
     return SLW_OK;
 }
