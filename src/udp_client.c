@@ -181,6 +181,11 @@ int slw_loop(slw_state_t* state, struct sockaddr* addr, socklen_t addrlen) {
         if (ready == -1) {
             return EXIT_FAILURE;
         }
+        if (ready == 0) {
+#ifdef UDP_DEBUG
+            LWARN("poll timeout");
+#endif
+        }
 
         /* stdin is independent: send each available line immediately. */
         if (watched[0].revents & (POLLIN | POLLHUP)) {
@@ -211,6 +216,9 @@ int slw_loop(slw_state_t* state, struct sockaddr* addr, socklen_t addrlen) {
 #endif
                 return EXIT_FAILURE;
             }
+#ifdef UDP_DEBUG
+            LINFO("sent %ld bytes", send_result);
+#endif
         }
 
         /* Echo reception is independent and never gates the next send. */

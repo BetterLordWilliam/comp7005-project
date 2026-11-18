@@ -314,7 +314,8 @@ ssize_t slw_send(slw_state_t* state, const char* buf, size_t bufsize,
         slw_write_packet(net_segment, BUFFER_SIZE, pkt);
 
         // send the packet
-        ssize_t sent_bytes = sendto_s(state->fd, net_segment, BUFFER_SIZE, 0, socka, sockalen);
+        ssize_t sent_bytes = sendto_s(state->fd, net_segment,
+            slw_packet_size(pkt), 0, socka, sockalen);
         if (sent_bytes < 0) {
 #ifdef UDP_DEBUG
             LERROR("faild to send packet");
@@ -325,6 +326,9 @@ ssize_t slw_send(slw_state_t* state, const char* buf, size_t bufsize,
         offset += chunk_len;
         sent_count++;
     }
+#ifdef UDP_DEBUG
+    LINFO("slw_send transmitted %ld packets", sent_count);
+#endif
     return (ssize_t)offset;
 }
 
@@ -462,12 +466,18 @@ int slw_process(slw_state_t* state,
     //
     // else if the packet id has already been acknowledge (< base)
     //      transmit a pure ACK for that packet 
-    if (pkt.id == rcvwind->base) {
-        rcvwind->packets[rcvwind->base] = pkt;
-        rcvwind->slot_filled[rcvwind->base] = 1;
-        rcvwind->base = slw_advance(rcvwind->base, rcvwind);
-        rcvwind->ack = rcvwind->base; // the next packet ID, go back N
-    } else if (slw_seq_less(pkt.id, rcvwind->base)){
+    if (pkt.id == rcvwind->next) {
+#ifdef UDP_DEBUG
+        LINFO("packet id is the expected id");
+#endif
+        rcvwind->packets[rcvwind->next] = pkt;
+        rcvwind->slot_filled[rcvwind->next] = 1;
+        rcvwind->next = slw_advance(rcvwind->next, rcvwind);
+        rcvwind->ack = rcvwind->next; // the next packet ID, go back N
+    } else if (slw_seq_less(pkt.id, rcvwind->next)){
+#ifdef UDP_DEBUG
+        LINFO("packet id is invalid");
+#endif
         rcvwind->ack = pkt.id;  // the next packet ID, go back N
         // ACK
     }
