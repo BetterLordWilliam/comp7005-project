@@ -262,7 +262,7 @@ static int slw_retransmit(
 
 static int slw_transmit_ack(
     slw_state_t* state, uint8_t ack,
-    const struct sockaddr* dest_addr, socklen_t addrlen
+    const struct sockaddr* dest_addr, socklen_t* addrlen
 ) {
     // create a pure ACK packet
     slw_packet_t pkt;
@@ -272,7 +272,7 @@ static int slw_transmit_ack(
     char buffer[BUFFER_SIZE];
     slw_write_packet(buffer, BUFFER_SIZE, &pkt);
     ssize_t r = sendto_s(state->fd, buffer, BUFFER_SIZE, 0,
-        dest_addr, addrlen);
+        dest_addr, *addrlen);
 
     // we try this & then can't really do anything if it fails
     if (r < 0) {
@@ -498,11 +498,13 @@ int slw_process(slw_state_t* state,
         rcvwind->slot_filled[rcvwind->next] = 1;
         rcvwind->next = slw_advance(rcvwind->next, rcvwind);
         rcvwind->ack = rcvwind->next; // the next packet ID, go back N
+        slw_transmit_ack(state, rcvwind->next, socka, sockalen);
     } else if (slw_seq_less(pkt.id, rcvwind->next)){
 #ifdef UDP_DEBUG
         LINFO("packet id is invalid");
 #endif
         rcvwind->ack = pkt.id;  // the next packet ID, go back N
+        slw_transmit_ack(state, rcvwind->next, socka, sockalen);
         // ACK
     }
     // the packets ID is not valid, drop it
