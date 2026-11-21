@@ -277,6 +277,8 @@ int slw_loop(slw_state_t* state, struct sockaddr* addr, socklen_t addrlen) {
                 putchar('\n');
             }
             fflush(stdout);
+
+            // application must immediately transmit ACK reply
         }
     }
     return 0;

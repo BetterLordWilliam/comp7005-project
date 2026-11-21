@@ -1,7 +1,5 @@
 #include "udp_slw.h"
-#include <asm-generic/errno.h>
-#include <bits/time.h>
-#include <sys/socket.h>
+#include "common.h"
 
 
 static inline int slw_advance(int idx, slw_window_t* win) {
@@ -256,7 +254,33 @@ static int slw_retransmit(
         }
         curr = slw_advance(curr, win);
     }
+
+    state->timeout = slw_calc_timeout(state);
+
     return SLW_OK;
+}
+
+static int slw_transmit_ack(
+    slw_state_t* state, uint8_t ack,
+    const struct sockaddr* dest_addr, socklen_t addrlen
+) {
+    // create a pure ACK packet
+    slw_packet_t pkt;
+    slw_init_packet(&pkt, 0, ack, 0, NULL, 0);
+
+    // write the packet to a network segment
+    char buffer[BUFFER_SIZE];
+    slw_write_packet(buffer, BUFFER_SIZE, &pkt);
+    ssize_t r = sendto_s(state->fd, buffer, BUFFER_SIZE, 0,
+        dest_addr, addrlen);
+
+    // we try this & then can't really do anything if it fails
+    if (r < 0) {
+#ifdef UDP_DEBUG
+        LERROR("failed to transmit pure ACK %d", ack);
+#endif
+    }
+    return 0;
 }
 
 
@@ -396,7 +420,7 @@ int slw_process(slw_state_t* state,
                 curr_time, state->timeout);
 #endif
             slw_retransmit(state, socka, *sockalen);
-            state->timeout = slw_calc_timeout(state);
+            // state->timeout = slw_calc_timeout(state);
         }
     }
 
@@ -440,6 +464,9 @@ int slw_process(slw_state_t* state,
         && !slw_seq_less(pkt.ack, sndwind->base)
         &&  slw_seq_less(pkt.ack, sndwind->next);
     if (ack_in_window) {
+#ifdef UDP_DEBUG
+        LINFO("ACK is in the transmission window");
+#endif
         while (sndwind->base != pkt.ack) {
             sndwind->slot_filled[sndwind->base] = 0;
             sndwind->base = slw_advance(sndwind->base, sndwind);
