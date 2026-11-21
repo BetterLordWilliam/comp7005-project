@@ -173,14 +173,14 @@ int slw_init(slw_state_t* state, int fd, int window_slots, int timeoutdur)
     state->timeout      = 0;
 
     state->rcvwind = (slw_window_t){
-        .slots  = state->slots,
+        .slots  = SLW_MAX_SLOTS,
         .length = 1,
         .base   = 0,
         .next   = 0,
         .ack    = 0
     };
     state->sndwind = (slw_window_t){
-        .slots  = state->slots,
+        .slots  = SLW_MAX_SLOTS,
         .length = min((state->slots - 1), SLW_MAX_WIND_LEN),
         .base   = 0,
         .next   = 0,
@@ -475,8 +475,11 @@ int slw_process(slw_state_t* state,
     //      calculate a new timeout for the new base (oldest unacked packet)
     int ack_in_window = (sndwind->base != sndwind->next)
         && !slw_seq_less(pkt.ack, sndwind->base)
-        &&  slw_seq_less(pkt.ack, sndwind->next);
+        &&  (pkt.ack == sndwind->next || slw_seq_less(pkt.ack, sndwind->next));
     if (ack_in_window) {
+#ifdef UDP_DEBUG
+        LINFO("ACK is in the window");
+#endif
         while (sndwind->base != pkt.ack) {
             sndwind->slot_filled[sndwind->base] = 0;
             sndwind->base = slw_advance(sndwind->base, sndwind);
