@@ -54,9 +54,6 @@ static uint16_t slw_compute_checksum(
     for (int i = 0; i < body_len; i++) {
         sum += (uint8_t)body[i];
     }
-#ifdef UDP_DEBUG
-    LINFO("computed checksum value of %d", sum);
-#endif
     return (uint16_t)sum;
 }
 
@@ -345,7 +342,11 @@ ssize_t slw_send(slw_state_t* state, const char* buf, size_t bufsize,
             LERROR("faild to send packet");
 #endif
             return SLW_ERROR;
-        }   
+        }
+#ifdef UDP_DEBUG
+        LINFO("Packet { id: %d, ack: %d, checksum: %d, length: %d }",
+            pkt->id, rcvwind->ack, pkt->checksum, pkt->length );
+#endif
 
         offset += chunk_len;
         sent_count++;
@@ -398,7 +399,7 @@ ssize_t slw_recv(slw_state_t* state, char* buf, size_t bufSize
         rcvwind->slot_filled[rcvwind->base] = 0;
         rcvwind->base = slw_advance(rcvwind->base, rcvwind);
     }
-    rcvwind->ack = last_ack; // advanced by 1?
+    // rcvwind->ack = last_ack; // advanced by 1?
 
     return (ssize_t)total_copied;
 }
@@ -410,6 +411,15 @@ int slw_process(slw_state_t* state,
     slw_window_t* sndwind = &state->sndwind;
     slw_window_t* rcvwind = &state->rcvwind;
 
+#ifdef UDP_DEBUG
+    LINFO("\nprocess start\n\tsend window state\n\t\t"    \
+        "{ base: %d, next %d, ack: %d }\n\t"            \
+        "receive window state\n\t\t"                    \
+        "{ base: %d, next %d, ack: %d }",
+        sndwind->base, sndwind->next, sndwind->ack,
+        rcvwind->base, rcvwind->next, rcvwind->ack);
+#endif
+
     // check if the timeout has expired & trigger retransmission if so
     //      base != next, packets are in flight
     if (sndwind->base != sndwind->next) {
@@ -419,8 +429,7 @@ int slw_process(slw_state_t* state,
             LWARN("time %ld greater than timeout %ld triggering retransmission",
                 curr_time, state->timeout);
 #endif
-            slw_retransmit(state, socka, *sockalen);
-            // state->timeout = slw_calc_timeout(state);
+            // slw_retransmit(state, socka, *sockalen);
         }
     }
 
@@ -454,6 +463,10 @@ int slw_process(slw_state_t* state,
 #endif
         return SLW_OK;
     }
+#ifdef UDP_DEBUG
+    LINFO("Recevied Packet { id: %d, ack %d, checksum: %d, length %d }",
+        pkt.id, pkt.ack, pkt.checksum, pkt.length);
+#endif
 
     // send window updates
     // if the ACK is populated
@@ -464,9 +477,6 @@ int slw_process(slw_state_t* state,
         && !slw_seq_less(pkt.ack, sndwind->base)
         &&  slw_seq_less(pkt.ack, sndwind->next);
     if (ack_in_window) {
-#ifdef UDP_DEBUG
-        LINFO("ACK is in the transmission window");
-#endif
         while (sndwind->base != pkt.ack) {
             sndwind->slot_filled[sndwind->base] = 0;
             sndwind->base = slw_advance(sndwind->base, sndwind);
@@ -509,6 +519,15 @@ int slw_process(slw_state_t* state,
     }
     // the packets ID is not valid, drop it
     //      dont do anything special for now
+
+#ifdef UDP_DEBUG
+    LINFO("\nprocess end\n\tsend window state\n\t\t"    \
+        "{ base: %d, next %d, ack: %d }\n\t"            \
+        "receive window state\n\t\t"                    \
+        "{ base: %d, next %d, ack: %d }",
+        sndwind->base, sndwind->next, sndwind->ack,
+        rcvwind->base, rcvwind->next, rcvwind->ack);
+#endif
 
     return SLW_OK;
 }

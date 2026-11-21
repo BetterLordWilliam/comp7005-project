@@ -183,7 +183,7 @@ int slw_loop(slw_state_t* state, struct sockaddr* addr, socklen_t addrlen) {
         }
         if (ready == 0) {
 #ifdef UDP_DEBUG
-            LWARN("poll timeout");
+            // LWARN("poll timeout");
 #endif
         }
 
