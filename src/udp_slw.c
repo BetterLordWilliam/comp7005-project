@@ -483,6 +483,7 @@ int slw_process(slw_state_t* state,
     //      determine that the ACK is valid (ie its actually in the send window)
     //      advance the base of the send window
     //      calculate a new timeout for the new base (oldest unacked packet)
+    // abandon processing if its just an ACK
     int ack_not_in_window = (
         (pkt.ack < sndwind->base) &&
         (pkt.ack > sndwind->next)
@@ -498,6 +499,12 @@ int slw_process(slw_state_t* state,
         }
         if (sndwind->base != sndwind->next) {
             state->timeout = slw_calc_timeout(state);
+        }
+        if (pkt.length == 0) {
+#ifdef UDP_DEBUG
+            LINFO("pure ACK no receive window updates");
+#endif
+            return SLW_OK;
         }
     }
    
