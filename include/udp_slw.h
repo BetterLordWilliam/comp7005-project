@@ -92,6 +92,9 @@ ssize_t slw_recv(slw_state_t* state, char* buf, size_t bufSize);
 int slw_process(slw_state_t* state,
     struct sockaddr* socka, socklen_t* sockalen);
 
+int slw_retransmit(slw_state_t* state,
+    const struct sockaddr* dest_addr, socklen_t addrlen);
+
 
 
 int slw_window_empty(slw_window_t* wind);

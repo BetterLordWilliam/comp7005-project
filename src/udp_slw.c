@@ -236,7 +236,7 @@ int slw_window_empty(slw_window_t* wind) {
 }
 
 
-static int slw_retransmit(
+int slw_retransmit(
     slw_state_t* state, const struct sockaddr* dest_addr, socklen_t addrlen
 ) {
     slw_window_t *win = &state->sndwind;
