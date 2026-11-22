@@ -183,10 +183,24 @@ int slw_loop(slw_state_t* state, struct sockaddr* addr, socklen_t addrlen) {
         }
         if (ready == 0) {
 #ifdef UDP_DEBUG
-            LWARN("poll timeout");
-            slw_retransmit(state, addr, addrlen);
+            //LWARN("poll timeout");
 #endif
+            //slw_retransmit(state, addr, addrlen);
+            //continue;
         }
+
+        // sliding window processing
+        int process_result = slw_process(state, addr, &addrlen);
+        if (process_result != SLW_OK) {
+            if (process_result == SLW_EWOULDBLOCK) {
+#ifdef UDP_DEBUG
+                LWARN("poll returned but there was nothing to process on the socket");
+#endif
+            } else if (process_result == SLW_ERROR) {
+                break;
+            }
+        }
+
 
         /* stdin is independent: send each available line immediately. */
         if (watched[0].revents & (POLLIN | POLLHUP)) {
@@ -224,18 +238,6 @@ int slw_loop(slw_state_t* state, struct sockaddr* addr, socklen_t addrlen) {
 
         /* Echo reception is independent and never gates the next send. */
         if (watched[1].revents & POLLIN) {
-            // sliding window processing
-            int process_result = slw_process(state, addr, &addrlen);
-            if (process_result != SLW_OK) {
-                if (process_result == SLW_EWOULDBLOCK) {
-#ifdef UDP_DEBUG
-                    LWARN("poll returned but there was nothing to process on the socket");
-#endif
-                    continue;
-                } else if (process_result == SLW_ERROR) {
-                    break;
-                }
-            }
 
             // receive any server replies
             ssize_t receive_result = slw_recv(state, buffer, sizeof(buffer));

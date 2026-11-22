@@ -111,18 +111,37 @@ int slw_loop(slw_state_t* state, struct sockaddr* addr, socklen_t addrlen)
         .revents    = 0
     };
 
+    struct sockaddr_in peer;
+    socklen_t peer_length = sizeof(peer);
+
     for (;;) {
         pfd.revents = 0;
 
         char buffer[BUFFER_SIZE];
-        struct sockaddr_in peer;
-        socklen_t peer_length = sizeof(peer);
 
         int poll_result = poll_s(&pfd, 1, (slw_window_empty(&state->sndwind))
             ? -1 
             : state->timeoutdur);
         if (poll_result == -1) {
             return EXIT_FAILURE;
+        } else if (poll_result == 0) {
+#ifdef UDP_DEBUG
+            //LWARN("poll timeout");
+#endif
+            //slw_retransmit(state, (struct sockaddr*)&peer, peer_length);
+            //continue;
+        }
+
+        // process the sliding windows
+        int process_result = slw_process(state, (struct sockaddr*)&peer, &peer_length);
+        if (!(process_result == SLW_OK)) {
+            if (process_result == SLW_EWOULDBLOCK) {
+#ifdef UDP_DEBUG                
+                LWARN("poll returned but there was nothing to process on the socket");            
+#endif
+            } else if (process_result == SLW_ERROR) {
+                return EXIT_FAILURE;
+            }
         }
 
         // receive data from the client peer
@@ -130,18 +149,6 @@ int slw_loop(slw_state_t* state, struct sockaddr* addr, socklen_t addrlen)
         //      poll time out (poll_result == 0) would seperately trigger slw_retransmit
         if (pfd.revents & (POLLIN)) {
 
-            // process the sliding windows
-            int process_result = slw_process(state, (struct sockaddr*)&peer, &peer_length);
-            if (!(process_result == SLW_OK)) {
-                if (process_result == SLW_EWOULDBLOCK) {
-#ifdef UDP_DEBUG                
-                    LWARN("poll returned but there was nothing to process on the socket");            
-#endif
-                    continue;
-                } else if (process_result == SLW_ERROR) {
-                    return EXIT_FAILURE;
-                }
-            }
 
             // receive the clients incoming message
             ssize_t receive_result = slw_recv(state, buffer, sizeof(buffer));
@@ -241,7 +248,7 @@ int main(int argc, char **argv)
     // [WO] slw server state
     int slots = 5;
     slw_state_t state = { 0 };
-    slw_init(&state, server_fd, slots, 1000);
+    slw_init(&state, server_fd, slots, 2000);
 
     LINFO("SLW STATE: { fd: %d, slots: %d }", state.fd, state.slots);
     LINFO("SLW SNDWIND STATE: { slots: %d, length: %d }",

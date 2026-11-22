@@ -103,7 +103,7 @@ static int slw_read_packet(
     );
     if (computed != pkt->checksum) {
 #ifdef UDP_DEBUG
-        LERROR("packet checksum did not match calculated checksum");
+        LWARN("packet checksum did not match calculated checksum");
 #endif
         return 0;
     }
@@ -271,6 +271,10 @@ static int slw_transmit_ack(
     slw_packet_t pkt;
     slw_init_packet(&pkt, 0, ack, 0, NULL, 0);
 
+#ifdef UDP_DEBUG
+    LINFO("Transmit pure ACK { id: %d, ack: %d }", pkt.id, pkt.ack);
+#endif
+
     // write the packet to a network segment
     char buffer[BUFFER_SIZE];
     slw_write_packet(buffer, BUFFER_SIZE, &pkt);
@@ -435,7 +439,7 @@ int slw_process(slw_state_t* state,
             LWARN("time %ld greater than timeout %ld triggering retransmission",
                 curr_time, state->timeout);
 #endif
-            // slw_retransmit(state, socka, *sockalen);
+            slw_retransmit(state, socka, *sockalen);
         }
     }
 
@@ -509,7 +513,7 @@ int slw_process(slw_state_t* state,
     //      append the packet to the rcvwind
     //      advance the rcvwind next pointer
     //
-    // else if the packet id has already been acknowledge (< base)
+    // else if the packet id has already been acknowledge
     //      transmit a pure ACK for that packet 
     if (pkt.id == rcvwind->next) {
 #ifdef UDP_DEBUG
@@ -524,7 +528,6 @@ int slw_process(slw_state_t* state,
 #ifdef UDP_DEBUG
         LINFO("packet id is invalid");
 #endif
-        rcvwind->ack = pkt.id;  // the next packet ID, go back N
         slw_transmit_ack(state, rcvwind->next, socka, sockalen);
         // ACK
     }
