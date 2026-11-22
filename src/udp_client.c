@@ -345,7 +345,7 @@ int main(int argc, char **argv)
 
 
     // [WO] slw client state
-    int slots = 256;
+    int slots = 5;
     slw_state_t state = { 0 };
     slw_init(&state, client_fd, slots, 400);
 
