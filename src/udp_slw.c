@@ -1,18 +1,21 @@
 #include "udp_slw.h"
-#include "common.h"
 
 
 static inline int slw_advance(int idx, slw_window_t* win) {
     return abs(idx + 1) % win->slots;
 }
 
+/*
 static inline int slw_retreat(int idx, slw_window_t* win) {
     return abs(idx - 1) % win->slots;
 }
+*/
 
+/*
 static inline int slw_advancen(int idx, int n, slw_window_t* win) {
     return (idx + n) % win->slots;
 }
+*/
 
 static inline int slw_seq_less(uint8_t a, uint8_t b) {
     return (
@@ -373,7 +376,7 @@ ssize_t slw_send(slw_state_t* state, const char* buf, size_t bufsize,
 ssize_t slw_recv(slw_state_t* state, char* buf, size_t bufSize
 ) {
     slw_window_t* rcvwind = &state->rcvwind;
-    slw_window_t* sndwind = &state->sndwind;
+    // slw_window_t* sndwind = &state->sndwind;
 
     // return would block if the receive queue is empty
     // the receive queue is empty if next == base
@@ -385,7 +388,7 @@ ssize_t slw_recv(slw_state_t* state, char* buf, size_t bufSize
     }
 
     size_t total_copied = 0;
-    uint8_t last_ack = rcvwind->ack;
+    // uint8_t last_ack = rcvwind->ack;
     int curr = rcvwind->base;
 
     // copy what can fit into the users supplied buffer
@@ -396,7 +399,7 @@ ssize_t slw_recv(slw_state_t* state, char* buf, size_t bufSize
         }
         memcpy(buf + total_copied, pkt->data, pkt->length);
         total_copied += pkt->length;
-        last_ack = pkt->ack;
+        // last_ack = pkt->ack;
         curr = slw_advance(curr, rcvwind);
     }
 
