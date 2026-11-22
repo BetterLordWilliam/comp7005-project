@@ -4,6 +4,9 @@
 #include <sys/socket.h>
 #include <unistd.h>
 
+#include "udp_saw.h"
+#include "udp_slw.h"
+
 /*      SERVER STARTER CODE LOOP
 for (;;) {
     unsigned char buffer[BUFFER_SIZE];
@@ -39,16 +42,13 @@ for (;;) {
 }
 */
 
-#include "udp_saw.h"
-#include "udp_slw.h"
-
+/*
 struct saw_sstate {
     int server_fd;
 };
-
-/**
-SAW specific application loop
 */
+
+/*
 int saw_loop(struct saw_sstate* sstate)
 {
     saw_state_t ssstate; saw_initState(&ssstate);
@@ -58,16 +58,6 @@ int saw_loop(struct saw_sstate* sstate)
 
     for (;;) {
         char buffer[BUFFER_SIZE];
-        //struct sockaddr_in peer;
-        //socklen_t peer_length = sizeof(peer);
-        /*
-        ssize_t length = recvfrom(sstate->server_fd,
-                                  buffer,
-                                  sizeof(buffer),
-                                  0,
-                                  (struct sockaddr *)&peer,
-                                  &peer_length);
-        */
         int length = saw_recv(sstate->server_fd, &ssstate,
             buffer, sizeof(buffer));
         if (length == -1) {
@@ -86,15 +76,6 @@ int saw_loop(struct saw_sstate* sstate)
         }
         fflush(stdout);
 
-        /*
-        if (sendto(sstate->server_fd,
-                   buffer,
-                   (size_t)length,
-                   0,
-                   (struct sockaddr *)&peer,
-                   peer_length) == -1) {
-            perror("sendto");
-        }*/
         if (saw_send(sstate->server_fd, &ssstate,
                 buffer, length) == -1) {
             LINFO("error sending the echo message");
@@ -102,9 +83,12 @@ int saw_loop(struct saw_sstate* sstate)
         continue;
     }
 }
+*/
 
 int slw_loop(slw_state_t* state, struct sockaddr* addr, socklen_t addrlen)
 {
+    (void)addr; (void)addrlen;
+
     struct pollfd pfd = {
         .fd         = state->fd,
         .events     = POLLIN,
@@ -122,15 +106,8 @@ int slw_loop(slw_state_t* state, struct sockaddr* addr, socklen_t addrlen)
         int poll_result = poll_s(&pfd, 1, (slw_window_empty(&state->sndwind))
             ? -1 
             : state->timeoutdur);
-        // int poll_result = poll_s(&pfd, 1, state->timeoutdur);
         if (poll_result == -1) {
             return EXIT_FAILURE;
-        } else if (poll_result == 0) {
-#ifdef UDP_DEBUG
-            //LWARN("poll timeout");
-#endif
-            //slw_retransmit(state, (struct sockaddr*)&peer, peer_length);
-            //continue;
         }
 
         // process the sliding windows
@@ -168,10 +145,7 @@ int slw_loop(slw_state_t* state, struct sockaddr* addr, socklen_t addrlen)
                     continue;
                 }
             }
-            /*
-            int length = saw_recv(sstate->server_fd, &ssstate,
-                buffer, sizeof(buffer));
-            */
+
             /* APPLICATION */
             printf("received: ");
             fwrite(buffer, 1, (size_t)receive_result, stdout);
@@ -179,12 +153,6 @@ int slw_loop(slw_state_t* state, struct sockaddr* addr, socklen_t addrlen)
                 putchar('\n');
             }
             fflush(stdout);
-            /*
-            if (saw_send(sstate->server_fd, &ssstate,
-                    buffer, length) == -1) {
-                LINFO("error sending the echo message");
-            }
-            */
 
             // transmit the reply message
             ssize_t send_result = slw_send(state, buffer, (size_t)receive_result,
@@ -239,12 +207,16 @@ int main(int argc, char **argv)
 
    
     // [WO] saw server state
-    /*struct saw_sstate sstate = { 0 };
+    /*
+    struct saw_sstate sstate = { 0 };
     sstate.server_fd = server_fd;
+    */
 
+    // [WO] saw server loop
+    /*
     int r = saw_loop(&sstate);
-    (void)r;*/
-
+    (void)r;
+    */
 
     // [WO] slw server state
     int slots = 5;
@@ -257,11 +229,14 @@ int main(int argc, char **argv)
     LINFO("SLW RCVWIND STATE: { slots: %d, length: %d }",
         state.rcvwind.slots, state.rcvwind.length);
 
+    // [WO] slw server loop
     int r = slw_loop(&state, (struct sockaddr*)&local, sizeof(local));
-    (void)r;
    
     slw_free(&state); 
     close(server_fd);
+
+    if (r == EXIT_FAILURE)
+        return EXIT_FAILURE;
     
-    return 0;
+    return EXIT_SUCCESS;
 }
