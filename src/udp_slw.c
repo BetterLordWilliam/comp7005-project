@@ -240,12 +240,15 @@ int slw_retransmit(
     slw_state_t* state, const struct sockaddr* dest_addr, socklen_t addrlen
 ) {
     slw_window_t *win = &state->sndwind;
+    slw_window_t *rwin = &state->rcvwind;
     int curr = win->base;
 
     while (curr != win->next) {
         if (win->slot_filled[curr]) {
             char raw_buf[BUFFER_SIZE];
-            slw_write_packet(raw_buf, BUFFER_SIZE, &win->packets[curr]);
+            slw_packet_t* pkt = &win->packets[curr];
+            pkt->ack = rwin->ack;
+            slw_write_packet(raw_buf, BUFFER_SIZE, pkt);
             ssize_t r = sendto_s(
                 state->fd, raw_buf, slw_packet_size(&win->packets[curr]), 0, dest_addr, addrlen);
             if (r == -1) {
@@ -484,10 +487,8 @@ int slw_process(slw_state_t* state,
     //      advance the base of the send window
     //      calculate a new timeout for the new base (oldest unacked packet)
     // abandon processing if its just an ACK
-    int ack_not_in_window = (
-        (pkt.ack < sndwind->base) &&
-        (pkt.ack > sndwind->next)
-    ) || sndwind->base == sndwind->next;
+    int ack_not_in_window = (pkt.ack <= sndwind->base || pkt.ack > sndwind->next)
+        && (sndwind->next == sndwind->base);
     int ack_in_window = !ack_not_in_window;
     if (ack_in_window) {
 #ifdef UDP_DEBUG
@@ -530,7 +531,7 @@ int slw_process(slw_state_t* state,
         rcvwind->slot_filled[rcvwind->next] = 1;
         rcvwind->next = slw_advance(rcvwind->next, rcvwind);
         rcvwind->ack = rcvwind->next; // the next packet ID, go back N
-        slw_transmit_ack(state, rcvwind->next, socka, sockalen);
+        // slw_transmit_ack(state, rcvwind->next, socka, sockalen);
     } else if (slw_seq_less(pkt.id, rcvwind->next)){
 #ifdef UDP_DEBUG
         LINFO("packet id is invalid");

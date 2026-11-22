@@ -122,6 +122,7 @@ int slw_loop(slw_state_t* state, struct sockaddr* addr, socklen_t addrlen)
         int poll_result = poll_s(&pfd, 1, (slw_window_empty(&state->sndwind))
             ? -1 
             : state->timeoutdur);
+        // int poll_result = poll_s(&pfd, 1, state->timeoutdur);
         if (poll_result == -1) {
             return EXIT_FAILURE;
         } else if (poll_result == 0) {
@@ -246,9 +247,9 @@ int main(int argc, char **argv)
 
 
     // [WO] slw server state
-    int slots = 5;
+    int slots = 256;
     slw_state_t state = { 0 };
-    slw_init(&state, server_fd, slots, 1000);
+    slw_init(&state, server_fd, slots, 400);
 
     LINFO("SLW STATE: { fd: %d, slots: %d }", state.fd, state.slots);
     LINFO("SLW SNDWIND STATE: { slots: %d, length: %d }",

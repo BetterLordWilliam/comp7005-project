@@ -345,9 +345,9 @@ int main(int argc, char **argv)
 
 
     // [WO] slw client state
-    int slots = 5;
+    int slots = 256;
     slw_state_t state = { 0 };
-    slw_init(&state, client_fd, slots, 1000);
+    slw_init(&state, client_fd, slots, 400);
 
     LINFO("SLW STATE: { fd: %d, slots: %d }", state.fd, state.slots);
     LINFO("SLW SNDWIND STATE: { slots: %d, length: %d }",
