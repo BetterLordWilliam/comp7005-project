@@ -1,6 +1,18 @@
 #ifndef UDP_SLW
 #define UDP_SLW
 
+/*
+Implementation Notes & Resources
+Will Otterbein
+
+Useful Resources
+
+- https://www.rfc-editor.org/info/rfc1982/
+    - serial number arithmetic
+    - comparison of ACK / SEQ numbers useful to simplify window operations
+    - example 5.2 is my exact use case regarding serial arithmetic
+*/
+
 #include <stdint.h>
 #include <time.h>
 #include <unistd.h>
@@ -9,6 +21,7 @@
 #include <sys/socket.h>
 #include <netinet/ip.h>
 #include <arpa/inet.h>
+#include <math.h>
 
 #ifdef UDP_DEBUG
 #include <assert.h>
@@ -17,9 +30,10 @@
 #include "common.h"
 
 
-#define SLW_HEADER      ((uint16_t)7)
-#define SLW_MAX_PAYLOAD (BUFFER_SIZE - SLW_HEADER)
-
+#define SLW_HEADER          ((uint16_t)7)
+#define SLW_MAX_PAYLOAD     (BUFFER_SIZE - SLW_HEADER)
+#define SLW_MAX_SLOTS       (256)
+#define SLW_MAX_WIND_LEN    ((SLW_MAX_SLOTS/2) - 1)
 
 typedef enum slw_error_code {
     SLW_OK = 0,
@@ -76,8 +90,14 @@ ssize_t slw_send(slw_state_t* state, const char* buf, size_t bufsize,
 ssize_t slw_recv(slw_state_t* state, char* buf, size_t bufSize);
 
 int slw_process(slw_state_t* state,
-    const struct sockaddr* socka, socklen_t sockalen);
+    struct sockaddr* socka, socklen_t* sockalen);
 
+int slw_retransmit(slw_state_t* state,
+    const struct sockaddr* dest_addr, socklen_t addrlen);
+
+
+
+int slw_window_empty(slw_window_t* wind);
 
 #endif
 

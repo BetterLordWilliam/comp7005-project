@@ -171,10 +171,36 @@ int slw_loop(slw_state_t* state, struct sockaddr* addr, socklen_t addrlen) {
         watched[0].revents = 0;
         watched[1].revents = 0;
 
-        int ready = poll_s(watched, 2, -1);
+        // if sndwind is not empty
+        //      infinite poll waiting for data from stdin
+        // otherwise
+        //      poll duration should be the timeout duration
+        int ready = poll_s(watched, 2, (slw_window_empty(&state->sndwind))
+            ? -1
+            : state->timeoutdur);
         if (ready == -1) {
             return EXIT_FAILURE;
         }
+        if (ready == 0) {
+#ifdef UDP_DEBUG
+            //LWARN("poll timeout");
+#endif
+            //slw_retransmit(state, addr, addrlen);
+            //continue;
+        }
+
+        // sliding window processing
+        int process_result = slw_process(state, addr, &addrlen);
+        if (process_result != SLW_OK) {
+            if (process_result == SLW_EWOULDBLOCK) {
+#ifdef UDP_DEBUG
+                LWARN("poll returned but there was nothing to process on the socket");
+#endif
+            } else if (process_result == SLW_ERROR) {
+                break;
+            }
+        }
+
 
         /* stdin is independent: send each available line immediately. */
         if (watched[0].revents & (POLLIN | POLLHUP)) {
@@ -191,10 +217,46 @@ int slw_loop(slw_state_t* state, struct sockaddr* addr, socklen_t addrlen) {
                 // return EXIT_FAILURE;
             }
             */
+
+            // submit new messages to the server
+            ssize_t send_result = slw_send(state, buffer, length, addr, addrlen);
+            if (send_result == SLW_EWOULDBLOCK) {
+#ifdef UDP_DEBUG
+                LWARN("new message dropped send window is full");
+#endif
+                continue;
+            } else if (send_result < 0) {
+#ifdef UDP_DEBUG
+                LERROR("send failed");
+#endif
+                return EXIT_FAILURE;
+            }
+#ifdef UDP_DEBUG
+            LINFO("sent %ld bytes", send_result);
+#endif
         }
 
         /* Echo reception is independent and never gates the next send. */
         if (watched[1].revents & POLLIN) {
+
+            // receive any server replies
+            ssize_t receive_result = slw_recv(state, buffer, sizeof(buffer));
+            if (!(receive_result > 0)) {
+                if (receive_result == SLW_EWOULDBLOCK) {
+#ifdef UDP_DEBUG
+                    LWARN("rcvwind is empty nothing to receive");
+#endif
+                    continue;
+                } else if (receive_result == SLW_EBUFSIZE) {
+#ifdef UDP_DEBUG
+                    LWARN("buffer not large enough to contain at least 1 packet data\n\trecommend resize the buffer");
+#endif
+                    // [WO] this is not a great 'solution' to this issue because this will lead to
+                    // a lot of retransmissions
+                    continue;
+                }
+            }
+
             /*
             int received = saw_recv(cstate->client_fd, &scstate,
                 buffer, sizeof(buffer));
@@ -211,14 +273,15 @@ int slw_loop(slw_state_t* state, struct sockaddr* addr, socklen_t addrlen) {
             */
 
         
-            /* APPLICATION
+            /* APPLICATION */
             printf("echo: ");
-            fwrite(buffer, 1, (size_t)received, stdout);
-            if (received == 0 || buffer[received - 1] != '\n') {
+            fwrite(buffer, 1, (size_t)receive_result, stdout);
+            if (receive_result == 0 || buffer[receive_result - 1] != '\n') {
                 putchar('\n');
             }
             fflush(stdout);
-            */
+
+            // application must immediately transmit ACK reply
         }
     }
     return 0;
@@ -284,7 +347,13 @@ int main(int argc, char **argv)
     // [WO] slw client state
     int slots = 5;
     slw_state_t state = { 0 };
-    slw_init(&state, client_fd, slots, 1000);
+    slw_init(&state, client_fd, slots, 400);
+
+    LINFO("SLW STATE: { fd: %d, slots: %d }", state.fd, state.slots);
+    LINFO("SLW SNDWIND STATE: { slots: %d, length: %d }",
+        state.sndwind.slots, state.sndwind.length);
+    LINFO("SLW RCVWIND STATE: { slots: %d, length: %d }",
+        state.rcvwind.slots, state.rcvwind.length);
 
     int r = slw_loop(&state, (struct sockaddr*)&network, sizeof(network));
     (void)r;
