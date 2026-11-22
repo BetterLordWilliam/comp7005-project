@@ -278,7 +278,7 @@ static int slw_transmit_ack(
     // write the packet to a network segment
     char buffer[BUFFER_SIZE];
     slw_write_packet(buffer, BUFFER_SIZE, &pkt);
-    ssize_t r = sendto_s(state->fd, buffer, BUFFER_SIZE, 0,
+    ssize_t r = sendto_s(state->fd, buffer, slw_packet_size(&pkt), 0,
         dest_addr, *addrlen);
 
     // we try this & then can't really do anything if it fails
