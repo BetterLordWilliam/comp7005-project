@@ -1,4 +1,5 @@
 #include "udp_slw.h"
+#include "common.h"
 
 
 static inline int slw_advance(int idx, slw_window_t* win) {
@@ -46,8 +47,28 @@ static inline time_t slw_time_ms(void) {
 }
 
 static inline time_t slw_calc_timeout(slw_state_t* state) {
-    time_t time_ms = slw_time_ms();
-    return time_ms + state->timeoutdur;
+    // time_t time_ms = slw_time_ms();
+    // return time_ms + state->timeoutdur;
+ 
+    time_t nrttv = (state->rttv != 0)
+        ? (3/4)*(state->rttv) + (1/4)*(state->rtt - state->srtt)
+        : (state->rtt)/2;
+    time_t nsrtt = (state->srtt != 0)
+        ? (7/8)*(state->srtt) + (1/8)*(state->rtt)
+        : (state->rtt);
+    time_t ntimeoutdur = nsrtt + max(SLW_MIN_TIMEOUT_MS, 4 * nrttv);
+
+    state->srtt = nsrtt;
+    state->rttv = nrttv;
+    state->timeoutdur = ntimeoutdur;
+
+    time_t ntimeout = slw_time_ms() + state->timeoutdur;
+    state->timeout = ntimeout;
+    return ntimeout;
+}
+
+static inline void slw_update_rtt(slw_state_t* state) {
+    state->rtt = slw_time_ms() - state->senttime;
 }
 
 
@@ -178,8 +199,11 @@ int slw_init(slw_state_t* state, int fd, int window_slots, int timeoutdur)
 {
     state->fd           = fd;
     state->slots        = min(window_slots, SLW_MAX_SLOTS);
+
     state->timeoutdur   = timeoutdur;
     state->timeout      = 0;
+    state->senttime     = 0;
+    state->rtt = state->rttv = state->srtt = 0;
 
     state->rcvwind = (slw_window_t){
         .slots  = SLW_MAX_SLOTS,
@@ -260,11 +284,14 @@ int slw_retransmit(
 #endif
                 return SLW_ERROR;
             }
+            // update oldest unacked timeout
+            if (curr == win->base) {
+                state->senttime = slw_time_ms();
+                slw_calc_timeout(state);
+            }
         }
         curr = slw_advance(curr, win);
     }
-
-    state->timeout = slw_calc_timeout(state);
 
     return SLW_OK;
 }
@@ -343,8 +370,10 @@ ssize_t slw_send(slw_state_t* state, const char* buf, size_t bufsize,
         sndwind->next = candidate_next;
 
         // if first unacked packet calculate the timeout
-        if (curr == sndwind->base)
-            state->timeout = slw_calc_timeout(state);
+        if (curr == sndwind->base) {
+            state->senttime = slw_time_ms();
+            slw_calc_timeout(state);
+        }
 
         // write the packet to a network segment buffer
         char net_segment[BUFFER_SIZE];
@@ -428,7 +457,7 @@ int slw_process(slw_state_t* state,
     slw_window_t* rcvwind = &state->rcvwind;
 
 #ifdef UDP_DEBUG
-    LINFO("\nprocess start\n\tsend window state\n\t\t"    \
+    LINFO("\nprocess start\n\tsend window state\n\t\t"  \
         "{ base: %d, next %d, ack: %d }\n\t"            \
         "receive window state\n\t\t"                    \
         "{ base: %d, next %d, ack: %d }",
@@ -436,8 +465,9 @@ int slw_process(slw_state_t* state,
         rcvwind->base, rcvwind->next, rcvwind->ack);
 #endif
 
-    // check if the timeout has expired & trigger retransmission if so
-    //      base != next, packets are in flight
+    // if the send window is not empty
+    // & the current time has exceeded the timeout
+    //      trigger retransmission
     if (sndwind->base != sndwind->next) {
         time_t curr_time = slw_time_ms();
         if (curr_time >= state->timeout) {
@@ -500,12 +530,14 @@ int slw_process(slw_state_t* state,
 #ifdef UDP_DEBUG
         LINFO("ACK is in the window");
 #endif
+        // update the round trip time
+        slw_update_rtt(state);
         while (sndwind->base != pkt.ack) {
             sndwind->slot_filled[sndwind->base] = 0;
             sndwind->base = slw_advance(sndwind->base, sndwind);
         }
         if (sndwind->base != sndwind->next) {
-            state->timeout = slw_calc_timeout(state);
+            slw_calc_timeout(state);
         }
         if (pkt.length == 0) {
 #ifdef UDP_DEBUG
