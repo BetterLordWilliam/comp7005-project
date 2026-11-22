@@ -179,14 +179,14 @@ int slw_init(slw_state_t* state, int fd, int window_slots, int timeoutdur)
     state->timeout      = 0;
 
     state->rcvwind = (slw_window_t){
-        .slots  = SLW_MAX_SLOTS,
+        .slots  = state->slots,
         .length = 1,
         .base   = 0,
         .next   = 0,
         .ack    = 0
     };
     state->sndwind = (slw_window_t){
-        .slots  = SLW_MAX_SLOTS,
+        .slots  = state->slots,
         .length = min((state->slots - 1), SLW_MAX_WIND_LEN),
         .base   = 0,
         .next   = 0,
@@ -479,9 +479,11 @@ int slw_process(slw_state_t* state,
     //      determine that the ACK is valid (ie its actually in the send window)
     //      advance the base of the send window
     //      calculate a new timeout for the new base (oldest unacked packet)
-    int ack_in_window = (sndwind->base != sndwind->next)
-        && !slw_seq_less(pkt.ack, sndwind->base)
-        &&  (pkt.ack == sndwind->next || slw_seq_less(pkt.ack, sndwind->next));
+    int ack_not_in_window = (
+        (pkt.ack < sndwind->base) &&
+        (pkt.ack > sndwind->next)
+    ) || sndwind->base == sndwind->next;
+    int ack_in_window = !ack_not_in_window;
     if (ack_in_window) {
 #ifdef UDP_DEBUG
         LINFO("ACK is in the window");
