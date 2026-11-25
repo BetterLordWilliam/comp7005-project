@@ -1,31 +1,77 @@
 CC := gcc
-CFLAGS := -std=c17 -Wall -Wextra -Wpedantic -O2
+CFLAGS := -std=gnu17 -Wall -Wextra -Wpedantic -O2 -Iinclude
 
 .RECIPEPREFIX = >
 .PHONY: all build clean
 
 
-BUILD_DIR = build
-SRC_DIR = src
+BUILD_DIR = ./build
+SRC_DIR = ./src
 
 
-all: build
+all: build_project
 
-build: network udp_server udp_client
+debug: CFLAGS += -g
+debug: CFLAGS += -DUDP_DEBUG
+debug: build_project
 
+
+test: build_project_tester
+
+debug_test: CFLAGS += -g
+debug_test: CFLAGS += -DUDP_DEBUG
+debug_test: build_project_tester
+
+
+build_project: $(BUILD_DIR) common udp_saw udp_slw network udp_server udp_client
+
+build_project_tester: $(BUILD_DIR) common udp_saw udp_slw udp_tester
+
+
+# "libraries"
+
+common: $(SRC_DIR)/common.c
+> $(CC) $(CFLAGS) $(SRC_DIR)/common.c -c -o $(BUILD_DIR)/common.o
+
+udp_saw: $(SRC_DIR)/udp_saw.c
+> $(CC) $(CFLAGS) $(SRC_DIR)/udp_saw.c -c -o $(BUILD_DIR)/udp_saw.o
+
+udp_slw: $(SRC_DIR)/udp_slw.c
+> $(CC) $(CFLAGS) $(SRC_DIR)/udp_slw.c -c -o $(BUILD_DIR)/udp_slw.o
+
+# binaries
 
 network: $(SRC_DIR)/network.c
-> $(CC) $(CFLAGS) $(SRC_DIR)/network.c -o $(BUILD_DIR)/network
+> $(CC) $(CFLAGS) $(BUILD_DIR)/*.o $(SRC_DIR)/network.c -o $(BUILD_DIR)/network
 
 udp_server: $(SRC_DIR)/udp_server.c
-> $(CC) $(CFLAGS) $(SRC_DIR)/udp_server.c -o $(BUILD_DIR)/udp_server
+> $(CC) $(CFLAGS) $(BUILD_DIR)/*.o $(SRC_DIR)/udp_server.c -o $(BUILD_DIR)/udp_server
 
 udp_client: $(SRC_DIR)/udp_client.c
-> $(CC) $(CFLAGS) $(SRC_DIR)/udp_client.c -o $(BUILD_DIR)/udp_client
+> $(CC) $(CFLAGS) $(BUILD_DIR)/*.o $(SRC_DIR)/udp_client.c -o $(BUILD_DIR)/udp_client
+
+udp_tester: $(SRC_DIR)/udp_tester.c
+> $(CC) $(CFLAGS) $(BUILD_DIR)/*.o $(SRC_DIR)/udp_tester.c -o $(BUILD_DIR)/udp_tester
 
 
-clean:
-> rm $(BUILD_DIR)/network
-> rm $(BUILD_DIR)/udp_server
-> rm $(BUILD_DIR)/udp_client
+# locations
+
+$(BUILD_DIR):
+> mkdir -p $(BUILD_DIR)
+
+
+# utilities
+
+clean: clean_obj clean_bin
+
+clean_bin:
+>- rm $(BUILD_DIR)/udp_server
+>- rm $(BUILD_DIR)/udp_client
+
+clean_obj:
+>- rm $(BUILD_DIR)/*.o
+
+# kinda dangerous
+dclean:
+> echo "rm $(BUILD_DIR)/*"
 
