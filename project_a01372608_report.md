@@ -102,7 +102,7 @@ sequenceDiagram
 
 From a calling applications perspective, the three most important primitives that the protocol library exposes are `slw_send`, `slw_recv`, `slw_process`. Other interfaces are exposed to calling applications, `slw_init` & `slw_free` protocol state initializers/"uninitializers", and the `slw_window_empty` function, but these functions are helpful utilities have a limited role compared to the three aforementioned primitives.
 
-Rather than meticulously comb over every function in the library, we will discuss the implementation of SLW in terms of the implementation of the three primitives & how the `udp_server` & `udp_client` applications were modified to use the SLW protocol, instead of pure UDP.
+Rather than meticulously comb over every function in the SLW library, we will discuss the implementation of SLW in terms of the implementation of the three primitives & how the `udp_server` & `udp_client` applications were modified to use the SLW protocol, instead of pure UDP.
 
 
 ### `slw_send`
