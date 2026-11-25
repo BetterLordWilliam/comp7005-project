@@ -210,14 +210,14 @@ int slw_init(slw_state_t* state, int fd, int window_slots, int timeoutdur)
         .length = 1,
         .base   = 0,
         .next   = 0,
-        .ack    = 0
+        .ack    = -1
     };
     state->sndwind = (slw_window_t){
         .slots  = SLW_MAX_SLOTS,
         .length = min((state->slots - 1), SLW_MAX_WIND_LEN),
         .base   = 0,
         .next   = 0,
-        .ack    = 0,
+        .ack    = -1,
     };
 
     state->rcvwind.slot_filled = (int*)calloc(
@@ -274,7 +274,11 @@ int slw_retransmit(
         if (win->slot_filled[curr]) {
             char raw_buf[BUFFER_SIZE];
             slw_packet_t* pkt = &win->packets[curr];
-            pkt->ack = rwin->ack;
+            // this may have changed so check & set
+            if (rwin->ack > 0) {
+                pkt->flags |= SLW_F_ACK;
+                pkt->ack = rwin->ack;
+            }
             slw_write_packet(raw_buf, BUFFER_SIZE, pkt);
             ssize_t r = sendto_s(
                 state->fd, raw_buf, slw_packet_size(&win->packets[curr]), 0, dest_addr, addrlen);
@@ -303,6 +307,7 @@ static int slw_transmit_ack(
     // create a pure ACK packet
     slw_packet_t pkt;
     slw_init_packet(&pkt, 0, ack, 0, NULL, 0);
+    pkt.flags |= SLW_F_ACK;
 
 #ifdef UDP_DEBUG
     LINFO("Transmit pure ACK { id: %d, ack: %d }", pkt.id, pkt.ack);
@@ -363,6 +368,9 @@ ssize_t slw_send(slw_state_t* state, const char* buf, size_t bufsize,
             0,
             buf + offset,
             chunk_len); // if the remaining number of user bytes < max payload
+        pkt->flags |= SLW_F_DAT;
+        if (rcvwind->ack > 0)
+            pkt->flags |= SLW_F_ACK;
         sndwind->slot_filled[sndwind->next] = 1;
 
         // advance the next pointer
@@ -497,7 +505,7 @@ int slw_process(slw_state_t* state,
 #ifdef UDP_DEBUG
         LWARN("invalid packet dropped\n\tpacket size was less than slw header size");
 #endif
-        return SLW_OK;
+        goto ok_return;
     }
 
     // parse the packet
@@ -507,7 +515,7 @@ int slw_process(slw_state_t* state,
 #ifdef UDP_DEBUG
         LWARN("invalid packet dropped\n\tpacket parse failed");
 #endif
-        return SLW_OK;
+        goto ok_return;
     }
 #ifdef UDP_DEBUG
     LINFO("Recevied Packet { id: %d, ack %d, checksum: %d, length %d }",
@@ -520,7 +528,7 @@ int slw_process(slw_state_t* state,
     //      advance the base of the send window
     //      calculate a new timeout for the new base (oldest unacked packet)
     // abandon processing if its just an ACK
-    int ack_not_in_window = (
+    int ack_not_in_window = (!(pkt.flags & SLW_F_ACK)) || (
         (pkt.ack == sndwind->base) ||
         (pkt.ack != sndwind->base && slw_seq_less(pkt.ack, sndwind->base)) ||
         (pkt.ack != sndwind->next && slw_seq_greater(pkt.ack, sndwind->next))
@@ -543,7 +551,7 @@ int slw_process(slw_state_t* state,
 #ifdef UDP_DEBUG
             LINFO("pure ACK no receive window updates");
 #endif
-            return SLW_OK;
+            goto ok_return;
         }
     }
    
@@ -561,25 +569,29 @@ int slw_process(slw_state_t* state,
     //
     // else if the packet id has already been acknowledge
     //      transmit a pure ACK for that packet 
-    if (pkt.id == rcvwind->next) {
+    if ((pkt.flags & SLW_F_DAT)) {
+        if (pkt.id == rcvwind->next) {
 #ifdef UDP_DEBUG
-        LINFO("packet id is the expected id");
+            LINFO("packet id is the expected id");
 #endif
-        rcvwind->packets[rcvwind->next] = pkt;
-        rcvwind->slot_filled[rcvwind->next] = 1;
-        rcvwind->next = slw_advance(rcvwind->next, rcvwind);
-        rcvwind->ack = rcvwind->next; // the next packet ID, go back N
-        // slw_transmit_ack(state, rcvwind->next, socka, sockalen);
-    } else if (slw_seq_less(pkt.id, rcvwind->next)){
+            rcvwind->packets[rcvwind->next] = pkt;
+            rcvwind->slot_filled[rcvwind->next] = 1;
+            rcvwind->next = slw_advance(rcvwind->next, rcvwind);
+            rcvwind->ack = rcvwind->next; // the next packet ID, go back N
+            // slw_transmit_ack(state, rcvwind->next, socka, sockalen);
+        } else if (slw_seq_less(pkt.id, rcvwind->next)){
 #ifdef UDP_DEBUG
-        LINFO("packet id is invalid");
+            LINFO("packet id is invalid");
 #endif
-        slw_transmit_ack(state, rcvwind->next, socka, sockalen);
-        // ACK
+            slw_transmit_ack(state, rcvwind->next, socka, sockalen);
+            // ACK
+        }
+        // the packets ID is not valid, drop it
+        //      dont do anything special for now
     }
-    // the packets ID is not valid, drop it
-    //      dont do anything special for now
 
+
+ok_return:
 #ifdef UDP_DEBUG
     LINFO("\nprocess end\n\tsend window state\n\t\t"    \
         "{ base: %d, next %d, ack: %d }\n\t"            \

@@ -8,6 +8,31 @@
 
 #include "common.h"
 #include "udp_saw.h"
+#include "udp_slw.h"
+
+
+void test_slw_flags() {
+    slw_packet_t pkt = { 0 };
+    pkt.id = 1;
+    pkt.flags = 0;
+
+
+    pkt.flags |= SLW_F_ACK;
+
+    LINFO("ack: %d, dat: %d", SLW_F_ACK, SLW_F_DAT);
+
+    assert(pkt.flags & SLW_F_ACK);
+    assert(!(pkt.flags & SLW_F_DAT));
+
+    pkt.flags |= SLW_F_DAT;
+
+    assert((pkt.flags & SLW_F_ACK) && (pkt.flags & SLW_F_DAT));
+
+    pkt.flags &= ~SLW_F_ACK;
+
+    assert(!(pkt.flags & SLW_F_ACK) && (pkt.flags & SLW_F_DAT));
+}
+
 
 int main(int argc, char** argv) {
     (void)argc;
@@ -59,6 +84,11 @@ int main(int argc, char** argv) {
     // connection & time testing
     saw_state_t state = { 0 };
     saw_initState(&state);
+
+
+
+    // structured, almost unit tests
+    test_slw_flags();
 
     return 0;
 }

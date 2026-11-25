@@ -53,8 +53,8 @@ typedef struct slw_packet {
     char data[SLW_MAX_PAYLOAD];
 } slw_packet_t;
 
-#define SLW_F_ACK   (0b00000001)
-#define SLW_F_ACK_I (0b11111110)
+#define SLW_F_ACK   (1)
+#define SLW_F_DAT   (1 << 1)
 
 
 typedef struct slw_window {
