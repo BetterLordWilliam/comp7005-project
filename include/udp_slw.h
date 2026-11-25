@@ -34,6 +34,7 @@ Useful Resources
 #define SLW_MAX_PAYLOAD     (BUFFER_SIZE - SLW_HEADER)
 #define SLW_MAX_SLOTS       (256)
 #define SLW_MAX_WIND_LEN    ((SLW_MAX_SLOTS/2) - 1)
+#define SLW_MIN_TIMEOUT_MS  (50)
 
 typedef enum slw_error_code {
     SLW_OK = 0,
@@ -52,8 +53,8 @@ typedef struct slw_packet {
     char data[SLW_MAX_PAYLOAD];
 } slw_packet_t;
 
-#define SLW_F_ACK   (0b00000001)
-#define SLW_F_ACK_I (0b11111110)
+#define SLW_F_ACK   (1)
+#define SLW_F_DAT   (1 << 1)
 
 
 typedef struct slw_window {
@@ -71,6 +72,10 @@ typedef struct slw_state {
     int fd;
     int slots;
     time_t timeout;
+    time_t senttime;
+    time_t srtt;
+    time_t rttv;
+    time_t rtt;
     int timeoutdur;
     slw_window_t sndwind;
     slw_window_t rcvwind;

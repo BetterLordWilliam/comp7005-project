@@ -73,13 +73,15 @@ static void usage(const char *program)
     fprintf(stderr, "Usage: %s <network-ip> <network-port>\n", program);
 }
 
+/*
 struct saw_cstate {
     int client_fd;
     struct pollfd* watched;
     struct sockaddr_in network;
 };
+*/
 
-
+/*
 int saw_loop(struct saw_cstate* cstate)
 {
     char buffer[BUFFER_SIZE];
@@ -102,7 +104,7 @@ int saw_loop(struct saw_cstate* cstate)
             return EXIT_FAILURE;
         }
 
-        /* stdin is independent: send each available line immediately. */
+        // stdin is independent: send each available line immediately.
         if (cstate->watched[0].revents & (POLLIN | POLLHUP)) {
             if (fgets(buffer, sizeof(buffer), stdin) == NULL) {
                 break;
@@ -117,16 +119,8 @@ int saw_loop(struct saw_cstate* cstate)
             }
         }
 
-        /* Echo reception is independent and never gates the next send. */
+        // Echo reception is independent and never gates the next send.
         if (cstate->watched[1].revents & POLLIN) {
-            /*
-            ssize_t received = recvfrom(cstate->client_fd,
-                                        buffer,
-                                        sizeof(buffer),
-                                        0,
-                                        NULL,
-                                        NULL);
-            */
             int received = saw_recv(cstate->client_fd, &scstate,
                 buffer, sizeof(buffer));
             if (received == -1) {
@@ -150,7 +144,7 @@ int saw_loop(struct saw_cstate* cstate)
     }
     return 0;
 }
-
+*/
 
 int slw_loop(slw_state_t* state, struct sockaddr* addr, socklen_t addrlen) {
     struct pollfd watched[2] = {
@@ -181,13 +175,6 @@ int slw_loop(slw_state_t* state, struct sockaddr* addr, socklen_t addrlen) {
         if (ready == -1) {
             return EXIT_FAILURE;
         }
-        if (ready == 0) {
-#ifdef UDP_DEBUG
-            //LWARN("poll timeout");
-#endif
-            //slw_retransmit(state, addr, addrlen);
-            //continue;
-        }
 
         // sliding window processing
         int process_result = slw_process(state, addr, &addrlen);
@@ -208,17 +195,6 @@ int slw_loop(slw_state_t* state, struct sockaddr* addr, socklen_t addrlen) {
                 break;
             }
             size_t length = strlen(buffer);
-            /*
-            int send_result = saw_send(cstate->client_fd, &scstate,
-                buffer, length);
-            if (send_result == -1) {
-                LERROR("failed to send message.");
-                continue;
-                // return EXIT_FAILURE;
-            }
-            */
-
-            // submit new messages to the server
             ssize_t send_result = slw_send(state, buffer, length, addr, addrlen);
             if (send_result == SLW_EWOULDBLOCK) {
 #ifdef UDP_DEBUG
@@ -256,22 +232,6 @@ int slw_loop(slw_state_t* state, struct sockaddr* addr, socklen_t addrlen) {
                     continue;
                 }
             }
-
-            /*
-            int received = saw_recv(cstate->client_fd, &scstate,
-                buffer, sizeof(buffer));
-            if (received == -1) {
-                if (errno == EINTR) {
-                    return 0;
-                }
-                return EXIT_FAILURE;
-            }
-            if (received == 0) {
-                LWARN("nothing to read now");
-                continue;
-            }
-            */
-
         
             /* APPLICATION */
             printf("echo: ");
@@ -315,33 +275,22 @@ int main(int argc, char **argv)
     printf("Type lines quickly, or paste several lines. Echoes print as they arrive.\n");
     printf("Ctrl+D exits.\n");
 
-    struct pollfd watched[2] = {
-        {
-            .fd = STDIN_FILENO,
-            .events = POLLIN,
-            .revents = 0,
-        },
-        {
-            .fd = client_fd,
-            .events = POLLIN,
-            .revents = 0,
-        },
-    };
-
     // [WO] saw client state
     /*
     struct saw_cstate cstate = { 0 };
     cstate.client_fd = client_fd;
     cstate.watched   = watched;
     cstate.network   = network;
+    */
 
-
+    // [WO] saw client loop
+    /*
     int r = saw_loop(&cstate);
-
     if (r == EXIT_FAILURE) {
         close(client_fd);
         return EXIT_FAILURE;
-    }*/
+    }
+    */
 
 
     // [WO] slw client state
@@ -355,11 +304,15 @@ int main(int argc, char **argv)
     LINFO("SLW RCVWIND STATE: { slots: %d, length: %d }",
         state.rcvwind.slots, state.rcvwind.length);
 
+    // [WO] slw client loop
     int r = slw_loop(&state, (struct sockaddr*)&network, sizeof(network));
     (void)r;
 
     slw_free(&state);
     close(client_fd);
+
+    if (r == EXIT_FAILURE)
+        return EXIT_FAILURE;
 
     return EXIT_SUCCESS;
 }

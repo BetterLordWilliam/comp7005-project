@@ -153,9 +153,9 @@ void saw_initState(saw_state_t* state);
 
 
 // [TODO]
-int saw_socket();
+// int saw_socket();
 // [TODO]
-int saw_bind();
+// int saw_bind();
 
 /**
 Listen for incoming SAW proto connection handshakes.

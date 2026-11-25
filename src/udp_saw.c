@@ -126,12 +126,15 @@ static int saw_genConnId(saw_state_t* state)
     return 0;
 }
 
+/*
 static int saw_calcTimeoutDur(saw_state_t* state)
 {
     state->timeoutDur = I_TIMEOUTDUR_MS; // previous RTTs are not tracked (yet)
     return 0;
 }
+*/
 
+/*
 static int saw_calcTimeout(saw_state_t* state)
 {
     struct timespec ts = { 0 };
@@ -145,7 +148,9 @@ static int saw_calcTimeout(saw_state_t* state)
     state->timeout  = ntime + state->timeoutDur;
     return 0;
 }
+*/
 
+/*
 static int saw_calcRtime(saw_state_t* state)
 {
     struct timespec ts = { 0 };
@@ -158,6 +163,7 @@ static int saw_calcRtime(saw_state_t* state)
     state->rtime = ntime;
     return 0;
 }
+*/
 
 static int saw_calcChecksum(const char* netBuf, size_t netBufSize) {
     // use a simple checksum
@@ -491,6 +497,7 @@ int saw_send(int fd, saw_state_t* state,
     if (state->cStatus != CON)
         return (int)SAWENCONN;
     int rcode = 0, r = 0, cpd = 0, ns = 0;
+    (void)rcode;
 
     // struct timespec rtime = { 0 };
     struct pollfd pfd = {
@@ -645,12 +652,15 @@ int saw_recv(int fd, saw_state_t* state,
     if (state->cStatus != CON)
         return (int)SAWENCONN;
     int rcode = 0, r = 0, nr = 0;
+    (void)rcode;
 
+    /*
     struct pollfd pfd = {
         .fd         = fd,
         .events     = POLLIN,
         .revents    = 0
     };
+    */
     char rbuffer[BUFFER_SIZE];
     char wbuffer[BUFFER_SIZE];
 
