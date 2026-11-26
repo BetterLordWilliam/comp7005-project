@@ -6,7 +6,7 @@ version: 1
 # COMP7005 SLW Protocol
 ### A Reliable UDP Protocol
 
-*Will Otterbien, A01372608, 2026*
+*Will Otterbein, A01372608, 2026*
 
 
 This report describes my implementation of a reliability layer on top of the UDP protocol.
@@ -160,7 +160,7 @@ int slw_init(slw_state_t* state, int fd, int window_length, int timeoutdur)
 }
 ```
 
-After initializing SLW protocol state, the calling application, according it's network event loop requirements, should pass the state amongst `slw_send`, `slw_recv`, and `slw_process` primitives. Other interfaces are exposed to calling applications, the `slw_init` & `slw_free` protocol state initializer/uninitializer, and the `slw_window_empty` function, but these functions are helpful utilities have a limited role compared to the three aforementioned primitives.
+After initializing SLW protocol state, the calling application, according it's network event loop requirements, should pass the state amongst `slw_send`, `slw_recv`, and `slw_process` primitives. Other interfaces are exposed to calling applications, the `slw_init` & `slw_free` protocol state initialize/uninitialize functions, and the `slw_window_empty` function, but these functions are helpful utilities have a limited role compared to the three aforementioned primitives.
 
 Rather than meticulously comb over every function in the SLW library, we will discuss the implementation of SLW in terms of the implementation of these three primitives & how the `udp_server` & `udp_client` applications had their event loops modified to use SLW over UDP.
 
