@@ -314,12 +314,48 @@ If a timeout occurs (`poll_s` returns zero), then no reply was received from the
 
 If there is data from the peer, `slw_process` is first invoked in order to deal with ACK's and updating the server's send window as well as to append the packet to the server's receive window (if there is in fact data to append). Then `slw_recv` is to be invoked, which will write received packet data to the server's buffer & update the server's receive window. The existing server's application logic executes (echoing the data in the server's buffer to STDOUT) & then `slw_send` is invoked with the server's buffer (transmitting the same data back to the peer), appending the packet to the server's send window.
 
+```mermaid
+flowchart LR
+    p2["`**server**
+    1. waits for data from the peer as SLW packets
+    2. transmits reply messages as SLW packets
+    `"]
+    p1["client"]
+
+    p1 -. "1. message" .-> p2
+    p2 -. "2. server reply" .-> p1
+
+```
+
 
 ### Client's use of SLW
 
 This section will discuss how `udp_client` was modified to work with the SLW protocol.
 
+Like the `udp_server`, the `udp_client` first initializes the SLW protocol state `slw_state_t` object with the window length supplied by the command line (or with the default value of 5).
 
+The client's event loop polls on both the socket FD and the STDIN FD, again with an infinite wait time (-1) if the SLW's send window is empty.
+
+If a timeout occurs, data is in transmission but no reply was received (and STDIN also has no new data to read in), but `slw_process` still needs to be invoked to determine if retransmission must be done for current in flight packets.
+
+If the STDIN fd returns data (`POLLIN` or `POLLHUP`), STDIN is read into the clients buffer, & `slw_send` is invoked to transmit the contents of STDIN to the server. If the send window is full, the client's STDIN is not transmitted & the client prints a message stating "cannot send new messages at this time.".
+
+If the socket fd returns data (`POLLIN`), then `slw_recv` is invoked to read the data into the clients buffer & echoed to `STDOUT`. In the case that `SLW_EWOULDBLOCK` is returned, the client simply moves on (there was no data to read, this will be the case if a pure ACK was transmitted). 
+
+```mermaid
+flowchart LR
+    p1["`**client**
+    1. waits for new data from STDIN and transmits them as SLW packet(s)
+    2. waits for server reply messages as SLW packet(s)
+    `"]
+    p2["`**server**`"]
+
+    p1 -. "1. message" .-> p2
+    p2 -. "2. reply" .-> p1
+```
+
+
+> If `SLW_EBUFSIZE` is returned, the client does nothing (which is not a good solution because this will lead to unnecessary retransmission for a failed message).
 
 
 ## Testing Scenarios
@@ -333,14 +369,17 @@ This section will discuss how `udp_client` was modified to work with the SLW pro
 
 There are a few extensions to this project that I have considered.
 
+### Potential for Better Abstraction
+- create a version of `poll`, `slw_poll`, which will call `slw_process` on behalf of the caller, otherwise returning poll errors / events such that the calling application is able to interface with the library without having to manually invoke this primitive
+- effectively, provide the calling application with only the `slw_send` / `slw_recv`, replace have a public `slw_process` with a `slw_poll` that takes care of internally invoking `slw_process`, the calling application can be completely unaware any underlying protocol mechanisms
+    - this would also remove the requirement to have `slw_window_empty` as a public member, the only three public member's would be `slw_poll`, `slw_send`, `slw_recv`.
+
 ### Introducing a Connection Setup / Teardown Phase
-
-
-
+- 
 
 ## Appendix
 
-### Serial Arithmetic and RFC 1982
+### SLW Serial Arithmetic (RFC 1982)
 
 Because SLW has an ID space of 2^8 and the fact that SLW uses go-back-N for retransmission, maximum possible windows size would be 255, except that I implement the comparison arithmetic for serial numbers defined in [RFC 1982](https://www.rfc-editor.org/info/rfc1982/), where such comparisons only have meaning for 2^(n-1) in a space of 2^(n). Practically, this means that the maximum window size is 127 (128-1).
 
