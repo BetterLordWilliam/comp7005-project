@@ -337,9 +337,7 @@ ssize_t slw_send(slw_state_t* state, const char* buf, size_t bufsize,
     slw_window_t* rcvwind = &state->rcvwind;
 
     // cannot send if the send window is full ie.
-    // int next = slw_advance(sndwind->next, sndwind);
     int in_flight = (uint8_t)((sndwind->next - sndwind->base) % sndwind->slots);
-    // if (next == sndwind->base) {
     if (in_flight > sndwind->length) {
 #ifdef UDP_DEBUG
         LWARN("send window is full");

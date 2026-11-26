@@ -179,9 +179,13 @@ int slw_loop(slw_state_t* state, struct sockaddr* addr, socklen_t addrlen)
 
 int main(int argc, char **argv)
 {
-    if (argc != 2) {
-        fprintf(stderr, "Usage: %s <listen-port>\n", argv[0]);
+    int window_length = 5;
+    if (argc < 2) {
+        fprintf(stderr, "Usage: %s <listen-port> [<window-length>]\n", argv[0]);
         return EXIT_FAILURE;
+    }
+    if (argc == 3) {
+        window_length = atoi(argv[2]);
     }
 
     unsigned short port = (unsigned short)strtoul(argv[1], NULL, 10);
@@ -219,9 +223,8 @@ int main(int argc, char **argv)
     */
 
     // [WO] slw server state
-    int slots = 1;
     slw_state_t state = { 0 };
-    slw_init(&state, server_fd, slots, 400);
+    slw_init(&state, server_fd, window_length, 400);
 
     LINFO("SLW STATE: { fd: %d, slots: %d }", state.fd, state.slots);
     LINFO("SLW SNDWIND STATE: { slots: %d, length: %d }",

@@ -70,7 +70,8 @@ for (;;) {
 
 static void usage(const char *program)
 {
-    fprintf(stderr, "Usage: %s <network-ip> <network-port>\n", program);
+    fprintf(stderr, "Usage: %s <network-ip> <network-port> [<window-length>]\n",
+        program);
 }
 
 /*
@@ -251,9 +252,13 @@ int slw_loop(slw_state_t* state, struct sockaddr* addr, socklen_t addrlen) {
 
 int main(int argc, char **argv)
 {
-    if (argc != 3) {
+    int window_length = 5;
+    if (argc < 3) {
         usage(argv[0]);
         return EXIT_FAILURE;
+    }
+    if (argc == 4) {
+        window_length = atoi(argv[3]);
     }
 
     unsigned short port = (unsigned short)strtoul(argv[2], NULL, 10);
@@ -295,9 +300,8 @@ int main(int argc, char **argv)
 
 
     // [WO] slw client state
-    int slots = 1;
     slw_state_t state = { 0 };
-    slw_init(&state, client_fd, slots, 400);
+    slw_init(&state, client_fd, window_length, 400);
 
     LINFO("SLW STATE: { fd: %d, slots: %d }", state.fd, state.slots);
     LINFO("SLW SNDWIND STATE: { slots: %d, length: %d }",
