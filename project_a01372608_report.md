@@ -315,16 +315,13 @@ If a timeout occurs (`poll_s` returns zero), then no reply was received from the
 If there is data from the peer, `slw_process` is first invoked in order to deal with ACK's and updating the server's send window as well as to append the packet to the server's receive window (if there is in fact data to append). Then `slw_recv` is to be invoked, which will write received packet data to the server's buffer & update the server's receive window. The existing server's application logic executes (echoing the data in the server's buffer to STDOUT) & then `slw_send` is invoked with the server's buffer (transmitting the same data back to the peer), appending the packet to the server's send window.
 
 ```mermaid
-flowchart LR
-    p2["`**server**
-    1. waits for data from the peer as SLW packets
-    2. transmits reply messages as SLW packets
-    `"]
-    p1["client"]
-
-    p1 -. "1. message" .-> p2
-    p2 -. "2. server reply" .-> p1
-
+stateDiagram
+    [*] --> waiting
+    waiting --> slw_process: `poll` returns
+    slw_process --> slw_recv: `poll` returns > 0
+    slw_recv --> slw_send: `slw_recv` returns > 0
+    slw_recv --> waiting: `slw_recv` returns SLW_EWOULDBLOCK
+    slw_send --> waiting
 ```
 
 
@@ -343,17 +340,9 @@ If the STDIN fd returns data (`POLLIN` or `POLLHUP`), STDIN is read into the cli
 If the socket fd returns data (`POLLIN`), then `slw_recv` is invoked to read the data into the clients buffer & echoed to `STDOUT`. In the case that `SLW_EWOULDBLOCK` is returned, the client simply moves on (there was no data to read, this will be the case if a pure ACK was transmitted). 
 
 ```mermaid
-flowchart LR
-    p1["`**client**
-    1. waits for new data from STDIN and transmits them as SLW packet(s)
-    2. waits for server reply messages as SLW packet(s)
-    `"]
-    p2["`**server**`"]
-
-    p1 -. "1. message" .-> p2
-    p2 -. "2. reply" .-> p1
+stateDiagram
+    [*] --> waiting
 ```
-
 
 > If `SLW_EBUFSIZE` is returned, the client does nothing (which is not a good solution because this will lead to unnecessary retransmission for a failed message).
 
