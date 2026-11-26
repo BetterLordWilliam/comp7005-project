@@ -83,7 +83,7 @@ typedef struct slw_state {
 
 
 
-int slw_init(slw_state_t* state, int fd, int window_slots, int timeoutdur);
+int slw_init(slw_state_t* state, int fd, int window_length, int timeoutdur);
 
 void slw_free(slw_state_t* state);
 
