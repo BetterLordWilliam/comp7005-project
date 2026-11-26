@@ -99,6 +99,37 @@ sequenceDiagram
 ```
 *etc*
 
+The size of the send window is specifiable, up until the maximum allowable window size, which is 1 less than half the ID space, or 127 packets. The size of the receive window is always fixed at 1, this is because the SLW protocol adheres to go-back-N & therefore does not buffer packets that are received in advanced of the next expected packet.
+
+```c
+int slw_init(slw_state_t* state, int fd, int window_length, int timeoutdur)
+{
+    state->fd           = fd;
+    state->slots        = SLW_MAX_SLOTS;
+
+    /* timer initialization */
+
+    state->rcvwind = (slw_window_t){
+        .slots  = state->slots,
+        .length = 1,
+        .base   = 0,
+        .next   = 0,
+        .ack    = -1
+    };
+    state->sndwind = (slw_window_t){
+        .slots  = state->slots,
+        .length = min((window_length), SLW_MAX_WIND_LEN),
+        .base   = 0,
+        .next   = 0,
+        .ack    = -1,
+    };
+
+    /* send/recv window memory allocation */
+}
+```
+
+> more on how this is usable for the `udp_server` / `udp_client` applications in the proceeding sections.
+
 
 From a calling applications perspective, the three most important primitives that the protocol library exposes are `slw_send`, `slw_recv`, `slw_process`. Other interfaces are exposed to calling applications, `slw_init` & `slw_free` protocol state initializers/"uninitializers", and the `slw_window_empty` function, but these functions are helpful utilities have a limited role compared to the three aforementioned primitives.
 
@@ -112,10 +143,52 @@ ssize_t slw_send(slw_state_t* state, const char* buf, size_t bufsize,
     const struct sockaddr* socka, socklen_t sockalen);
 ```
 
-The `slw_send` primitive purpose is to synthesize a packet or packet(s) for the users data and append these packets to the send window. The first thing this function does is check that adding a new packet does not overfill the send window. This is done by advancing the current next index (which indexes into the send windows array of packets), & checking if this index equals the base
+The `slw_send` primitive purpose is to synthesize a packet or packet(s) for the users data and append these packets to the send window. The first thing this function does is check that adding a new packet does not overfill the send window. This is done by taking the unsigned difference between the next index & the base index (unsigned is a shortcut to checking if the difference is zero & adding the number of slots). If the window is full, `SLW_EWOULDBLOCK` is returned signaling to the caller that there message was not delivered.
+
+```c
+int in_flight = (uint8_t)((sndwind->next - sndwind->base) % sndwind->slots);
+if (in_flight >= sndwind->length) {
+    return SLW_EWOULDBLOCK;
+}
+```
+
+Then, the number of packets are calculated, this is for the case that the user transmits a message larger than the maximum possible payload size for a single packet. A loop begins creating & transmitting these packets, tracking the offset across the user supplied buffer if multiple packets need be sent. Packets are written to the send window slot according to the next index, the `slot_filled` for the next index is set to a value of `1` which is used elsewhere regarding windows to indicate whether a window slot has a packet or not. If the next pointer equals the base pointer (which means this is the first/only packet being transmitted), the SLW timeout is calculated.
+
+To facilitate the piggy-backing of ACKs, there is an `ack` variable on each window, if this is greater than zero (which is the initial value) for the receive window, this value is written to the packet & the ACK flag is set. For user packets, the DAT flag is set as well.
+
+```c
+int curr = sndwind->next;
+sndwind->next = candidate_next;
+
+if (curr == sndwind->base) {
+    state->senttime = slw_time_ms();
+    slw_calc_timeout(state);
+}
+pkt->flags |= SLW_F_DAT;
+if (rcvwind->ack > 0)
+    pkt->flags |= SLW_F_ACK;
+sndwind->slot_filled[sndwind->next] = 1;
+```
+
+Once the protocols accounting is complete, the packet is translated (byte-reordered) to a network segment buffer which is passed to the function `sendto_s`, a wrapper that just handles the error return `EINTR`, transmitting the packet over the wire. 
+
+```c
+char net_segment[BUFFER_SIZE];
+slw_write_packet(net_segment, BUFFER_SIZE, pkt);
+
+ssize_t sent_bytes = sendto_s(state->fd, net_segment,
+    slw_packet_size(pkt), 0, socka, sockalen);
+if (sent_bytes < 0) {
+    return SLW_ERROR;
+}
+offset += chunk_len;
+sent_count++;
+```
+
+The number of sent bytes is stored in the `offset` variable, in the case only part of the users content is delivered then can prepare to send again.
+
 
 > In brief, the purpose of `slw_send` is to attempt to append a packet or packets to the SLW protocol's send window.
-
 
 
 ### `slw_recv`
@@ -124,6 +197,31 @@ The `slw_send` primitive purpose is to synthesize a packet or packet(s) for the 
 ssize_t slw_recv(slw_state_t* state, char* buf, size_t bufSize);
 ```
 
+The purpose of the `slw_recv` primitive is to read received packets into a users buffer. Perhaps unintuitive, this function does not actually invoke `recv` (`recv_s` wrapper, really), rather it is solely responsible to check the receive window for packets, which to reiterate there will only ever be one of these per invocation due to go-back-N.
+
+If there are no packets to receive, the method returns `SLW_EWOULDBLOCK`, this is checked by making use of the `slot_filled` array of the receive window, which is a companion "boolean" array of the `packets` array indicating whether at that index a packet has been populated.
+
+```c
+if (!rcvwind->slot_filled[rcvwind->base]) {
+    return SLW_EWOULDBLOCK;
+}
+```
+
+Essentially the reverse of the process in `slw_send` takes place, the function tracks the number of copied bytes from the packets in the receive window & writes their contents to the user buffer, though their is no synthesis of the packet structures as they are already parsed from the network & written into the receive window slots by `slw_process`. The copy loop iterates through all the filled slots of the receive window, or until the `total_copied` number of bytes would exceed the buffer size supplied by the user.
+
+```c
+slw_packet_t* pkt = &rcvwind->packets[curr];
+if (total_copied + pkt->length > bufSize) {
+    break;
+}
+memcpy(buf + total_copied, pkt->data, pkt->length);
+total_copied += pkt->length;
+curr = slw_advance(curr, rcvwind);
+```
+
+If no bytes were copied, the users buffer was too small for even one packet, so an `SLW_EBUFSIZE` is returned.
+
+Finally, the function iterates from the base index resetting the slot_filled, while also advancing the receive window base index, & returns the `total_copied` number of bytes, so that the caller can know how much actual data sits in the buffer they supplied.
 
 
 > In brief, the purpose of `slw_recv` is to attempt to consolidate available packets in the SLW protocol's send window & write their data into the user's supplied buffer.
