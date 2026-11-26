@@ -219,7 +219,7 @@ int main(int argc, char **argv)
     */
 
     // [WO] slw server state
-    int slots = 5;
+    int slots = 1;
     slw_state_t state = { 0 };
     slw_init(&state, server_fd, slots, 400);
 

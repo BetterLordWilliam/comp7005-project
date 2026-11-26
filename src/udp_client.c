@@ -200,6 +200,7 @@ int slw_loop(slw_state_t* state, struct sockaddr* addr, socklen_t addrlen) {
 #ifdef UDP_DEBUG
                 LWARN("new message dropped send window is full");
 #endif
+                fprintf(stdout, "cannot send new messages at this time.\n");
                 continue;
             } else if (send_result < 0) {
 #ifdef UDP_DEBUG
@@ -294,7 +295,7 @@ int main(int argc, char **argv)
 
 
     // [WO] slw client state
-    int slots = 5;
+    int slots = 1;
     slw_state_t state = { 0 };
     slw_init(&state, client_fd, slots, 400);
 

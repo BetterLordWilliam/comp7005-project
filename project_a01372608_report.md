@@ -112,9 +112,9 @@ ssize_t slw_send(slw_state_t* state, const char* buf, size_t bufsize,
     const struct sockaddr* socka, socklen_t sockalen);
 ```
 
-In brief, the purpose of `slw_send` is to attempt to append a packet or packets to the SLW protocol's send window.
+The `slw_send` primitive purpose is to synthesize a packet or packet(s) for the users data and append these packets to the send window. The first thing this function does is check that adding a new packet does not overfill the send window. This is done by advancing the current next index (which indexes into the send windows array of packets), & checking if this index equals the base
 
-If the send
+> In brief, the purpose of `slw_send` is to attempt to append a packet or packets to the SLW protocol's send window.
 
 
 
@@ -124,7 +124,9 @@ If the send
 ssize_t slw_recv(slw_state_t* state, char* buf, size_t bufSize);
 ```
 
-In brief, the purpose of `slw_recv` is to attempt to consolidate available packets in the SLW protocol's send window & write their data into the user's supplied buffer.
+
+
+> In brief, the purpose of `slw_recv` is to attempt to consolidate available packets in the SLW protocol's send window & write their data into the user's supplied buffer.
 
 
 ### `slw_process`
@@ -136,9 +138,9 @@ int slw_process(slw_state_t* state,
     struct sockaddr* socka, socklen_t* sockalen);
 ```
 
-In brief, the purpose of `slw_process` is to handle the transmission logic of the protocol, typically executed first when the caller has determined that the underlying socket has data to be read from the kernel. This function reads UDP packets from the wire, & parses the SLW packet.
 
 
+> In brief, the purpose of `slw_process` is to handle the transmission logic of the protocol, typically executed first when the caller has determined that the underlying socket has data to be read from the kernel. This function reads UDP packets from the wire, & parses the SLW packet.
 
 
 ### Server's use of SLW
