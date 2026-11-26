@@ -236,9 +236,70 @@ int slw_process(slw_state_t* state,
     struct sockaddr* socka, socklen_t* sockalen);
 ```
 
+This function is meant to be executed by callers according to their event loop involving the underlying UDP socket. The intention is that the process function executes when `poll` returns, either with or without data to process.
+
+The first thing `slw_process` does is determine if retransmission needs to occur. `slw_process` gets the current time & checks whether the current time is greater than the `timeout` variable, if this is the case the `slw_retransmit` function is invoked, this function iterates over the send window & re-invokes `send_s` on the packet & restarts the transmission timer (resets `timeout`).
+
+```c
+if (sndwind->base != sndwind->next) {
+    time_t curr_time = slw_time_ms();
+    if (curr_time >= state->timeout) {
+        slw_retransmit(state, socka, *sockalen);
+    }
+}
+```
+
+Next `slw_process` attempts to read a packet from the socket using `recvfrom_s` (which handles the `EINTR` return), it does so in a non-blocking fashion so as to immediately return from `slw_process` if `EWOULDBLOCK` or `EAGAIN` is returned, with `slw_process` returning the `SLW_EWOULDBLOCK` error code. Other errors result in `SLW_ERROR`. Finally, if the number of bytes returned by `recvfrom_s` is less than the size of the SLW header, the packet is dropped.
+
+After the packet as been read from the kernel into the `raw_buf` representation of the network segment, it is parsed into a the `slw_packet_t` type via `slw_read_packet`, which triggers checksum recalculation & compares the re-calculated checksum against the one parsed from the network segment. Packet parsing fails (checksum, or packet size is invalid), the packet is dropped.
+
+First ACK handling occurs. `slw_process` determines whether the packet is a valid ACK packet by checking the flags field of the packet & calculating if the ACK number of the packet is within the send window (using the serial arithmetic comparison functions `slw_seq_less` & `slw_seq_greater`), if so there are a number of operations to complete for SLW: The current time is now representative of an rtt, so the round trip variance and smoother error values are recalculated to determine a new expected delay value via `slw_update_rtt`; the send window needs to accordingly be updated, to do so the function iterates from the base index to (not including) the ACK, setting the `slot_filled` value to 0 & advancing the base index (at the end of this if the base index does not equal the next index, there are still packets in flight so a new timeout is calculated).
+
+```c
+int ack_not_in_window = (!(pkt.flags & SLW_F_ACK)) || (
+    (pkt.ack == sndwind->base) ||
+    (pkt.ack != sndwind->base && slw_seq_less(pkt.ack, sndwind->base)) ||
+    (pkt.ack != sndwind->next && slw_seq_greater(pkt.ack, sndwind->next))
+) || (sndwind->next == sndwind->base);
+int ack_in_window = !ack_not_in_window;
+if (ack_in_window) {
+    // update the round trip time
+    slw_update_rtt(state);
+    while (sndwind->base != pkt.ack) {
+        sndwind->slot_filled[sndwind->base] = 0;
+        sndwind->base = slw_advance(sndwind->base, sndwind);
+    }
+    if (sndwind->base != sndwind->next) {
+        slw_calc_timeout(state);
+    }
+    if (pkt.length == 0) {
+        goto ok_return;
+    }
+}
+```
+
+Second there is the handling of the rest of the packet. The packet flags are checked to determine if the packet is a one containing data & if it is the expected next packet (meaning its id matches the next index of the receive window), & if so the packet is written to the next index of the receive window, with the receive window updating its ACK tracker accordingly & the receive windows next index is advanced. If the packet id is not the expected packet ID, then the `slw_transmit_ack` helper is invoked to transmit a pure ACK packet with the current next index of the receive window, with the purpose of informing the peer of the current expected packet, & the out of order packet is dropped.
+
+```c
+if ((pkt.flags & SLW_F_DAT)) {
+    if (pkt.id == rcvwind->next) {
+        rcvwind->packets[rcvwind->next] = pkt;
+        rcvwind->slot_filled[rcvwind->next] = 1;
+        rcvwind->next = slw_advance(rcvwind->next, rcvwind);
+        rcvwind->ack = rcvwind->next; // the next packet ID, go back N
+    } else if (slw_seq_less(pkt.id, rcvwind->next)){
+        slw_transmit_ack(state, rcvwind->next, socka, sockalen);
+    }
+}
+```
+
+If processing completes normally or returns early via packet drop, `SLW_OK` is returned by `slw_process`.
+
 
 
 > In brief, the purpose of `slw_process` is to handle the transmission logic of the protocol, typically executed first when the caller has determined that the underlying socket has data to be read from the kernel. This function reads UDP packets from the wire, & parses the SLW packet.
+
+> Dropping packets mean aborting any further processing, so `slw_process` returns `SLW_OK`
 
 
 ### Server's use of SLW
@@ -270,4 +331,4 @@ Because SLW has an ID space of 2^8 and the fact that SLW uses go-back-N for retr
 
 ### SLW Checksum Calculation
 
-
+### SLW RTT Tracking & Timer Calculations
