@@ -321,7 +321,7 @@ stateDiagram
     slw_process --> slw_recv: `poll` returns > 0
     slw_recv --> slw_send: `slw_recv` returns > 0
     slw_recv --> waiting: `slw_recv` returns SLW_EWOULDBLOCK
-    slw_send --> waiting
+    slw_send --> waiting: `slw_send` returns
 ```
 
 
@@ -342,6 +342,12 @@ If the socket fd returns data (`POLLIN`), then `slw_recv` is invoked to read the
 ```mermaid
 stateDiagram
     [*] --> waiting
+    waiting --> slw_process: `poll` returns
+    slw_process --> slw_send: `poll` returns for STDIN
+    slw_process --> slw_recv: `poll` returns for socket fd
+    slw_recv --> waiting: `slw_recv` returns
+    slw_send --> slw_recv: `poll` also returned for socket fd
+    slw_send --> waiting: `poll` only returned for socket fd
 ```
 
 > If `SLW_EBUFSIZE` is returned, the client does nothing (which is not a good solution because this will lead to unnecessary retransmission for a failed message).
