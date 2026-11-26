@@ -51,7 +51,7 @@ packet
 
 ## Protocol Implementation
 
-As mentioned in the introduction, SLW is an implementation of the sliding window protocol. The SLW library is defined in `include/udp_slw.h` & implemented in `src/udp_slw.c` using go-back-N for retransmission.
+As mentioned in the introduction, SLW is an implementation of the sliding window protocol using go-back-N for retransmission. The SLW library is defined in `include/udp_slw.h` & implemented in `src/udp_slw.c`.
 
 The goal of SLW is to improve upon the reliability of UDP, specifically with regard to the following:
 - recovery from data loss
@@ -97,9 +97,41 @@ sequenceDiagram
     p2 ->> p1: ID: 0, ACK: 5, FLAGS: 1, ...
     note right of p1: p1 receives ACK 5, frees slot(s) in send window
 ```
+
 *etc*
 
-The size of the send window is specifiable, up until the maximum allowable window size, which is 1 less than half the ID space, or 127 packets. The size of the receive window is always fixed at 1, this is because the SLW protocol adheres to go-back-N & therefore does not buffer packets that are received in advanced of the next expected packet.
+```c
+typedef struct slw_state {
+    int fd;
+    int slots;
+    time_t timeout;
+    time_t senttime;
+    time_t srtt;
+    time_t rttv;
+    time_t rtt;
+    int timeoutdur;
+    slw_window_t sndwind;
+    slw_window_t rcvwind;
+} slw_state_t;
+```
+
+> the SLW protocol state type.
+
+```c
+typedef struct slw_window {
+    slw_packet_t* packets;
+    int* slot_filled;
+    int slots;
+    int length;
+    int base;
+    int next;
+    int ack;
+} slw_window_t;
+```
+
+> a generic window type.
+
+Practically, a calling application using SLW on top of UDP initializes a `slw_state_t` type, which holds references to the SLW send and receive windows and the state network (RTT time). The size of the send window is specifiable, up until the maximum allowable window size, which is 1 less than half the ID space, or 127 packets. The size of the receive window is always fixed at 1, this is because the SLW protocol adheres to go-back-N & therefore does not buffer packets that are received in advanced of the next expected packet.
 
 ```c
 int slw_init(slw_state_t* state, int fd, int window_length, int timeoutdur)
@@ -128,15 +160,9 @@ int slw_init(slw_state_t* state, int fd, int window_length, int timeoutdur)
 }
 ```
 
-*more details about the SLW data model, `slw_state_t` & `slw_window_t` type descriptions*
+After initializing SLW protocol state, the calling application, according it's network event loop requirements, should pass the state amongst `slw_send`, `slw_recv`, and `slw_process` primitives. Other interfaces are exposed to calling applications, the `slw_init` & `slw_free` protocol state initializer/uninitializer, and the `slw_window_empty` function, but these functions are helpful utilities have a limited role compared to the three aforementioned primitives.
 
-
-> more on how this is usable for the `udp_server` / `udp_client` applications in the proceeding sections.
-
-
-From a calling applications perspective, the three most important primitives that the protocol library exposes are `slw_send`, `slw_recv`, `slw_process`. Other interfaces are exposed to calling applications, `slw_init` & `slw_free` protocol state initializers/"uninitializers", and the `slw_window_empty` function, but these functions are helpful utilities have a limited role compared to the three aforementioned primitives.
-
-Rather than meticulously comb over every function in the SLW library, we will discuss the implementation of SLW in terms of the implementation of the three primitives & how the `udp_server` & `udp_client` applications were modified to use the SLW protocol, instead of pure UDP.
+Rather than meticulously comb over every function in the SLW library, we will discuss the implementation of SLW in terms of the implementation of these three primitives & how the `udp_server` & `udp_client` applications had their event loops modified to use SLW over UDP.
 
 
 ### `slw_send`
