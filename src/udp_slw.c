@@ -195,10 +195,10 @@ static void slw_init_packet(
 }
 
 
-int slw_init(slw_state_t* state, int fd, int window_slots, int timeoutdur)
+int slw_init(slw_state_t* state, int fd, int window_length, int timeoutdur)
 {
     state->fd           = fd;
-    state->slots        = min(window_slots, SLW_MAX_SLOTS);
+    state->slots        = SLW_MAX_SLOTS;
 
     state->timeoutdur   = timeoutdur;
     state->timeout      = 0;
@@ -214,7 +214,7 @@ int slw_init(slw_state_t* state, int fd, int window_slots, int timeoutdur)
     };
     state->sndwind = (slw_window_t){
         .slots  = state->slots,
-        .length = min((state->slots - 1), SLW_MAX_WIND_LEN),
+        .length = min((window_length), SLW_MAX_WIND_LEN),
         .base   = 0,
         .next   = 0,
         .ack    = -1,
@@ -340,7 +340,7 @@ ssize_t slw_send(slw_state_t* state, const char* buf, size_t bufsize,
     // int next = slw_advance(sndwind->next, sndwind);
     int in_flight = (uint8_t)((sndwind->next - sndwind->base) % sndwind->slots);
     // if (next == sndwind->base) {
-    if (in_flight >= sndwind->length)
+    if (in_flight > sndwind->length) {
 #ifdef UDP_DEBUG
         LWARN("send window is full");
 #endif
