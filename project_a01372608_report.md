@@ -128,6 +128,9 @@ int slw_init(slw_state_t* state, int fd, int window_length, int timeoutdur)
 }
 ```
 
+*more details about the SLW data model, `slw_state_t` & `slw_window_t` type descriptions*
+
+
 > more on how this is usable for the `udp_server` / `udp_client` applications in the proceeding sections.
 
 
