@@ -306,10 +306,20 @@ If processing completes normally or returns early via packet drop, `SLW_OK` is r
 
 This section will discuss how `udp_server` was modified to work with the SLW protocol.
 
+Instead of immediately entering it's event loop on the UDP socket, the server initializes the `slw_state_t` SLW protocol state object supplying the user provided window length (or the default value of 10).
+
+The server enters it's event loop by invoking the `slw_loop` function, which begins polling on the `pollfd` object initialized for the socket's file descriptor using the `poll_s` wrapper (again handling `EINTR` returns). The timeout is set to -1 if the send window is empty (there's nothing outgoing, this peer is just waiting for traffic), otherwise some transmission is in progress & so the timeout is the current value of the state's `timeoutdur`.
+
+If a timeout occurs (`poll_s` returns zero), then no reply was received from the peer. `slw_process` should be invoked to handle this situation, this function will handle retransmission.
+
+If there is data from the peer, `slw_process` is first invoked in order to deal with ACK's and updating the server's send window as well as to append the packet to the server's receive window (if there is in fact data to append). Then `slw_recv` is to be invoked, which will write received packet data to the server's buffer & update the server's receive window. The existing server's application logic executes (echoing the data in the server's buffer to STDOUT) & then `slw_send` is invoked with the server's buffer (transmitting the same data back to the peer), appending the packet to the server's send window.
+
 
 ### Client's use of SLW
 
 This section will discuss how `udp_client` was modified to work with the SLW protocol.
+
+
 
 
 ## Testing Scenarios
@@ -320,6 +330,11 @@ This section will discuss how `udp_client` was modified to work with the SLW pro
 
 
 ## Reflection and Novelty
+
+There are a few extensions to this project that I have considered.
+
+### Introducing a Connection Setup / Teardown Phase
+
 
 
 
