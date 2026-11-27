@@ -672,7 +672,7 @@ The network parameters are the same as the combined test from the scenarios.
 ### Window Length of 1
 
 ```
-for i in {0..4}; do ./test/thrpt.sh -r 0; done
+for i in {1..5}; do ./test/thrpt.sh -r 0 -n "$i"; done
 ```
 
 | Test No. | ID | Successful Messages | Logs | SRT/sec |
@@ -689,7 +689,7 @@ Average SRT/sec = 25.6 / 5 = **5.12 SRT/sec**
 ### Window Length of 25
 
 ```
-for i in {0..4}; do ./test/thrpt.sh -w 25 -r 0; done
+for i in {1..5}; do ./test/thrpt.sh -w 25 -r 0 -n "$i"; done
 ```
 
 | Test No. | ID | Successful Messages | Logs | SRT/sec |
@@ -700,7 +700,7 @@ for i in {0..4}; do ./test/thrpt.sh -w 25 -r 0; done
 | 4 | 1795766687 | 115 | [server-out](./logs/1795766687-server-out.log), [server-err](./logs/1795766687-server-err.log), [client-out](./logs/1795766687-client-out.log), [client-err](./logs/1795766687-client-err.log), [network](./logs/1795766687-network.log) | 11.5 |
 | 5 | 1795766697 | 114 | [server-out](./logs/1795766697-server-out.log), [server-err](./logs/1795766697-server-err.log), [client-out](./logs/1795766697-client-out.log), [client-err](./logs/1795766697-client-err.log), [network](./logs/1795766697-network.log) | 11.4 |
 
-Average SRT/sec = 51.6 / 5 = **10.32 SRC/sec**
+Average SRT/sec = 51.6 / 5 = **10.32 SRT/sec**
 
 ## Reflection and Novelty
 
@@ -711,8 +711,6 @@ There are a few extensions to this project that I have considered.
 - effectively, provide the calling application with only the `slw_send` / `slw_recv`, replace have a public `slw_process` with a `slw_poll` that takes care of internally invoking `slw_process`, the calling application can be completely unaware any underlying protocol mechanisms
     - this would also remove the requirement to have `slw_window_empty` as a public member, the only three public member's would be `slw_poll`, `slw_send`, `slw_recv`.
 
-### Introducing a Connection Setup / Teardown Phase
-- 
 
 ## Appendix
 Additional information about SLW & resources.

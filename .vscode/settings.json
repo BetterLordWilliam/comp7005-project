@@ -10,6 +10,7 @@
         "EINTR",
         "EWOULDBLOCK",
         "memcpy",
+        "monotime",
         "pollfd",
         "POLLHUP",
         "POLLIN",
@@ -24,6 +25,7 @@
         "sockalen",
         "socklen",
         "srtt",
+        "thrpt",
         "timeoutdur"
     ]
 }
