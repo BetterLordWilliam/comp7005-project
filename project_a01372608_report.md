@@ -647,11 +647,58 @@ results:
 ![ultimate results](./screenshots/ultimate.png)
 
 
+
 ## Throughput Comparison
 
-### Stop and Wait (window length 1)
+`./test/thrpt.sh`
 
-### Default (window length 5)
+In this experiment we are measuring successful messages for 2 different window lengths, the stop-and-wait (window size of 1) & window size 25 because I like number.
+
+Success messages are defined as a round trip, therefore messages which the client is able to echo back to it's STDOUT.
+
+Experiment parameters:
+- Messages are transmitted every 0.05 seconds
+- Messages are transmitted for a duration of 10 seconds
+
+The network parameters are the same as the combined test from the scenarios.
+```
+./build/network --server-port 8080 --server-ip 127.0.0.1 --listen-port 8081 --loss 0.10 --delay 0.50 --corrupt 0.05 --max-delay-ms 500 --seed 7005
+```
+
+> The `thrpt.sh` testing script use `python3` for the monotime precision it offers over a pure bash script.
+
+### Window Length of 1
+
+```
+./test/thrpt.sh -r 0
+```
+
+| Test No. | ID | Successful Messages | Logs |
+| :- | :- | :- | :- |
+| 1 | 1795764418 | 47 | [server-out](./logs/1795764418-server-out.log), [server-err](./logs/1795764418-server-err.log), [client-out](./logs/1795764418-client-out.log), [client-err](./logs/1795764418-client-err.log), [network](./logs/1795764418-network.log) |
+| 2 | 1795764489 | 52 | [server-out](./logs/1795764489-server-out.log), [server-err](./logs/1795764489-server-err.log), [client-out](./logs/1795764489-client-out.log), [client-err](./logs/1795764489-client-err.log), [network](./logs/1795764489-network.log) |
+| 3 | 1795764680 | 48 | [server-out](./logs/1795764680-server-out.log), [server-err](./logs/1795764680-server-err.log), [client-out](./logs/1795764680-client-out.log), [client-err](./logs/1795764680-client-err.log), [network](./logs/1795764680-network.log) |
+| 4 | 1795764720 | 48 | [server-out](./logs/1795764720-server-out.log), [server-err](./logs/1795764720-server-err.log), [client-out](./logs/1795764720-client-out.log), [client-err](./logs/1795764720-client-err.log), [network](./logs/1795764720-network.log) |
+| 5 | 1795764769 | 53 | [server-out](./logs/1795764769-server-out.log), [server-err](./logs/1795764769-server-err.log), [client-out](./logs/1795764769-client-out.log), [client-err](./logs/1795764769-client-err.log), [network](./logs/1795764769-network.log) |
+
+
+
+### Window Length of 25
+
+```
+./test/thrpt.sh -w 25 -r 0
+```
+
+| Test No. | ID | Successful Messages | Logs |
+| :- | :- | :- | :- |
+| 1 | 1795764955 | 98 | [server-out](./logs/1795764955-server-out.log), [server-err](./logs/1795764955-server-err.log), [client-out](./logs/1795764955-client-out.log), [client-err](./logs/1795764955-client-err.log), [network](./logs/1795764955-network.log) |
+| 2 | 1795764985 | 119 | [server-out](./logs/1795764985-server-out.log), [server-err](./logs/1795764985-server-err.log), [client-out](./logs/1795764985-client-out.log), [client-err](./logs/1795764985-client-err.log), [network](./logs/1795764985-network.log) |
+| 3 | 1795765023 | 109 | [server-out](./logs/1795765023-server-out.log), [server-err](./logs/1795765023-server-err.log), [client-out](./logs/1795765023-client-out.log), [client-err](./logs/1795765023-client-err.log), [network](./logs/1795765023-network.log) |
+| 4 | 1795765036 | 103 | [server-out](./logs/1795765036-server-out.log), [server-err](./logs/1795765036-server-err.log), [client-out](./logs/1795765036-client-out.log), [client-err](./logs/1795765036-client-err.log), [network](./logs/1795765036-network.log) |
+| 5 | 1795765051 | 101 | [server-out](./logs/1795765051-server-out.log), [server-err](./logs/1795765051-server-err.log), [client-out](./logs/1795765051-client-out.log), [client-err](./logs/1795765051-client-err.log), [network](./logs/1795765051-network.log) |
+
+### Conclusions
+
 
 
 
