@@ -1,0 +1,3730 @@
+[32mINFO[0m ./src/udp_server.c:main:229	SLW STATE: { fd: 3, slots: 256 }
+[32mINFO[0m ./src/udp_server.c:main:230	SLW SNDWIND STATE: { slots: 256, length: 1 }
+[32mINFO[0m ./src/udp_server.c:main:232	SLW RCVWIND STATE: { slots: 256, length: 1 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:479	
+process start
+	send window state
+		{ base: 0, next 0, ack: -1 }
+	receive window state
+		{ base: 0, next 0, ack: -1 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:532	Recevied Packet { id: 0, ack 255, checksum: 694, length 6 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:586	packet id is the expected id
+[32mINFO[0m ./src/udp_slw.c:slw_process:607	
+process end
+	send window state
+		{ base: 0, next 0, ack: -1 }
+	receive window state
+		{ base: 0, next 1, ack: 1 }
+[32mINFO[0m ./src/udp_slw.c:slw_write_packet:169	writing packet produced following checksum 441
+[32mINFO[0m ./src/udp_slw.c:slw_send:411	Packet { id: 0, ack: 1, checksum: 0, length: 6 }
+[32mINFO[0m ./src/udp_slw.c:slw_send:419	slw_send transmitted 1 packets
+[32mINFO[0m ./src/udp_slw.c:slw_process:479	
+process start
+	send window state
+		{ base: 0, next 1, ack: -1 }
+	receive window state
+		{ base: 1, next 1, ack: 1 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:532	Recevied Packet { id: 0, ack 255, checksum: 694, length 6 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:595	packet id is invalid
+[32mINFO[0m ./src/udp_slw.c:slw_transmit_ack:322	Transmit pure ACK { id: 0, ack: 1 }
+[32mINFO[0m ./src/udp_slw.c:slw_write_packet:169	writing packet produced following checksum 2
+[32mINFO[0m ./src/udp_slw.c:slw_process:607	
+process end
+	send window state
+		{ base: 0, next 1, ack: -1 }
+	receive window state
+		{ base: 1, next 1, ack: 1 }
+[33mWARN[0m ./src/udp_slw.c:slw_recv:433	no packets to receive
+[33mWARN[0m ./src/udp_server.c:slw_loop:136	rcvwind is empty nothing to receive
+[32mINFO[0m ./src/udp_slw.c:slw_process:479	
+process start
+	send window state
+		{ base: 0, next 1, ack: -1 }
+	receive window state
+		{ base: 1, next 1, ack: 1 }
+[33mWARN[0m ./src/udp_slw.c:slw_process:494	time 12694981 greater than timeout 12694981 triggering retransmission
+[32mINFO[0m ./src/udp_slw.c:slw_write_packet:169	writing packet produced following checksum 441
+[32mINFO[0m ./src/udp_slw.c:slw_process:532	Recevied Packet { id: 0, ack 255, checksum: 694, length 6 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:595	packet id is invalid
+[32mINFO[0m ./src/udp_slw.c:slw_transmit_ack:322	Transmit pure ACK { id: 0, ack: 1 }
+[32mINFO[0m ./src/udp_slw.c:slw_write_packet:169	writing packet produced following checksum 2
+[32mINFO[0m ./src/udp_slw.c:slw_process:607	
+process end
+	send window state
+		{ base: 0, next 1, ack: -1 }
+	receive window state
+		{ base: 1, next 1, ack: 1 }
+[33mWARN[0m ./src/udp_slw.c:slw_recv:433	no packets to receive
+[33mWARN[0m ./src/udp_server.c:slw_loop:136	rcvwind is empty nothing to receive
+[32mINFO[0m ./src/udp_slw.c:slw_process:479	
+process start
+	send window state
+		{ base: 0, next 1, ack: -1 }
+	receive window state
+		{ base: 1, next 1, ack: 1 }
+[33mWARN[0m ./src/udp_slw.c:slw_process:494	time 12695032 greater than timeout 12695031 triggering retransmission
+[32mINFO[0m ./src/udp_slw.c:slw_write_packet:169	writing packet produced following checksum 441
+[32mINFO[0m ./src/udp_slw.c:slw_process:532	Recevied Packet { id: 1, ack 1, checksum: 444, length 6 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:550	ACK is in the window
+[32mINFO[0m ./src/udp_slw.c:slw_process:586	packet id is the expected id
+[32mINFO[0m ./src/udp_slw.c:slw_process:607	
+process end
+	send window state
+		{ base: 1, next 1, ack: -1 }
+	receive window state
+		{ base: 1, next 2, ack: 2 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:479	
+process start
+	send window state
+		{ base: 1, next 1, ack: -1 }
+	receive window state
+		{ base: 1, next 2, ack: 2 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:532	Recevied Packet { id: 0, ack 1, checksum: 2, length 0 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:607	
+process end
+	send window state
+		{ base: 1, next 1, ack: -1 }
+	receive window state
+		{ base: 1, next 2, ack: 2 }
+[32mINFO[0m ./src/udp_slw.c:slw_write_packet:169	writing packet produced following checksum 445
+[32mINFO[0m ./src/udp_slw.c:slw_send:411	Packet { id: 1, ack: 2, checksum: 0, length: 6 }
+[32mINFO[0m ./src/udp_slw.c:slw_send:419	slw_send transmitted 1 packets
+[32mINFO[0m ./src/udp_slw.c:slw_process:479	
+process start
+	send window state
+		{ base: 1, next 2, ack: -1 }
+	receive window state
+		{ base: 2, next 2, ack: 2 }
+[33mWARN[0m ./src/udp_slw.c:slw_process:494	time 12695239 greater than timeout 12695239 triggering retransmission
+[32mINFO[0m ./src/udp_slw.c:slw_write_packet:169	writing packet produced following checksum 445
+[33mWARN[0m ./src/udp_slw.c:slw_process:507	`recvfrom` call would block
+[33mWARN[0m ./src/udp_server.c:slw_loop:118	poll returned but there was nothing to process on the socket
+[32mINFO[0m ./src/udp_slw.c:slw_process:479	
+process start
+	send window state
+		{ base: 1, next 2, ack: -1 }
+	receive window state
+		{ base: 2, next 2, ack: 2 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:532	Recevied Packet { id: 1, ack 1, checksum: 444, length 6 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:595	packet id is invalid
+[32mINFO[0m ./src/udp_slw.c:slw_transmit_ack:322	Transmit pure ACK { id: 0, ack: 2 }
+[32mINFO[0m ./src/udp_slw.c:slw_write_packet:169	writing packet produced following checksum 3
+[32mINFO[0m ./src/udp_slw.c:slw_process:607	
+process end
+	send window state
+		{ base: 1, next 2, ack: -1 }
+	receive window state
+		{ base: 2, next 2, ack: 2 }
+[33mWARN[0m ./src/udp_slw.c:slw_recv:433	no packets to receive
+[33mWARN[0m ./src/udp_server.c:slw_loop:136	rcvwind is empty nothing to receive
+[32mINFO[0m ./src/udp_slw.c:slw_process:479	
+process start
+	send window state
+		{ base: 1, next 2, ack: -1 }
+	receive window state
+		{ base: 2, next 2, ack: 2 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:532	Recevied Packet { id: 2, ack 2, checksum: 451, length 6 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:550	ACK is in the window
+[32mINFO[0m ./src/udp_slw.c:slw_process:586	packet id is the expected id
+[32mINFO[0m ./src/udp_slw.c:slw_process:607	
+process end
+	send window state
+		{ base: 2, next 2, ack: -1 }
+	receive window state
+		{ base: 2, next 3, ack: 3 }
+[32mINFO[0m ./src/udp_slw.c:slw_write_packet:169	writing packet produced following checksum 452
+[32mINFO[0m ./src/udp_slw.c:slw_send:411	Packet { id: 2, ack: 3, checksum: 0, length: 6 }
+[32mINFO[0m ./src/udp_slw.c:slw_send:419	slw_send transmitted 1 packets
+[32mINFO[0m ./src/udp_slw.c:slw_process:479	
+process start
+	send window state
+		{ base: 2, next 3, ack: -1 }
+	receive window state
+		{ base: 3, next 3, ack: 3 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:532	Recevied Packet { id: 1, ack 1, checksum: 444, length 6 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:595	packet id is invalid
+[32mINFO[0m ./src/udp_slw.c:slw_transmit_ack:322	Transmit pure ACK { id: 0, ack: 3 }
+[32mINFO[0m ./src/udp_slw.c:slw_write_packet:169	writing packet produced following checksum 4
+[32mINFO[0m ./src/udp_slw.c:slw_process:607	
+process end
+	send window state
+		{ base: 2, next 3, ack: -1 }
+	receive window state
+		{ base: 3, next 3, ack: 3 }
+[33mWARN[0m ./src/udp_slw.c:slw_recv:433	no packets to receive
+[33mWARN[0m ./src/udp_server.c:slw_loop:136	rcvwind is empty nothing to receive
+[32mINFO[0m ./src/udp_slw.c:slw_process:479	
+process start
+	send window state
+		{ base: 2, next 3, ack: -1 }
+	receive window state
+		{ base: 3, next 3, ack: 3 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:532	Recevied Packet { id: 2, ack 2, checksum: 451, length 6 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:595	packet id is invalid
+[32mINFO[0m ./src/udp_slw.c:slw_transmit_ack:322	Transmit pure ACK { id: 0, ack: 3 }
+[32mINFO[0m ./src/udp_slw.c:slw_write_packet:169	writing packet produced following checksum 4
+[32mINFO[0m ./src/udp_slw.c:slw_process:607	
+process end
+	send window state
+		{ base: 2, next 3, ack: -1 }
+	receive window state
+		{ base: 3, next 3, ack: 3 }
+[33mWARN[0m ./src/udp_slw.c:slw_recv:433	no packets to receive
+[33mWARN[0m ./src/udp_server.c:slw_loop:136	rcvwind is empty nothing to receive
+[32mINFO[0m ./src/udp_slw.c:slw_process:479	
+process start
+	send window state
+		{ base: 2, next 3, ack: -1 }
+	receive window state
+		{ base: 3, next 3, ack: 3 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:532	Recevied Packet { id: 0, ack 2, checksum: 3, length 0 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:607	
+process end
+	send window state
+		{ base: 2, next 3, ack: -1 }
+	receive window state
+		{ base: 3, next 3, ack: 3 }
+[33mWARN[0m ./src/udp_slw.c:slw_recv:433	no packets to receive
+[33mWARN[0m ./src/udp_server.c:slw_loop:136	rcvwind is empty nothing to receive
+[32mINFO[0m ./src/udp_slw.c:slw_process:479	
+process start
+	send window state
+		{ base: 2, next 3, ack: -1 }
+	receive window state
+		{ base: 3, next 3, ack: 3 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:532	Recevied Packet { id: 3, ack 2, checksum: 494, length 7 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:586	packet id is the expected id
+[32mINFO[0m ./src/udp_slw.c:slw_process:607	
+process end
+	send window state
+		{ base: 2, next 3, ack: -1 }
+	receive window state
+		{ base: 3, next 4, ack: 4 }
+[33mWARN[0m ./src/udp_slw.c:slw_send:353	send window is full
+[33mWARN[0m ./src/udp_server.c:slw_loop:163	new message dropped send window is full
+[32mINFO[0m ./src/udp_slw.c:slw_process:479	
+process start
+	send window state
+		{ base: 2, next 3, ack: -1 }
+	receive window state
+		{ base: 4, next 4, ack: 4 }
+[33mWARN[0m ./src/udp_slw.c:slw_process:494	time 12695508 greater than timeout 12695407 triggering retransmission
+[32mINFO[0m ./src/udp_slw.c:slw_write_packet:169	writing packet produced following checksum 453
+[33mWARN[0m ./src/udp_slw.c:slw_process:507	`recvfrom` call would block
+[33mWARN[0m ./src/udp_server.c:slw_loop:118	poll returned but there was nothing to process on the socket
+[32mINFO[0m ./src/udp_slw.c:slw_process:479	
+process start
+	send window state
+		{ base: 2, next 3, ack: -1 }
+	receive window state
+		{ base: 4, next 4, ack: 4 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:532	Recevied Packet { id: 3, ack 2, checksum: 494, length 7 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:595	packet id is invalid
+[32mINFO[0m ./src/udp_slw.c:slw_transmit_ack:322	Transmit pure ACK { id: 0, ack: 4 }
+[32mINFO[0m ./src/udp_slw.c:slw_write_packet:169	writing packet produced following checksum 5
+[32mINFO[0m ./src/udp_slw.c:slw_process:607	
+process end
+	send window state
+		{ base: 2, next 3, ack: -1 }
+	receive window state
+		{ base: 4, next 4, ack: 4 }
+[33mWARN[0m ./src/udp_slw.c:slw_recv:433	no packets to receive
+[33mWARN[0m ./src/udp_server.c:slw_loop:136	rcvwind is empty nothing to receive
+[32mINFO[0m ./src/udp_slw.c:slw_process:479	
+process start
+	send window state
+		{ base: 2, next 3, ack: -1 }
+	receive window state
+		{ base: 4, next 4, ack: 4 }
+[33mWARN[0m ./src/udp_slw.c:slw_process:494	time 12695560 greater than timeout 12695558 triggering retransmission
+[32mINFO[0m ./src/udp_slw.c:slw_write_packet:169	writing packet produced following checksum 453
+[32mINFO[0m ./src/udp_slw.c:slw_process:532	Recevied Packet { id: 1, ack 1, checksum: 444, length 6 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:595	packet id is invalid
+[32mINFO[0m ./src/udp_slw.c:slw_transmit_ack:322	Transmit pure ACK { id: 0, ack: 4 }
+[32mINFO[0m ./src/udp_slw.c:slw_write_packet:169	writing packet produced following checksum 5
+[32mINFO[0m ./src/udp_slw.c:slw_process:607	
+process end
+	send window state
+		{ base: 2, next 3, ack: -1 }
+	receive window state
+		{ base: 4, next 4, ack: 4 }
+[33mWARN[0m ./src/udp_slw.c:slw_recv:433	no packets to receive
+[33mWARN[0m ./src/udp_server.c:slw_loop:136	rcvwind is empty nothing to receive
+[32mINFO[0m ./src/udp_slw.c:slw_process:479	
+process start
+	send window state
+		{ base: 2, next 3, ack: -1 }
+	receive window state
+		{ base: 4, next 4, ack: 4 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:532	Recevied Packet { id: 4, ack 3, checksum: 500, length 7 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:550	ACK is in the window
+[32mINFO[0m ./src/udp_slw.c:slw_process:586	packet id is the expected id
+[32mINFO[0m ./src/udp_slw.c:slw_process:607	
+process end
+	send window state
+		{ base: 3, next 3, ack: -1 }
+	receive window state
+		{ base: 4, next 5, ack: 5 }
+[32mINFO[0m ./src/udp_slw.c:slw_write_packet:169	writing packet produced following checksum 501
+[32mINFO[0m ./src/udp_slw.c:slw_send:411	Packet { id: 3, ack: 5, checksum: 0, length: 7 }
+[32mINFO[0m ./src/udp_slw.c:slw_send:419	slw_send transmitted 1 packets
+[32mINFO[0m ./src/udp_slw.c:slw_process:479	
+process start
+	send window state
+		{ base: 3, next 4, ack: -1 }
+	receive window state
+		{ base: 5, next 5, ack: 5 }
+[33mWARN[0m ./src/udp_slw.c:slw_process:494	time 12695682 greater than timeout 12695682 triggering retransmission
+[32mINFO[0m ./src/udp_slw.c:slw_write_packet:169	writing packet produced following checksum 501
+[33mWARN[0m ./src/udp_slw.c:slw_process:507	`recvfrom` call would block
+[33mWARN[0m ./src/udp_server.c:slw_loop:118	poll returned but there was nothing to process on the socket
+[32mINFO[0m ./src/udp_slw.c:slw_process:479	
+process start
+	send window state
+		{ base: 3, next 4, ack: -1 }
+	receive window state
+		{ base: 5, next 5, ack: 5 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:532	Recevied Packet { id: 4, ack 3, checksum: 500, length 7 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:595	packet id is invalid
+[32mINFO[0m ./src/udp_slw.c:slw_transmit_ack:322	Transmit pure ACK { id: 0, ack: 5 }
+[32mINFO[0m ./src/udp_slw.c:slw_write_packet:169	writing packet produced following checksum 6
+[32mINFO[0m ./src/udp_slw.c:slw_process:607	
+process end
+	send window state
+		{ base: 3, next 4, ack: -1 }
+	receive window state
+		{ base: 5, next 5, ack: 5 }
+[33mWARN[0m ./src/udp_slw.c:slw_recv:433	no packets to receive
+[33mWARN[0m ./src/udp_server.c:slw_loop:136	rcvwind is empty nothing to receive
+[32mINFO[0m ./src/udp_slw.c:slw_process:479	
+process start
+	send window state
+		{ base: 3, next 4, ack: -1 }
+	receive window state
+		{ base: 5, next 5, ack: 5 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:532	Recevied Packet { id: 5, ack 4, checksum: 505, length 7 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:550	ACK is in the window
+[32mINFO[0m ./src/udp_slw.c:slw_process:586	packet id is the expected id
+[32mINFO[0m ./src/udp_slw.c:slw_process:607	
+process end
+	send window state
+		{ base: 4, next 4, ack: -1 }
+	receive window state
+		{ base: 5, next 6, ack: 6 }
+[32mINFO[0m ./src/udp_slw.c:slw_write_packet:169	writing packet produced following checksum 506
+[32mINFO[0m ./src/udp_slw.c:slw_send:411	Packet { id: 4, ack: 6, checksum: 0, length: 7 }
+[32mINFO[0m ./src/udp_slw.c:slw_send:419	slw_send transmitted 1 packets
+[32mINFO[0m ./src/udp_slw.c:slw_process:479	
+process start
+	send window state
+		{ base: 4, next 5, ack: -1 }
+	receive window state
+		{ base: 6, next 6, ack: 6 }
+[33mWARN[0m ./src/udp_slw.c:slw_process:494	time 12695831 greater than timeout 12695831 triggering retransmission
+[32mINFO[0m ./src/udp_slw.c:slw_write_packet:169	writing packet produced following checksum 506
+[33mWARN[0m ./src/udp_slw.c:slw_process:507	`recvfrom` call would block
+[33mWARN[0m ./src/udp_server.c:slw_loop:118	poll returned but there was nothing to process on the socket
+[32mINFO[0m ./src/udp_slw.c:slw_process:479	
+process start
+	send window state
+		{ base: 4, next 5, ack: -1 }
+	receive window state
+		{ base: 6, next 6, ack: 6 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:532	Recevied Packet { id: 5, ack 4, checksum: 505, length 7 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:595	packet id is invalid
+[32mINFO[0m ./src/udp_slw.c:slw_transmit_ack:322	Transmit pure ACK { id: 0, ack: 6 }
+[32mINFO[0m ./src/udp_slw.c:slw_write_packet:169	writing packet produced following checksum 7
+[32mINFO[0m ./src/udp_slw.c:slw_process:607	
+process end
+	send window state
+		{ base: 4, next 5, ack: -1 }
+	receive window state
+		{ base: 6, next 6, ack: 6 }
+[33mWARN[0m ./src/udp_slw.c:slw_recv:433	no packets to receive
+[33mWARN[0m ./src/udp_server.c:slw_loop:136	rcvwind is empty nothing to receive
+[32mINFO[0m ./src/udp_slw.c:slw_process:479	
+process start
+	send window state
+		{ base: 4, next 5, ack: -1 }
+	receive window state
+		{ base: 6, next 6, ack: 6 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:532	Recevied Packet { id: 3, ack 2, checksum: 494, length 7 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:595	packet id is invalid
+[32mINFO[0m ./src/udp_slw.c:slw_transmit_ack:322	Transmit pure ACK { id: 0, ack: 6 }
+[32mINFO[0m ./src/udp_slw.c:slw_write_packet:169	writing packet produced following checksum 7
+[32mINFO[0m ./src/udp_slw.c:slw_process:607	
+process end
+	send window state
+		{ base: 4, next 5, ack: -1 }
+	receive window state
+		{ base: 6, next 6, ack: 6 }
+[33mWARN[0m ./src/udp_slw.c:slw_recv:433	no packets to receive
+[33mWARN[0m ./src/udp_server.c:slw_loop:136	rcvwind is empty nothing to receive
+[32mINFO[0m ./src/udp_slw.c:slw_process:479	
+process start
+	send window state
+		{ base: 4, next 5, ack: -1 }
+	receive window state
+		{ base: 6, next 6, ack: 6 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:532	Recevied Packet { id: 4, ack 3, checksum: 500, length 7 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:595	packet id is invalid
+[32mINFO[0m ./src/udp_slw.c:slw_transmit_ack:322	Transmit pure ACK { id: 0, ack: 6 }
+[32mINFO[0m ./src/udp_slw.c:slw_write_packet:169	writing packet produced following checksum 7
+[32mINFO[0m ./src/udp_slw.c:slw_process:607	
+process end
+	send window state
+		{ base: 4, next 5, ack: -1 }
+	receive window state
+		{ base: 6, next 6, ack: 6 }
+[33mWARN[0m ./src/udp_slw.c:slw_recv:433	no packets to receive
+[33mWARN[0m ./src/udp_server.c:slw_loop:136	rcvwind is empty nothing to receive
+[32mINFO[0m ./src/udp_slw.c:slw_process:479	
+process start
+	send window state
+		{ base: 4, next 5, ack: -1 }
+	receive window state
+		{ base: 6, next 6, ack: 6 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:532	Recevied Packet { id: 0, ack 5, checksum: 6, length 0 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:550	ACK is in the window
+[32mINFO[0m ./src/udp_slw.c:slw_process:563	pure ACK no receive window updates
+[32mINFO[0m ./src/udp_slw.c:slw_process:607	
+process end
+	send window state
+		{ base: 5, next 5, ack: -1 }
+	receive window state
+		{ base: 6, next 6, ack: 6 }
+[33mWARN[0m ./src/udp_slw.c:slw_recv:433	no packets to receive
+[33mWARN[0m ./src/udp_server.c:slw_loop:136	rcvwind is empty nothing to receive
+[32mINFO[0m ./src/udp_slw.c:slw_process:479	
+process start
+	send window state
+		{ base: 5, next 5, ack: -1 }
+	receive window state
+		{ base: 6, next 6, ack: 6 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:532	Recevied Packet { id: 6, ack 5, checksum: 501, length 7 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:586	packet id is the expected id
+[32mINFO[0m ./src/udp_slw.c:slw_process:607	
+process end
+	send window state
+		{ base: 5, next 5, ack: -1 }
+	receive window state
+		{ base: 6, next 7, ack: 7 }
+[32mINFO[0m ./src/udp_slw.c:slw_write_packet:169	writing packet produced following checksum 502
+[32mINFO[0m ./src/udp_slw.c:slw_send:411	Packet { id: 5, ack: 7, checksum: 0, length: 7 }
+[32mINFO[0m ./src/udp_slw.c:slw_send:419	slw_send transmitted 1 packets
+[32mINFO[0m ./src/udp_slw.c:slw_process:479	
+process start
+	send window state
+		{ base: 5, next 6, ack: -1 }
+	receive window state
+		{ base: 7, next 7, ack: 7 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:532	Recevied Packet { id: 5, ack 4, checksum: 505, length 7 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:595	packet id is invalid
+[32mINFO[0m ./src/udp_slw.c:slw_transmit_ack:322	Transmit pure ACK { id: 0, ack: 7 }
+[32mINFO[0m ./src/udp_slw.c:slw_write_packet:169	writing packet produced following checksum 8
+[32mINFO[0m ./src/udp_slw.c:slw_process:607	
+process end
+	send window state
+		{ base: 5, next 6, ack: -1 }
+	receive window state
+		{ base: 7, next 7, ack: 7 }
+[33mWARN[0m ./src/udp_slw.c:slw_recv:433	no packets to receive
+[33mWARN[0m ./src/udp_server.c:slw_loop:136	rcvwind is empty nothing to receive
+[32mINFO[0m ./src/udp_slw.c:slw_process:479	
+process start
+	send window state
+		{ base: 5, next 6, ack: -1 }
+	receive window state
+		{ base: 7, next 7, ack: 7 }
+[33mWARN[0m ./src/udp_slw.c:slw_process:494	time 12696182 greater than timeout 12696169 triggering retransmission
+[32mINFO[0m ./src/udp_slw.c:slw_write_packet:169	writing packet produced following checksum 502
+[32mINFO[0m ./src/udp_slw.c:slw_process:532	Recevied Packet { id: 6, ack 5, checksum: 501, length 7 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:595	packet id is invalid
+[32mINFO[0m ./src/udp_slw.c:slw_transmit_ack:322	Transmit pure ACK { id: 0, ack: 7 }
+[32mINFO[0m ./src/udp_slw.c:slw_write_packet:169	writing packet produced following checksum 8
+[32mINFO[0m ./src/udp_slw.c:slw_process:607	
+process end
+	send window state
+		{ base: 5, next 6, ack: -1 }
+	receive window state
+		{ base: 7, next 7, ack: 7 }
+[33mWARN[0m ./src/udp_slw.c:slw_recv:433	no packets to receive
+[33mWARN[0m ./src/udp_server.c:slw_loop:136	rcvwind is empty nothing to receive
+[32mINFO[0m ./src/udp_slw.c:slw_process:479	
+process start
+	send window state
+		{ base: 5, next 6, ack: -1 }
+	receive window state
+		{ base: 7, next 7, ack: 7 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:532	Recevied Packet { id: 6, ack 5, checksum: 501, length 7 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:595	packet id is invalid
+[32mINFO[0m ./src/udp_slw.c:slw_transmit_ack:322	Transmit pure ACK { id: 0, ack: 7 }
+[32mINFO[0m ./src/udp_slw.c:slw_write_packet:169	writing packet produced following checksum 8
+[32mINFO[0m ./src/udp_slw.c:slw_process:607	
+process end
+	send window state
+		{ base: 5, next 6, ack: -1 }
+	receive window state
+		{ base: 7, next 7, ack: 7 }
+[33mWARN[0m ./src/udp_slw.c:slw_recv:433	no packets to receive
+[33mWARN[0m ./src/udp_server.c:slw_loop:136	rcvwind is empty nothing to receive
+[32mINFO[0m ./src/udp_slw.c:slw_process:479	
+process start
+	send window state
+		{ base: 5, next 6, ack: -1 }
+	receive window state
+		{ base: 7, next 7, ack: 7 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:532	Recevied Packet { id: 7, ack 5, checksum: 509, length 7 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:586	packet id is the expected id
+[32mINFO[0m ./src/udp_slw.c:slw_process:607	
+process end
+	send window state
+		{ base: 5, next 6, ack: -1 }
+	receive window state
+		{ base: 7, next 8, ack: 8 }
+[33mWARN[0m ./src/udp_slw.c:slw_send:353	send window is full
+[33mWARN[0m ./src/udp_server.c:slw_loop:163	new message dropped send window is full
+[32mINFO[0m ./src/udp_slw.c:slw_process:479	
+process start
+	send window state
+		{ base: 5, next 6, ack: -1 }
+	receive window state
+		{ base: 8, next 8, ack: 8 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:532	Recevied Packet { id: 7, ack 5, checksum: 509, length 7 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:595	packet id is invalid
+[32mINFO[0m ./src/udp_slw.c:slw_transmit_ack:322	Transmit pure ACK { id: 0, ack: 8 }
+[32mINFO[0m ./src/udp_slw.c:slw_write_packet:169	writing packet produced following checksum 9
+[32mINFO[0m ./src/udp_slw.c:slw_process:607	
+process end
+	send window state
+		{ base: 5, next 6, ack: -1 }
+	receive window state
+		{ base: 8, next 8, ack: 8 }
+[33mWARN[0m ./src/udp_slw.c:slw_recv:433	no packets to receive
+[33mWARN[0m ./src/udp_server.c:slw_loop:136	rcvwind is empty nothing to receive
+[32mINFO[0m ./src/udp_slw.c:slw_process:479	
+process start
+	send window state
+		{ base: 5, next 6, ack: -1 }
+	receive window state
+		{ base: 8, next 8, ack: 8 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:532	Recevied Packet { id: 6, ack 5, checksum: 501, length 7 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:595	packet id is invalid
+[32mINFO[0m ./src/udp_slw.c:slw_transmit_ack:322	Transmit pure ACK { id: 0, ack: 8 }
+[32mINFO[0m ./src/udp_slw.c:slw_write_packet:169	writing packet produced following checksum 9
+[32mINFO[0m ./src/udp_slw.c:slw_process:607	
+process end
+	send window state
+		{ base: 5, next 6, ack: -1 }
+	receive window state
+		{ base: 8, next 8, ack: 8 }
+[33mWARN[0m ./src/udp_slw.c:slw_recv:433	no packets to receive
+[33mWARN[0m ./src/udp_server.c:slw_loop:136	rcvwind is empty nothing to receive
+[32mINFO[0m ./src/udp_slw.c:slw_process:479	
+process start
+	send window state
+		{ base: 5, next 6, ack: -1 }
+	receive window state
+		{ base: 8, next 8, ack: 8 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:532	Recevied Packet { id: 0, ack 5, checksum: 6, length 0 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:607	
+process end
+	send window state
+		{ base: 5, next 6, ack: -1 }
+	receive window state
+		{ base: 8, next 8, ack: 8 }
+[33mWARN[0m ./src/udp_slw.c:slw_recv:433	no packets to receive
+[33mWARN[0m ./src/udp_server.c:slw_loop:136	rcvwind is empty nothing to receive
+[32mINFO[0m ./src/udp_slw.c:slw_process:479	
+process start
+	send window state
+		{ base: 5, next 6, ack: -1 }
+	receive window state
+		{ base: 8, next 8, ack: 8 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:532	Recevied Packet { id: 0, ack 5, checksum: 6, length 0 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:607	
+process end
+	send window state
+		{ base: 5, next 6, ack: -1 }
+	receive window state
+		{ base: 8, next 8, ack: 8 }
+[33mWARN[0m ./src/udp_slw.c:slw_recv:433	no packets to receive
+[33mWARN[0m ./src/udp_server.c:slw_loop:136	rcvwind is empty nothing to receive
+[32mINFO[0m ./src/udp_slw.c:slw_process:479	
+process start
+	send window state
+		{ base: 5, next 6, ack: -1 }
+	receive window state
+		{ base: 8, next 8, ack: 8 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:532	Recevied Packet { id: 8, ack 5, checksum: 512, length 7 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:586	packet id is the expected id
+[32mINFO[0m ./src/udp_slw.c:slw_process:607	
+process end
+	send window state
+		{ base: 5, next 6, ack: -1 }
+	receive window state
+		{ base: 8, next 9, ack: 9 }
+[33mWARN[0m ./src/udp_slw.c:slw_send:353	send window is full
+[33mWARN[0m ./src/udp_server.c:slw_loop:163	new message dropped send window is full
+[32mINFO[0m ./src/udp_slw.c:slw_process:479	
+process start
+	send window state
+		{ base: 5, next 6, ack: -1 }
+	receive window state
+		{ base: 9, next 9, ack: 9 }
+[33mWARN[0m ./src/udp_slw.c:slw_process:494	time 12696650 greater than timeout 12696578 triggering retransmission
+[32mINFO[0m ./src/udp_slw.c:slw_write_packet:169	writing packet produced following checksum 504
+[32mINFO[0m ./src/udp_slw.c:slw_process:532	Recevied Packet { id: 8, ack 5, checksum: 512, length 7 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:595	packet id is invalid
+[32mINFO[0m ./src/udp_slw.c:slw_transmit_ack:322	Transmit pure ACK { id: 0, ack: 9 }
+[32mINFO[0m ./src/udp_slw.c:slw_write_packet:169	writing packet produced following checksum 10
+[32mINFO[0m ./src/udp_slw.c:slw_process:607	
+process end
+	send window state
+		{ base: 5, next 6, ack: -1 }
+	receive window state
+		{ base: 9, next 9, ack: 9 }
+[33mWARN[0m ./src/udp_slw.c:slw_recv:433	no packets to receive
+[33mWARN[0m ./src/udp_server.c:slw_loop:136	rcvwind is empty nothing to receive
+[32mINFO[0m ./src/udp_slw.c:slw_process:479	
+process start
+	send window state
+		{ base: 5, next 6, ack: -1 }
+	receive window state
+		{ base: 9, next 9, ack: 9 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:532	Recevied Packet { id: 0, ack 6, checksum: 7, length 0 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:550	ACK is in the window
+[32mINFO[0m ./src/udp_slw.c:slw_process:563	pure ACK no receive window updates
+[32mINFO[0m ./src/udp_slw.c:slw_process:607	
+process end
+	send window state
+		{ base: 6, next 6, ack: -1 }
+	receive window state
+		{ base: 9, next 9, ack: 9 }
+[33mWARN[0m ./src/udp_slw.c:slw_recv:433	no packets to receive
+[33mWARN[0m ./src/udp_server.c:slw_loop:136	rcvwind is empty nothing to receive
+[32mINFO[0m ./src/udp_slw.c:slw_process:479	
+process start
+	send window state
+		{ base: 6, next 6, ack: -1 }
+	receive window state
+		{ base: 9, next 9, ack: 9 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:532	Recevied Packet { id: 9, ack 6, checksum: 512, length 7 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:586	packet id is the expected id
+[32mINFO[0m ./src/udp_slw.c:slw_process:607	
+process end
+	send window state
+		{ base: 6, next 6, ack: -1 }
+	receive window state
+		{ base: 9, next 10, ack: 10 }
+[32mINFO[0m ./src/udp_slw.c:slw_write_packet:169	writing packet produced following checksum 513
+[32mINFO[0m ./src/udp_slw.c:slw_send:411	Packet { id: 6, ack: 10, checksum: 0, length: 7 }
+[32mINFO[0m ./src/udp_slw.c:slw_send:419	slw_send transmitted 1 packets
+[32mINFO[0m ./src/udp_slw.c:slw_process:479	
+process start
+	send window state
+		{ base: 6, next 7, ack: -1 }
+	receive window state
+		{ base: 10, next 10, ack: 10 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:532	Recevied Packet { id: 8, ack 5, checksum: 512, length 7 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:595	packet id is invalid
+[32mINFO[0m ./src/udp_slw.c:slw_transmit_ack:322	Transmit pure ACK { id: 0, ack: 10 }
+[32mINFO[0m ./src/udp_slw.c:slw_write_packet:169	writing packet produced following checksum 11
+[32mINFO[0m ./src/udp_slw.c:slw_process:607	
+process end
+	send window state
+		{ base: 6, next 7, ack: -1 }
+	receive window state
+		{ base: 10, next 10, ack: 10 }
+[33mWARN[0m ./src/udp_slw.c:slw_recv:433	no packets to receive
+[33mWARN[0m ./src/udp_server.c:slw_loop:136	rcvwind is empty nothing to receive
+[32mINFO[0m ./src/udp_slw.c:slw_process:479	
+process start
+	send window state
+		{ base: 6, next 7, ack: -1 }
+	receive window state
+		{ base: 10, next 10, ack: 10 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:532	Recevied Packet { id: 10, ack 6, checksum: 514, length 7 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:586	packet id is the expected id
+[32mINFO[0m ./src/udp_slw.c:slw_process:607	
+process end
+	send window state
+		{ base: 6, next 7, ack: -1 }
+	receive window state
+		{ base: 10, next 11, ack: 11 }
+[33mWARN[0m ./src/udp_slw.c:slw_send:353	send window is full
+[33mWARN[0m ./src/udp_server.c:slw_loop:163	new message dropped send window is full
+[32mINFO[0m ./src/udp_slw.c:slw_process:479	
+process start
+	send window state
+		{ base: 6, next 7, ack: -1 }
+	receive window state
+		{ base: 11, next 11, ack: 11 }
+[33mWARN[0m ./src/udp_slw.c:slw_process:494	time 12696786 greater than timeout 12696736 triggering retransmission
+[32mINFO[0m ./src/udp_slw.c:slw_write_packet:169	writing packet produced following checksum 514
+[33mWARN[0m ./src/udp_slw.c:slw_process:507	`recvfrom` call would block
+[33mWARN[0m ./src/udp_server.c:slw_loop:118	poll returned but there was nothing to process on the socket
+[32mINFO[0m ./src/udp_slw.c:slw_process:479	
+process start
+	send window state
+		{ base: 6, next 7, ack: -1 }
+	receive window state
+		{ base: 11, next 11, ack: 11 }
+[33mWARN[0m ./src/udp_slw.c:slw_process:494	time 12696836 greater than timeout 12696836 triggering retransmission
+[32mINFO[0m ./src/udp_slw.c:slw_write_packet:169	writing packet produced following checksum 514
+[33mWARN[0m ./src/udp_slw.c:slw_process:507	`recvfrom` call would block
+[33mWARN[0m ./src/udp_server.c:slw_loop:118	poll returned but there was nothing to process on the socket
+[32mINFO[0m ./src/udp_slw.c:slw_process:479	
+process start
+	send window state
+		{ base: 6, next 7, ack: -1 }
+	receive window state
+		{ base: 11, next 11, ack: 11 }
+[33mWARN[0m ./src/udp_slw.c:slw_process:494	time 12696890 greater than timeout 12696890 triggering retransmission
+[32mINFO[0m ./src/udp_slw.c:slw_write_packet:169	writing packet produced following checksum 514
+[33mWARN[0m ./src/udp_slw.c:slw_process:507	`recvfrom` call would block
+[33mWARN[0m ./src/udp_server.c:slw_loop:118	poll returned but there was nothing to process on the socket
+[32mINFO[0m ./src/udp_slw.c:slw_process:479	
+process start
+	send window state
+		{ base: 6, next 7, ack: -1 }
+	receive window state
+		{ base: 11, next 11, ack: 11 }
+[33mWARN[0m ./src/udp_slw.c:slw_process:494	time 12696940 greater than timeout 12696940 triggering retransmission
+[32mINFO[0m ./src/udp_slw.c:slw_write_packet:169	writing packet produced following checksum 514
+[33mWARN[0m ./src/udp_slw.c:slw_process:507	`recvfrom` call would block
+[33mWARN[0m ./src/udp_server.c:slw_loop:118	poll returned but there was nothing to process on the socket
+[32mINFO[0m ./src/udp_slw.c:slw_process:479	
+process start
+	send window state
+		{ base: 6, next 7, ack: -1 }
+	receive window state
+		{ base: 11, next 11, ack: 11 }
+[33mWARN[0m ./src/udp_slw.c:slw_read_packet:139	packet checksum did not match calculated checksum
+[33mWARN[0m ./src/udp_slw.c:slw_process:527	invalid packet dropped
+	packet parse failed
+[32mINFO[0m ./src/udp_slw.c:slw_process:607	
+process end
+	send window state
+		{ base: 6, next 7, ack: -1 }
+	receive window state
+		{ base: 11, next 11, ack: 11 }
+[33mWARN[0m ./src/udp_slw.c:slw_recv:433	no packets to receive
+[33mWARN[0m ./src/udp_server.c:slw_loop:136	rcvwind is empty nothing to receive
+[32mINFO[0m ./src/udp_slw.c:slw_process:479	
+process start
+	send window state
+		{ base: 6, next 7, ack: -1 }
+	receive window state
+		{ base: 11, next 11, ack: 11 }
+[33mWARN[0m ./src/udp_slw.c:slw_process:494	time 12697037 greater than timeout 12696995 triggering retransmission
+[32mINFO[0m ./src/udp_slw.c:slw_write_packet:169	writing packet produced following checksum 514
+[33mWARN[0m ./src/udp_slw.c:slw_process:507	`recvfrom` call would block
+[33mWARN[0m ./src/udp_server.c:slw_loop:118	poll returned but there was nothing to process on the socket
+[32mINFO[0m ./src/udp_slw.c:slw_process:479	
+process start
+	send window state
+		{ base: 6, next 7, ack: -1 }
+	receive window state
+		{ base: 11, next 11, ack: 11 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:532	Recevied Packet { id: 11, ack 7, checksum: 510, length 7 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:550	ACK is in the window
+[32mINFO[0m ./src/udp_slw.c:slw_process:586	packet id is the expected id
+[32mINFO[0m ./src/udp_slw.c:slw_process:607	
+process end
+	send window state
+		{ base: 7, next 7, ack: -1 }
+	receive window state
+		{ base: 11, next 12, ack: 12 }
+[32mINFO[0m ./src/udp_slw.c:slw_write_packet:169	writing packet produced following checksum 511
+[32mINFO[0m ./src/udp_slw.c:slw_send:411	Packet { id: 7, ack: 12, checksum: 0, length: 7 }
+[32mINFO[0m ./src/udp_slw.c:slw_send:419	slw_send transmitted 1 packets
+[32mINFO[0m ./src/udp_slw.c:slw_process:479	
+process start
+	send window state
+		{ base: 7, next 8, ack: -1 }
+	receive window state
+		{ base: 12, next 12, ack: 12 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:532	Recevied Packet { id: 0, ack 7, checksum: 8, length 0 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:607	
+process end
+	send window state
+		{ base: 7, next 8, ack: -1 }
+	receive window state
+		{ base: 12, next 12, ack: 12 }
+[33mWARN[0m ./src/udp_slw.c:slw_recv:433	no packets to receive
+[33mWARN[0m ./src/udp_server.c:slw_loop:136	rcvwind is empty nothing to receive
+[32mINFO[0m ./src/udp_slw.c:slw_process:479	
+process start
+	send window state
+		{ base: 7, next 8, ack: -1 }
+	receive window state
+		{ base: 12, next 12, ack: 12 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:532	Recevied Packet { id: 0, ack 7, checksum: 8, length 0 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:607	
+process end
+	send window state
+		{ base: 7, next 8, ack: -1 }
+	receive window state
+		{ base: 12, next 12, ack: 12 }
+[33mWARN[0m ./src/udp_slw.c:slw_recv:433	no packets to receive
+[33mWARN[0m ./src/udp_server.c:slw_loop:136	rcvwind is empty nothing to receive
+[32mINFO[0m ./src/udp_slw.c:slw_process:479	
+process start
+	send window state
+		{ base: 7, next 8, ack: -1 }
+	receive window state
+		{ base: 12, next 12, ack: 12 }
+[33mWARN[0m ./src/udp_slw.c:slw_process:494	time 12697089 greater than timeout 12697089 triggering retransmission
+[32mINFO[0m ./src/udp_slw.c:slw_write_packet:169	writing packet produced following checksum 511
+[33mWARN[0m ./src/udp_slw.c:slw_process:507	`recvfrom` call would block
+[33mWARN[0m ./src/udp_server.c:slw_loop:118	poll returned but there was nothing to process on the socket
+[32mINFO[0m ./src/udp_slw.c:slw_process:479	
+process start
+	send window state
+		{ base: 7, next 8, ack: -1 }
+	receive window state
+		{ base: 12, next 12, ack: 12 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:532	Recevied Packet { id: 11, ack 7, checksum: 510, length 7 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:595	packet id is invalid
+[32mINFO[0m ./src/udp_slw.c:slw_transmit_ack:322	Transmit pure ACK { id: 0, ack: 12 }
+[32mINFO[0m ./src/udp_slw.c:slw_write_packet:169	writing packet produced following checksum 13
+[32mINFO[0m ./src/udp_slw.c:slw_process:607	
+process end
+	send window state
+		{ base: 7, next 8, ack: -1 }
+	receive window state
+		{ base: 12, next 12, ack: 12 }
+[33mWARN[0m ./src/udp_slw.c:slw_recv:433	no packets to receive
+[33mWARN[0m ./src/udp_server.c:slw_loop:136	rcvwind is empty nothing to receive
+[32mINFO[0m ./src/udp_slw.c:slw_process:479	
+process start
+	send window state
+		{ base: 7, next 8, ack: -1 }
+	receive window state
+		{ base: 12, next 12, ack: 12 }
+[33mWARN[0m ./src/udp_slw.c:slw_process:494	time 12697182 greater than timeout 12697139 triggering retransmission
+[32mINFO[0m ./src/udp_slw.c:slw_write_packet:169	writing packet produced following checksum 511
+[33mWARN[0m ./src/udp_slw.c:slw_process:507	`recvfrom` call would block
+[33mWARN[0m ./src/udp_server.c:slw_loop:118	poll returned but there was nothing to process on the socket
+[32mINFO[0m ./src/udp_slw.c:slw_process:479	
+process start
+	send window state
+		{ base: 7, next 8, ack: -1 }
+	receive window state
+		{ base: 12, next 12, ack: 12 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:532	Recevied Packet { id: 10, ack 6, checksum: 514, length 7 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:595	packet id is invalid
+[32mINFO[0m ./src/udp_slw.c:slw_transmit_ack:322	Transmit pure ACK { id: 0, ack: 12 }
+[32mINFO[0m ./src/udp_slw.c:slw_write_packet:169	writing packet produced following checksum 13
+[32mINFO[0m ./src/udp_slw.c:slw_process:607	
+process end
+	send window state
+		{ base: 7, next 8, ack: -1 }
+	receive window state
+		{ base: 12, next 12, ack: 12 }
+[33mWARN[0m ./src/udp_slw.c:slw_recv:433	no packets to receive
+[33mWARN[0m ./src/udp_server.c:slw_loop:136	rcvwind is empty nothing to receive
+[32mINFO[0m ./src/udp_slw.c:slw_process:479	
+process start
+	send window state
+		{ base: 7, next 8, ack: -1 }
+	receive window state
+		{ base: 12, next 12, ack: 12 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:532	Recevied Packet { id: 0, ack 8, checksum: 9, length 0 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:550	ACK is in the window
+[32mINFO[0m ./src/udp_slw.c:slw_process:563	pure ACK no receive window updates
+[32mINFO[0m ./src/udp_slw.c:slw_process:607	
+process end
+	send window state
+		{ base: 8, next 8, ack: -1 }
+	receive window state
+		{ base: 12, next 12, ack: 12 }
+[33mWARN[0m ./src/udp_slw.c:slw_recv:433	no packets to receive
+[33mWARN[0m ./src/udp_server.c:slw_loop:136	rcvwind is empty nothing to receive
+[32mINFO[0m ./src/udp_slw.c:slw_process:479	
+process start
+	send window state
+		{ base: 8, next 8, ack: -1 }
+	receive window state
+		{ base: 12, next 12, ack: 12 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:532	Recevied Packet { id: 12, ack 8, checksum: 518, length 7 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:586	packet id is the expected id
+[32mINFO[0m ./src/udp_slw.c:slw_process:607	
+process end
+	send window state
+		{ base: 8, next 8, ack: -1 }
+	receive window state
+		{ base: 12, next 13, ack: 13 }
+[32mINFO[0m ./src/udp_slw.c:slw_write_packet:169	writing packet produced following checksum 519
+[32mINFO[0m ./src/udp_slw.c:slw_send:411	Packet { id: 8, ack: 13, checksum: 0, length: 7 }
+[32mINFO[0m ./src/udp_slw.c:slw_send:419	slw_send transmitted 1 packets
+[32mINFO[0m ./src/udp_slw.c:slw_process:479	
+process start
+	send window state
+		{ base: 8, next 9, ack: -1 }
+	receive window state
+		{ base: 13, next 13, ack: 13 }
+[33mWARN[0m ./src/udp_slw.c:slw_read_packet:139	packet checksum did not match calculated checksum
+[33mWARN[0m ./src/udp_slw.c:slw_process:527	invalid packet dropped
+	packet parse failed
+[32mINFO[0m ./src/udp_slw.c:slw_process:607	
+process end
+	send window state
+		{ base: 8, next 9, ack: -1 }
+	receive window state
+		{ base: 13, next 13, ack: 13 }
+[33mWARN[0m ./src/udp_slw.c:slw_recv:433	no packets to receive
+[33mWARN[0m ./src/udp_server.c:slw_loop:136	rcvwind is empty nothing to receive
+[32mINFO[0m ./src/udp_slw.c:slw_process:479	
+process start
+	send window state
+		{ base: 8, next 9, ack: -1 }
+	receive window state
+		{ base: 13, next 13, ack: 13 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:532	Recevied Packet { id: 12, ack 8, checksum: 518, length 7 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:595	packet id is invalid
+[32mINFO[0m ./src/udp_slw.c:slw_transmit_ack:322	Transmit pure ACK { id: 0, ack: 13 }
+[32mINFO[0m ./src/udp_slw.c:slw_write_packet:169	writing packet produced following checksum 14
+[32mINFO[0m ./src/udp_slw.c:slw_process:607	
+process end
+	send window state
+		{ base: 8, next 9, ack: -1 }
+	receive window state
+		{ base: 13, next 13, ack: 13 }
+[33mWARN[0m ./src/udp_slw.c:slw_recv:433	no packets to receive
+[33mWARN[0m ./src/udp_server.c:slw_loop:136	rcvwind is empty nothing to receive
+[32mINFO[0m ./src/udp_slw.c:slw_process:479	
+process start
+	send window state
+		{ base: 8, next 9, ack: -1 }
+	receive window state
+		{ base: 13, next 13, ack: 13 }
+[33mWARN[0m ./src/udp_slw.c:slw_process:494	time 12697464 greater than timeout 12697432 triggering retransmission
+[32mINFO[0m ./src/udp_slw.c:slw_write_packet:169	writing packet produced following checksum 519
+[32mINFO[0m ./src/udp_slw.c:slw_process:532	Recevied Packet { id: 12, ack 8, checksum: 518, length 7 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:595	packet id is invalid
+[32mINFO[0m ./src/udp_slw.c:slw_transmit_ack:322	Transmit pure ACK { id: 0, ack: 13 }
+[32mINFO[0m ./src/udp_slw.c:slw_write_packet:169	writing packet produced following checksum 14
+[32mINFO[0m ./src/udp_slw.c:slw_process:607	
+process end
+	send window state
+		{ base: 8, next 9, ack: -1 }
+	receive window state
+		{ base: 13, next 13, ack: 13 }
+[33mWARN[0m ./src/udp_slw.c:slw_recv:433	no packets to receive
+[33mWARN[0m ./src/udp_server.c:slw_loop:136	rcvwind is empty nothing to receive
+[32mINFO[0m ./src/udp_slw.c:slw_process:479	
+process start
+	send window state
+		{ base: 8, next 9, ack: -1 }
+	receive window state
+		{ base: 13, next 13, ack: 13 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:532	Recevied Packet { id: 13, ack 9, checksum: 517, length 7 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:550	ACK is in the window
+[32mINFO[0m ./src/udp_slw.c:slw_process:586	packet id is the expected id
+[32mINFO[0m ./src/udp_slw.c:slw_process:607	
+process end
+	send window state
+		{ base: 9, next 9, ack: -1 }
+	receive window state
+		{ base: 13, next 14, ack: 14 }
+[32mINFO[0m ./src/udp_slw.c:slw_write_packet:169	writing packet produced following checksum 518
+[32mINFO[0m ./src/udp_slw.c:slw_send:411	Packet { id: 9, ack: 14, checksum: 0, length: 7 }
+[32mINFO[0m ./src/udp_slw.c:slw_send:419	slw_send transmitted 1 packets
+[32mINFO[0m ./src/udp_slw.c:slw_process:479	
+process start
+	send window state
+		{ base: 9, next 10, ack: -1 }
+	receive window state
+		{ base: 14, next 14, ack: 14 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:532	Recevied Packet { id: 0, ack 8, checksum: 9, length 0 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:607	
+process end
+	send window state
+		{ base: 9, next 10, ack: -1 }
+	receive window state
+		{ base: 14, next 14, ack: 14 }
+[33mWARN[0m ./src/udp_slw.c:slw_recv:433	no packets to receive
+[33mWARN[0m ./src/udp_server.c:slw_loop:136	rcvwind is empty nothing to receive
+[32mINFO[0m ./src/udp_slw.c:slw_process:479	
+process start
+	send window state
+		{ base: 9, next 10, ack: -1 }
+	receive window state
+		{ base: 14, next 14, ack: 14 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:532	Recevied Packet { id: 14, ack 10, checksum: 521, length 7 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:550	ACK is in the window
+[32mINFO[0m ./src/udp_slw.c:slw_process:586	packet id is the expected id
+[32mINFO[0m ./src/udp_slw.c:slw_process:607	
+process end
+	send window state
+		{ base: 10, next 10, ack: -1 }
+	receive window state
+		{ base: 14, next 15, ack: 15 }
+[32mINFO[0m ./src/udp_slw.c:slw_write_packet:169	writing packet produced following checksum 522
+[32mINFO[0m ./src/udp_slw.c:slw_send:411	Packet { id: 10, ack: 15, checksum: 0, length: 7 }
+[32mINFO[0m ./src/udp_slw.c:slw_send:419	slw_send transmitted 1 packets
+[32mINFO[0m ./src/udp_slw.c:slw_process:479	
+process start
+	send window state
+		{ base: 10, next 11, ack: -1 }
+	receive window state
+		{ base: 15, next 15, ack: 15 }
+[33mWARN[0m ./src/udp_slw.c:slw_process:494	time 12697781 greater than timeout 12697780 triggering retransmission
+[32mINFO[0m ./src/udp_slw.c:slw_write_packet:169	writing packet produced following checksum 522
+[33mWARN[0m ./src/udp_slw.c:slw_process:507	`recvfrom` call would block
+[33mWARN[0m ./src/udp_server.c:slw_loop:118	poll returned but there was nothing to process on the socket
+[32mINFO[0m ./src/udp_slw.c:slw_process:479	
+process start
+	send window state
+		{ base: 10, next 11, ack: -1 }
+	receive window state
+		{ base: 15, next 15, ack: 15 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:532	Recevied Packet { id: 13, ack 9, checksum: 517, length 7 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:595	packet id is invalid
+[32mINFO[0m ./src/udp_slw.c:slw_transmit_ack:322	Transmit pure ACK { id: 0, ack: 15 }
+[32mINFO[0m ./src/udp_slw.c:slw_write_packet:169	writing packet produced following checksum 16
+[32mINFO[0m ./src/udp_slw.c:slw_process:607	
+process end
+	send window state
+		{ base: 10, next 11, ack: -1 }
+	receive window state
+		{ base: 15, next 15, ack: 15 }
+[33mWARN[0m ./src/udp_slw.c:slw_recv:433	no packets to receive
+[33mWARN[0m ./src/udp_server.c:slw_loop:136	rcvwind is empty nothing to receive
+[32mINFO[0m ./src/udp_slw.c:slw_process:479	
+process start
+	send window state
+		{ base: 10, next 11, ack: -1 }
+	receive window state
+		{ base: 15, next 15, ack: 15 }
+[31mERROR[0m ./src/udp_slw.c:slw_read_packet:126	packet length cannot exceed the maximum payload size or buffer bytes
+[33mWARN[0m ./src/udp_slw.c:slw_process:527	invalid packet dropped
+	packet parse failed
+[32mINFO[0m ./src/udp_slw.c:slw_process:607	
+process end
+	send window state
+		{ base: 10, next 11, ack: -1 }
+	receive window state
+		{ base: 15, next 15, ack: 15 }
+[33mWARN[0m ./src/udp_slw.c:slw_recv:433	no packets to receive
+[33mWARN[0m ./src/udp_server.c:slw_loop:136	rcvwind is empty nothing to receive
+[32mINFO[0m ./src/udp_slw.c:slw_process:479	
+process start
+	send window state
+		{ base: 10, next 11, ack: -1 }
+	receive window state
+		{ base: 15, next 15, ack: 15 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:532	Recevied Packet { id: 15, ack 11, checksum: 528, length 7 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:550	ACK is in the window
+[32mINFO[0m ./src/udp_slw.c:slw_process:586	packet id is the expected id
+[32mINFO[0m ./src/udp_slw.c:slw_process:607	
+process end
+	send window state
+		{ base: 11, next 11, ack: -1 }
+	receive window state
+		{ base: 15, next 16, ack: 16 }
+[32mINFO[0m ./src/udp_slw.c:slw_write_packet:169	writing packet produced following checksum 529
+[32mINFO[0m ./src/udp_slw.c:slw_send:411	Packet { id: 11, ack: 16, checksum: 0, length: 7 }
+[32mINFO[0m ./src/udp_slw.c:slw_send:419	slw_send transmitted 1 packets
+[32mINFO[0m ./src/udp_slw.c:slw_process:479	
+process start
+	send window state
+		{ base: 11, next 12, ack: -1 }
+	receive window state
+		{ base: 16, next 16, ack: 16 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:532	Recevied Packet { id: 15, ack 11, checksum: 528, length 7 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:595	packet id is invalid
+[32mINFO[0m ./src/udp_slw.c:slw_transmit_ack:322	Transmit pure ACK { id: 0, ack: 16 }
+[32mINFO[0m ./src/udp_slw.c:slw_write_packet:169	writing packet produced following checksum 17
+[32mINFO[0m ./src/udp_slw.c:slw_process:607	
+process end
+	send window state
+		{ base: 11, next 12, ack: -1 }
+	receive window state
+		{ base: 16, next 16, ack: 16 }
+[33mWARN[0m ./src/udp_slw.c:slw_recv:433	no packets to receive
+[33mWARN[0m ./src/udp_server.c:slw_loop:136	rcvwind is empty nothing to receive
+[32mINFO[0m ./src/udp_slw.c:slw_process:479	
+process start
+	send window state
+		{ base: 11, next 12, ack: -1 }
+	receive window state
+		{ base: 16, next 16, ack: 16 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:532	Recevied Packet { id: 14, ack 10, checksum: 521, length 7 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:595	packet id is invalid
+[32mINFO[0m ./src/udp_slw.c:slw_transmit_ack:322	Transmit pure ACK { id: 0, ack: 16 }
+[32mINFO[0m ./src/udp_slw.c:slw_write_packet:169	writing packet produced following checksum 17
+[32mINFO[0m ./src/udp_slw.c:slw_process:607	
+process end
+	send window state
+		{ base: 11, next 12, ack: -1 }
+	receive window state
+		{ base: 16, next 16, ack: 16 }
+[33mWARN[0m ./src/udp_slw.c:slw_recv:433	no packets to receive
+[33mWARN[0m ./src/udp_server.c:slw_loop:136	rcvwind is empty nothing to receive
+[32mINFO[0m ./src/udp_slw.c:slw_process:479	
+process start
+	send window state
+		{ base: 11, next 12, ack: -1 }
+	receive window state
+		{ base: 16, next 16, ack: 16 }
+[33mWARN[0m ./src/udp_slw.c:slw_process:494	time 12698034 greater than timeout 12698033 triggering retransmission
+[32mINFO[0m ./src/udp_slw.c:slw_write_packet:169	writing packet produced following checksum 529
+[32mINFO[0m ./src/udp_slw.c:slw_process:532	Recevied Packet { id: 14, ack 10, checksum: 521, length 7 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:595	packet id is invalid
+[32mINFO[0m ./src/udp_slw.c:slw_transmit_ack:322	Transmit pure ACK { id: 0, ack: 16 }
+[32mINFO[0m ./src/udp_slw.c:slw_write_packet:169	writing packet produced following checksum 17
+[32mINFO[0m ./src/udp_slw.c:slw_process:607	
+process end
+	send window state
+		{ base: 11, next 12, ack: -1 }
+	receive window state
+		{ base: 16, next 16, ack: 16 }
+[33mWARN[0m ./src/udp_slw.c:slw_recv:433	no packets to receive
+[33mWARN[0m ./src/udp_server.c:slw_loop:136	rcvwind is empty nothing to receive
+[32mINFO[0m ./src/udp_slw.c:slw_process:479	
+process start
+	send window state
+		{ base: 11, next 12, ack: -1 }
+	receive window state
+		{ base: 16, next 16, ack: 16 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:532	Recevied Packet { id: 15, ack 11, checksum: 528, length 7 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:595	packet id is invalid
+[32mINFO[0m ./src/udp_slw.c:slw_transmit_ack:322	Transmit pure ACK { id: 0, ack: 16 }
+[32mINFO[0m ./src/udp_slw.c:slw_write_packet:169	writing packet produced following checksum 17
+[32mINFO[0m ./src/udp_slw.c:slw_process:607	
+process end
+	send window state
+		{ base: 11, next 12, ack: -1 }
+	receive window state
+		{ base: 16, next 16, ack: 16 }
+[33mWARN[0m ./src/udp_slw.c:slw_recv:433	no packets to receive
+[33mWARN[0m ./src/udp_server.c:slw_loop:136	rcvwind is empty nothing to receive
+[32mINFO[0m ./src/udp_slw.c:slw_process:479	
+process start
+	send window state
+		{ base: 11, next 12, ack: -1 }
+	receive window state
+		{ base: 16, next 16, ack: 16 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:532	Recevied Packet { id: 16, ack 12, checksum: 526, length 7 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:550	ACK is in the window
+[32mINFO[0m ./src/udp_slw.c:slw_process:586	packet id is the expected id
+[32mINFO[0m ./src/udp_slw.c:slw_process:607	
+process end
+	send window state
+		{ base: 12, next 12, ack: -1 }
+	receive window state
+		{ base: 16, next 17, ack: 17 }
+[32mINFO[0m ./src/udp_slw.c:slw_write_packet:169	writing packet produced following checksum 527
+[32mINFO[0m ./src/udp_slw.c:slw_send:411	Packet { id: 12, ack: 17, checksum: 0, length: 7 }
+[32mINFO[0m ./src/udp_slw.c:slw_send:419	slw_send transmitted 1 packets
+[32mINFO[0m ./src/udp_slw.c:slw_process:479	
+process start
+	send window state
+		{ base: 12, next 13, ack: -1 }
+	receive window state
+		{ base: 17, next 17, ack: 17 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:532	Recevied Packet { id: 16, ack 12, checksum: 526, length 7 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:595	packet id is invalid
+[32mINFO[0m ./src/udp_slw.c:slw_transmit_ack:322	Transmit pure ACK { id: 0, ack: 17 }
+[32mINFO[0m ./src/udp_slw.c:slw_write_packet:169	writing packet produced following checksum 18
+[32mINFO[0m ./src/udp_slw.c:slw_process:607	
+process end
+	send window state
+		{ base: 12, next 13, ack: -1 }
+	receive window state
+		{ base: 17, next 17, ack: 17 }
+[33mWARN[0m ./src/udp_slw.c:slw_recv:433	no packets to receive
+[33mWARN[0m ./src/udp_server.c:slw_loop:136	rcvwind is empty nothing to receive
+[32mINFO[0m ./src/udp_slw.c:slw_process:479	
+process start
+	send window state
+		{ base: 12, next 13, ack: -1 }
+	receive window state
+		{ base: 17, next 17, ack: 17 }
+[33mWARN[0m ./src/udp_slw.c:slw_process:494	time 12698229 greater than timeout 12698178 triggering retransmission
+[32mINFO[0m ./src/udp_slw.c:slw_write_packet:169	writing packet produced following checksum 527
+[33mWARN[0m ./src/udp_slw.c:slw_process:507	`recvfrom` call would block
+[33mWARN[0m ./src/udp_server.c:slw_loop:118	poll returned but there was nothing to process on the socket
+[32mINFO[0m ./src/udp_slw.c:slw_process:479	
+process start
+	send window state
+		{ base: 12, next 13, ack: -1 }
+	receive window state
+		{ base: 17, next 17, ack: 17 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:532	Recevied Packet { id: 14, ack 10, checksum: 521, length 7 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:595	packet id is invalid
+[32mINFO[0m ./src/udp_slw.c:slw_transmit_ack:322	Transmit pure ACK { id: 0, ack: 17 }
+[32mINFO[0m ./src/udp_slw.c:slw_write_packet:169	writing packet produced following checksum 18
+[32mINFO[0m ./src/udp_slw.c:slw_process:607	
+process end
+	send window state
+		{ base: 12, next 13, ack: -1 }
+	receive window state
+		{ base: 17, next 17, ack: 17 }
+[33mWARN[0m ./src/udp_slw.c:slw_recv:433	no packets to receive
+[33mWARN[0m ./src/udp_server.c:slw_loop:136	rcvwind is empty nothing to receive
+[32mINFO[0m ./src/udp_slw.c:slw_process:479	
+process start
+	send window state
+		{ base: 12, next 13, ack: -1 }
+	receive window state
+		{ base: 17, next 17, ack: 17 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:532	Recevied Packet { id: 0, ack 11, checksum: 12, length 0 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:607	
+process end
+	send window state
+		{ base: 12, next 13, ack: -1 }
+	receive window state
+		{ base: 17, next 17, ack: 17 }
+[33mWARN[0m ./src/udp_slw.c:slw_recv:433	no packets to receive
+[33mWARN[0m ./src/udp_server.c:slw_loop:136	rcvwind is empty nothing to receive
+[32mINFO[0m ./src/udp_slw.c:slw_process:479	
+process start
+	send window state
+		{ base: 12, next 13, ack: -1 }
+	receive window state
+		{ base: 17, next 17, ack: 17 }
+[33mWARN[0m ./src/udp_slw.c:slw_process:494	time 12698323 greater than timeout 12698321 triggering retransmission
+[32mINFO[0m ./src/udp_slw.c:slw_write_packet:169	writing packet produced following checksum 527
+[32mINFO[0m ./src/udp_slw.c:slw_process:532	Recevied Packet { id: 15, ack 11, checksum: 528, length 7 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:595	packet id is invalid
+[32mINFO[0m ./src/udp_slw.c:slw_transmit_ack:322	Transmit pure ACK { id: 0, ack: 17 }
+[32mINFO[0m ./src/udp_slw.c:slw_write_packet:169	writing packet produced following checksum 18
+[32mINFO[0m ./src/udp_slw.c:slw_process:607	
+process end
+	send window state
+		{ base: 12, next 13, ack: -1 }
+	receive window state
+		{ base: 17, next 17, ack: 17 }
+[33mWARN[0m ./src/udp_slw.c:slw_recv:433	no packets to receive
+[33mWARN[0m ./src/udp_server.c:slw_loop:136	rcvwind is empty nothing to receive
+[32mINFO[0m ./src/udp_slw.c:slw_process:479	
+process start
+	send window state
+		{ base: 12, next 13, ack: -1 }
+	receive window state
+		{ base: 17, next 17, ack: 17 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:532	Recevied Packet { id: 17, ack 13, checksum: 532, length 7 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:550	ACK is in the window
+[32mINFO[0m ./src/udp_slw.c:slw_process:586	packet id is the expected id
+[32mINFO[0m ./src/udp_slw.c:slw_process:607	
+process end
+	send window state
+		{ base: 13, next 13, ack: -1 }
+	receive window state
+		{ base: 17, next 18, ack: 18 }
+[32mINFO[0m ./src/udp_slw.c:slw_write_packet:169	writing packet produced following checksum 533
+[32mINFO[0m ./src/udp_slw.c:slw_send:411	Packet { id: 13, ack: 18, checksum: 0, length: 7 }
+[32mINFO[0m ./src/udp_slw.c:slw_send:419	slw_send transmitted 1 packets
+[32mINFO[0m ./src/udp_slw.c:slw_process:479	
+process start
+	send window state
+		{ base: 13, next 14, ack: -1 }
+	receive window state
+		{ base: 18, next 18, ack: 18 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:532	Recevied Packet { id: 16, ack 12, checksum: 526, length 7 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:595	packet id is invalid
+[32mINFO[0m ./src/udp_slw.c:slw_transmit_ack:322	Transmit pure ACK { id: 0, ack: 18 }
+[32mINFO[0m ./src/udp_slw.c:slw_write_packet:169	writing packet produced following checksum 19
+[32mINFO[0m ./src/udp_slw.c:slw_process:607	
+process end
+	send window state
+		{ base: 13, next 14, ack: -1 }
+	receive window state
+		{ base: 18, next 18, ack: 18 }
+[33mWARN[0m ./src/udp_slw.c:slw_recv:433	no packets to receive
+[33mWARN[0m ./src/udp_server.c:slw_loop:136	rcvwind is empty nothing to receive
+[32mINFO[0m ./src/udp_slw.c:slw_process:479	
+process start
+	send window state
+		{ base: 13, next 14, ack: -1 }
+	receive window state
+		{ base: 18, next 18, ack: 18 }
+[33mWARN[0m ./src/udp_slw.c:slw_process:494	time 12698498 greater than timeout 12698438 triggering retransmission
+[32mINFO[0m ./src/udp_slw.c:slw_write_packet:169	writing packet produced following checksum 533
+[32mINFO[0m ./src/udp_slw.c:slw_process:532	Recevied Packet { id: 0, ack 13, checksum: 14, length 0 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:607	
+process end
+	send window state
+		{ base: 13, next 14, ack: -1 }
+	receive window state
+		{ base: 18, next 18, ack: 18 }
+[33mWARN[0m ./src/udp_slw.c:slw_recv:433	no packets to receive
+[33mWARN[0m ./src/udp_server.c:slw_loop:136	rcvwind is empty nothing to receive
+[32mINFO[0m ./src/udp_slw.c:slw_process:479	
+process start
+	send window state
+		{ base: 13, next 14, ack: -1 }
+	receive window state
+		{ base: 18, next 18, ack: 18 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:532	Recevied Packet { id: 0, ack 14, checksum: 15, length 0 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:550	ACK is in the window
+[32mINFO[0m ./src/udp_slw.c:slw_process:563	pure ACK no receive window updates
+[32mINFO[0m ./src/udp_slw.c:slw_process:607	
+process end
+	send window state
+		{ base: 14, next 14, ack: -1 }
+	receive window state
+		{ base: 18, next 18, ack: 18 }
+[33mWARN[0m ./src/udp_slw.c:slw_recv:433	no packets to receive
+[33mWARN[0m ./src/udp_server.c:slw_loop:136	rcvwind is empty nothing to receive
+[32mINFO[0m ./src/udp_slw.c:slw_process:479	
+process start
+	send window state
+		{ base: 14, next 14, ack: -1 }
+	receive window state
+		{ base: 18, next 18, ack: 18 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:532	Recevied Packet { id: 17, ack 13, checksum: 532, length 7 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:595	packet id is invalid
+[32mINFO[0m ./src/udp_slw.c:slw_transmit_ack:322	Transmit pure ACK { id: 0, ack: 18 }
+[32mINFO[0m ./src/udp_slw.c:slw_write_packet:169	writing packet produced following checksum 19
+[32mINFO[0m ./src/udp_slw.c:slw_process:607	
+process end
+	send window state
+		{ base: 14, next 14, ack: -1 }
+	receive window state
+		{ base: 18, next 18, ack: 18 }
+[33mWARN[0m ./src/udp_slw.c:slw_recv:433	no packets to receive
+[33mWARN[0m ./src/udp_server.c:slw_loop:136	rcvwind is empty nothing to receive
+[32mINFO[0m ./src/udp_slw.c:slw_process:479	
+process start
+	send window state
+		{ base: 14, next 14, ack: -1 }
+	receive window state
+		{ base: 18, next 18, ack: 18 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:532	Recevied Packet { id: 18, ack 14, checksum: 528, length 7 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:586	packet id is the expected id
+[32mINFO[0m ./src/udp_slw.c:slw_process:607	
+process end
+	send window state
+		{ base: 14, next 14, ack: -1 }
+	receive window state
+		{ base: 18, next 19, ack: 19 }
+[32mINFO[0m ./src/udp_slw.c:slw_write_packet:169	writing packet produced following checksum 529
+[32mINFO[0m ./src/udp_slw.c:slw_send:411	Packet { id: 14, ack: 19, checksum: 0, length: 7 }
+[32mINFO[0m ./src/udp_slw.c:slw_send:419	slw_send transmitted 1 packets
+[32mINFO[0m ./src/udp_slw.c:slw_process:479	
+process start
+	send window state
+		{ base: 14, next 15, ack: -1 }
+	receive window state
+		{ base: 19, next 19, ack: 19 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:532	Recevied Packet { id: 16, ack 12, checksum: 526, length 7 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:595	packet id is invalid
+[32mINFO[0m ./src/udp_slw.c:slw_transmit_ack:322	Transmit pure ACK { id: 0, ack: 19 }
+[32mINFO[0m ./src/udp_slw.c:slw_write_packet:169	writing packet produced following checksum 20
+[32mINFO[0m ./src/udp_slw.c:slw_process:607	
+process end
+	send window state
+		{ base: 14, next 15, ack: -1 }
+	receive window state
+		{ base: 19, next 19, ack: 19 }
+[33mWARN[0m ./src/udp_slw.c:slw_recv:433	no packets to receive
+[33mWARN[0m ./src/udp_server.c:slw_loop:136	rcvwind is empty nothing to receive
+[32mINFO[0m ./src/udp_slw.c:slw_process:479	
+process start
+	send window state
+		{ base: 14, next 15, ack: -1 }
+	receive window state
+		{ base: 19, next 19, ack: 19 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:532	Recevied Packet { id: 19, ack 15, checksum: 534, length 7 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:550	ACK is in the window
+[32mINFO[0m ./src/udp_slw.c:slw_process:586	packet id is the expected id
+[32mINFO[0m ./src/udp_slw.c:slw_process:607	
+process end
+	send window state
+		{ base: 15, next 15, ack: -1 }
+	receive window state
+		{ base: 19, next 20, ack: 20 }
+[32mINFO[0m ./src/udp_slw.c:slw_write_packet:169	writing packet produced following checksum 535
+[32mINFO[0m ./src/udp_slw.c:slw_send:411	Packet { id: 15, ack: 20, checksum: 0, length: 7 }
+[32mINFO[0m ./src/udp_slw.c:slw_send:419	slw_send transmitted 1 packets
+[32mINFO[0m ./src/udp_slw.c:slw_process:479	
+process start
+	send window state
+		{ base: 15, next 16, ack: -1 }
+	receive window state
+		{ base: 20, next 20, ack: 20 }
+[33mWARN[0m ./src/udp_slw.c:slw_process:494	time 12698734 greater than timeout 12698733 triggering retransmission
+[32mINFO[0m ./src/udp_slw.c:slw_write_packet:169	writing packet produced following checksum 535
+[33mWARN[0m ./src/udp_slw.c:slw_process:507	`recvfrom` call would block
+[33mWARN[0m ./src/udp_server.c:slw_loop:118	poll returned but there was nothing to process on the socket
+[32mINFO[0m ./src/udp_slw.c:slw_process:479	
+process start
+	send window state
+		{ base: 15, next 16, ack: -1 }
+	receive window state
+		{ base: 20, next 20, ack: 20 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:532	Recevied Packet { id: 0, ack 13, checksum: 14, length 0 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:607	
+process end
+	send window state
+		{ base: 15, next 16, ack: -1 }
+	receive window state
+		{ base: 20, next 20, ack: 20 }
+[33mWARN[0m ./src/udp_slw.c:slw_recv:433	no packets to receive
+[33mWARN[0m ./src/udp_server.c:slw_loop:136	rcvwind is empty nothing to receive
+[32mINFO[0m ./src/udp_slw.c:slw_process:479	
+process start
+	send window state
+		{ base: 15, next 16, ack: -1 }
+	receive window state
+		{ base: 20, next 20, ack: 20 }
+[33mWARN[0m ./src/udp_slw.c:slw_process:494	time 12698852 greater than timeout 12698834 triggering retransmission
+[32mINFO[0m ./src/udp_slw.c:slw_write_packet:169	writing packet produced following checksum 535
+[33mWARN[0m ./src/udp_slw.c:slw_process:507	`recvfrom` call would block
+[33mWARN[0m ./src/udp_server.c:slw_loop:118	poll returned but there was nothing to process on the socket
+[32mINFO[0m ./src/udp_slw.c:slw_process:479	
+process start
+	send window state
+		{ base: 15, next 16, ack: -1 }
+	receive window state
+		{ base: 20, next 20, ack: 20 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:532	Recevied Packet { id: 0, ack 16, checksum: 17, length 0 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:550	ACK is in the window
+[32mINFO[0m ./src/udp_slw.c:slw_process:563	pure ACK no receive window updates
+[32mINFO[0m ./src/udp_slw.c:slw_process:607	
+process end
+	send window state
+		{ base: 16, next 16, ack: -1 }
+	receive window state
+		{ base: 20, next 20, ack: 20 }
+[33mWARN[0m ./src/udp_slw.c:slw_recv:433	no packets to receive
+[33mWARN[0m ./src/udp_server.c:slw_loop:136	rcvwind is empty nothing to receive
+[32mINFO[0m ./src/udp_slw.c:slw_process:479	
+process start
+	send window state
+		{ base: 16, next 16, ack: -1 }
+	receive window state
+		{ base: 20, next 20, ack: 20 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:532	Recevied Packet { id: 20, ack 16, checksum: 537, length 7 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:586	packet id is the expected id
+[32mINFO[0m ./src/udp_slw.c:slw_process:607	
+process end
+	send window state
+		{ base: 16, next 16, ack: -1 }
+	receive window state
+		{ base: 20, next 21, ack: 21 }
+[32mINFO[0m ./src/udp_slw.c:slw_write_packet:169	writing packet produced following checksum 538
+[32mINFO[0m ./src/udp_slw.c:slw_send:411	Packet { id: 16, ack: 21, checksum: 0, length: 7 }
+[32mINFO[0m ./src/udp_slw.c:slw_send:419	slw_send transmitted 1 packets
+[32mINFO[0m ./src/udp_slw.c:slw_process:479	
+process start
+	send window state
+		{ base: 16, next 17, ack: -1 }
+	receive window state
+		{ base: 21, next 21, ack: 21 }
+[33mWARN[0m ./src/udp_slw.c:slw_read_packet:139	packet checksum did not match calculated checksum
+[33mWARN[0m ./src/udp_slw.c:slw_process:527	invalid packet dropped
+	packet parse failed
+[32mINFO[0m ./src/udp_slw.c:slw_process:607	
+process end
+	send window state
+		{ base: 16, next 17, ack: -1 }
+	receive window state
+		{ base: 21, next 21, ack: 21 }
+[33mWARN[0m ./src/udp_slw.c:slw_recv:433	no packets to receive
+[33mWARN[0m ./src/udp_server.c:slw_loop:136	rcvwind is empty nothing to receive
+[32mINFO[0m ./src/udp_slw.c:slw_process:479	
+process start
+	send window state
+		{ base: 16, next 17, ack: -1 }
+	receive window state
+		{ base: 21, next 21, ack: 21 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:532	Recevied Packet { id: 20, ack 16, checksum: 537, length 7 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:595	packet id is invalid
+[32mINFO[0m ./src/udp_slw.c:slw_transmit_ack:322	Transmit pure ACK { id: 0, ack: 21 }
+[32mINFO[0m ./src/udp_slw.c:slw_write_packet:169	writing packet produced following checksum 22
+[32mINFO[0m ./src/udp_slw.c:slw_process:607	
+process end
+	send window state
+		{ base: 16, next 17, ack: -1 }
+	receive window state
+		{ base: 21, next 21, ack: 21 }
+[33mWARN[0m ./src/udp_slw.c:slw_recv:433	no packets to receive
+[33mWARN[0m ./src/udp_server.c:slw_loop:136	rcvwind is empty nothing to receive
+[32mINFO[0m ./src/udp_slw.c:slw_process:479	
+process start
+	send window state
+		{ base: 16, next 17, ack: -1 }
+	receive window state
+		{ base: 21, next 21, ack: 21 }
+[33mWARN[0m ./src/udp_slw.c:slw_process:494	time 12698982 greater than timeout 12698955 triggering retransmission
+[32mINFO[0m ./src/udp_slw.c:slw_write_packet:169	writing packet produced following checksum 538
+[32mINFO[0m ./src/udp_slw.c:slw_process:532	Recevied Packet { id: 21, ack 17, checksum: 535, length 7 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:550	ACK is in the window
+[32mINFO[0m ./src/udp_slw.c:slw_process:586	packet id is the expected id
+[32mINFO[0m ./src/udp_slw.c:slw_process:607	
+process end
+	send window state
+		{ base: 17, next 17, ack: -1 }
+	receive window state
+		{ base: 21, next 22, ack: 22 }
+[32mINFO[0m ./src/udp_slw.c:slw_write_packet:169	writing packet produced following checksum 536
+[32mINFO[0m ./src/udp_slw.c:slw_send:411	Packet { id: 17, ack: 22, checksum: 0, length: 7 }
+[32mINFO[0m ./src/udp_slw.c:slw_send:419	slw_send transmitted 1 packets
+[32mINFO[0m ./src/udp_slw.c:slw_process:479	
+process start
+	send window state
+		{ base: 17, next 18, ack: -1 }
+	receive window state
+		{ base: 22, next 22, ack: 22 }
+[33mWARN[0m ./src/udp_slw.c:slw_process:494	time 12699032 greater than timeout 12699032 triggering retransmission
+[32mINFO[0m ./src/udp_slw.c:slw_write_packet:169	writing packet produced following checksum 536
+[32mINFO[0m ./src/udp_slw.c:slw_process:532	Recevied Packet { id: 21, ack 17, checksum: 535, length 7 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:595	packet id is invalid
+[32mINFO[0m ./src/udp_slw.c:slw_transmit_ack:322	Transmit pure ACK { id: 0, ack: 22 }
+[32mINFO[0m ./src/udp_slw.c:slw_write_packet:169	writing packet produced following checksum 23
+[32mINFO[0m ./src/udp_slw.c:slw_process:607	
+process end
+	send window state
+		{ base: 17, next 18, ack: -1 }
+	receive window state
+		{ base: 22, next 22, ack: 22 }
+[33mWARN[0m ./src/udp_slw.c:slw_recv:433	no packets to receive
+[33mWARN[0m ./src/udp_server.c:slw_loop:136	rcvwind is empty nothing to receive
+[32mINFO[0m ./src/udp_slw.c:slw_process:479	
+process start
+	send window state
+		{ base: 17, next 18, ack: -1 }
+	receive window state
+		{ base: 22, next 22, ack: 22 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:532	Recevied Packet { id: 20, ack 16, checksum: 537, length 7 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:595	packet id is invalid
+[32mINFO[0m ./src/udp_slw.c:slw_transmit_ack:322	Transmit pure ACK { id: 0, ack: 22 }
+[32mINFO[0m ./src/udp_slw.c:slw_write_packet:169	writing packet produced following checksum 23
+[32mINFO[0m ./src/udp_slw.c:slw_process:607	
+process end
+	send window state
+		{ base: 17, next 18, ack: -1 }
+	receive window state
+		{ base: 22, next 22, ack: 22 }
+[33mWARN[0m ./src/udp_slw.c:slw_recv:433	no packets to receive
+[33mWARN[0m ./src/udp_server.c:slw_loop:136	rcvwind is empty nothing to receive
+[32mINFO[0m ./src/udp_slw.c:slw_process:479	
+process start
+	send window state
+		{ base: 17, next 18, ack: -1 }
+	receive window state
+		{ base: 22, next 22, ack: 22 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:532	Recevied Packet { id: 22, ack 18, checksum: 540, length 7 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:550	ACK is in the window
+[32mINFO[0m ./src/udp_slw.c:slw_process:586	packet id is the expected id
+[32mINFO[0m ./src/udp_slw.c:slw_process:607	
+process end
+	send window state
+		{ base: 18, next 18, ack: -1 }
+	receive window state
+		{ base: 22, next 23, ack: 23 }
+[32mINFO[0m ./src/udp_slw.c:slw_write_packet:169	writing packet produced following checksum 541
+[32mINFO[0m ./src/udp_slw.c:slw_send:411	Packet { id: 18, ack: 23, checksum: 0, length: 7 }
+[32mINFO[0m ./src/udp_slw.c:slw_send:419	slw_send transmitted 1 packets
+[32mINFO[0m ./src/udp_slw.c:slw_process:479	
+process start
+	send window state
+		{ base: 18, next 19, ack: -1 }
+	receive window state
+		{ base: 23, next 23, ack: 23 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:532	Recevied Packet { id: 0, ack 17, checksum: 18, length 0 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:607	
+process end
+	send window state
+		{ base: 18, next 19, ack: -1 }
+	receive window state
+		{ base: 23, next 23, ack: 23 }
+[33mWARN[0m ./src/udp_slw.c:slw_recv:433	no packets to receive
+[33mWARN[0m ./src/udp_server.c:slw_loop:136	rcvwind is empty nothing to receive
+[32mINFO[0m ./src/udp_slw.c:slw_process:479	
+process start
+	send window state
+		{ base: 18, next 19, ack: -1 }
+	receive window state
+		{ base: 23, next 23, ack: 23 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:532	Recevied Packet { id: 22, ack 18, checksum: 540, length 7 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:595	packet id is invalid
+[32mINFO[0m ./src/udp_slw.c:slw_transmit_ack:322	Transmit pure ACK { id: 0, ack: 23 }
+[32mINFO[0m ./src/udp_slw.c:slw_write_packet:169	writing packet produced following checksum 24
+[32mINFO[0m ./src/udp_slw.c:slw_process:607	
+process end
+	send window state
+		{ base: 18, next 19, ack: -1 }
+	receive window state
+		{ base: 23, next 23, ack: 23 }
+[33mWARN[0m ./src/udp_slw.c:slw_recv:433	no packets to receive
+[33mWARN[0m ./src/udp_server.c:slw_loop:136	rcvwind is empty nothing to receive
+[32mINFO[0m ./src/udp_slw.c:slw_process:479	
+process start
+	send window state
+		{ base: 18, next 19, ack: -1 }
+	receive window state
+		{ base: 23, next 23, ack: 23 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:532	Recevied Packet { id: 0, ack 18, checksum: 19, length 0 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:607	
+process end
+	send window state
+		{ base: 18, next 19, ack: -1 }
+	receive window state
+		{ base: 23, next 23, ack: 23 }
+[33mWARN[0m ./src/udp_slw.c:slw_recv:433	no packets to receive
+[33mWARN[0m ./src/udp_server.c:slw_loop:136	rcvwind is empty nothing to receive
+[32mINFO[0m ./src/udp_slw.c:slw_process:479	
+process start
+	send window state
+		{ base: 18, next 19, ack: -1 }
+	receive window state
+		{ base: 23, next 23, ack: 23 }
+[33mWARN[0m ./src/udp_slw.c:slw_process:494	time 12699332 greater than timeout 12699226 triggering retransmission
+[32mINFO[0m ./src/udp_slw.c:slw_write_packet:169	writing packet produced following checksum 541
+[33mWARN[0m ./src/udp_slw.c:slw_process:507	`recvfrom` call would block
+[33mWARN[0m ./src/udp_server.c:slw_loop:118	poll returned but there was nothing to process on the socket
+[32mINFO[0m ./src/udp_slw.c:slw_process:479	
+process start
+	send window state
+		{ base: 18, next 19, ack: -1 }
+	receive window state
+		{ base: 23, next 23, ack: 23 }
+[33mWARN[0m ./src/udp_slw.c:slw_process:494	time 12699382 greater than timeout 12699382 triggering retransmission
+[32mINFO[0m ./src/udp_slw.c:slw_write_packet:169	writing packet produced following checksum 541
+[33mWARN[0m ./src/udp_slw.c:slw_process:507	`recvfrom` call would block
+[33mWARN[0m ./src/udp_server.c:slw_loop:118	poll returned but there was nothing to process on the socket
+[32mINFO[0m ./src/udp_slw.c:slw_process:479	
+process start
+	send window state
+		{ base: 18, next 19, ack: -1 }
+	receive window state
+		{ base: 23, next 23, ack: 23 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:532	Recevied Packet { id: 23, ack 19, checksum: 546, length 7 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:550	ACK is in the window
+[32mINFO[0m ./src/udp_slw.c:slw_process:586	packet id is the expected id
+[32mINFO[0m ./src/udp_slw.c:slw_process:607	
+process end
+	send window state
+		{ base: 19, next 19, ack: -1 }
+	receive window state
+		{ base: 23, next 24, ack: 24 }
+[32mINFO[0m ./src/udp_slw.c:slw_write_packet:169	writing packet produced following checksum 547
+[32mINFO[0m ./src/udp_slw.c:slw_send:411	Packet { id: 19, ack: 24, checksum: 0, length: 7 }
+[32mINFO[0m ./src/udp_slw.c:slw_send:419	slw_send transmitted 1 packets
+[32mINFO[0m ./src/udp_slw.c:slw_process:479	
+process start
+	send window state
+		{ base: 19, next 20, ack: -1 }
+	receive window state
+		{ base: 24, next 24, ack: 24 }
+[33mWARN[0m ./src/udp_slw.c:slw_process:494	time 12699484 greater than timeout 12699484 triggering retransmission
+[32mINFO[0m ./src/udp_slw.c:slw_write_packet:169	writing packet produced following checksum 547
+[33mWARN[0m ./src/udp_slw.c:slw_process:507	`recvfrom` call would block
+[33mWARN[0m ./src/udp_server.c:slw_loop:118	poll returned but there was nothing to process on the socket
+[32mINFO[0m ./src/udp_slw.c:slw_process:479	
+process start
+	send window state
+		{ base: 19, next 20, ack: -1 }
+	receive window state
+		{ base: 24, next 24, ack: 24 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:532	Recevied Packet { id: 23, ack 19, checksum: 546, length 7 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:595	packet id is invalid
+[32mINFO[0m ./src/udp_slw.c:slw_transmit_ack:322	Transmit pure ACK { id: 0, ack: 24 }
+[32mINFO[0m ./src/udp_slw.c:slw_write_packet:169	writing packet produced following checksum 25
+[32mINFO[0m ./src/udp_slw.c:slw_process:607	
+process end
+	send window state
+		{ base: 19, next 20, ack: -1 }
+	receive window state
+		{ base: 24, next 24, ack: 24 }
+[33mWARN[0m ./src/udp_slw.c:slw_recv:433	no packets to receive
+[33mWARN[0m ./src/udp_server.c:slw_loop:136	rcvwind is empty nothing to receive
+[32mINFO[0m ./src/udp_slw.c:slw_process:479	
+process start
+	send window state
+		{ base: 19, next 20, ack: -1 }
+	receive window state
+		{ base: 24, next 24, ack: 24 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:532	Recevied Packet { id: 0, ack 19, checksum: 20, length 0 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:607	
+process end
+	send window state
+		{ base: 19, next 20, ack: -1 }
+	receive window state
+		{ base: 24, next 24, ack: 24 }
+[33mWARN[0m ./src/udp_slw.c:slw_recv:433	no packets to receive
+[33mWARN[0m ./src/udp_server.c:slw_loop:136	rcvwind is empty nothing to receive
+[32mINFO[0m ./src/udp_slw.c:slw_process:479	
+process start
+	send window state
+		{ base: 19, next 20, ack: -1 }
+	receive window state
+		{ base: 24, next 24, ack: 24 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:532	Recevied Packet { id: 24, ack 20, checksum: 543, length 7 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:550	ACK is in the window
+[32mINFO[0m ./src/udp_slw.c:slw_process:586	packet id is the expected id
+[32mINFO[0m ./src/udp_slw.c:slw_process:607	
+process end
+	send window state
+		{ base: 20, next 20, ack: -1 }
+	receive window state
+		{ base: 24, next 25, ack: 25 }
+[32mINFO[0m ./src/udp_slw.c:slw_write_packet:169	writing packet produced following checksum 544
+[32mINFO[0m ./src/udp_slw.c:slw_send:411	Packet { id: 20, ack: 25, checksum: 0, length: 7 }
+[32mINFO[0m ./src/udp_slw.c:slw_send:419	slw_send transmitted 1 packets
+[32mINFO[0m ./src/udp_slw.c:slw_process:479	
+process start
+	send window state
+		{ base: 20, next 21, ack: -1 }
+	receive window state
+		{ base: 25, next 25, ack: 25 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:532	Recevied Packet { id: 23, ack 19, checksum: 546, length 7 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:595	packet id is invalid
+[32mINFO[0m ./src/udp_slw.c:slw_transmit_ack:322	Transmit pure ACK { id: 0, ack: 25 }
+[32mINFO[0m ./src/udp_slw.c:slw_write_packet:169	writing packet produced following checksum 26
+[32mINFO[0m ./src/udp_slw.c:slw_process:607	
+process end
+	send window state
+		{ base: 20, next 21, ack: -1 }
+	receive window state
+		{ base: 25, next 25, ack: 25 }
+[33mWARN[0m ./src/udp_slw.c:slw_recv:433	no packets to receive
+[33mWARN[0m ./src/udp_server.c:slw_loop:136	rcvwind is empty nothing to receive
+[32mINFO[0m ./src/udp_slw.c:slw_process:479	
+process start
+	send window state
+		{ base: 20, next 21, ack: -1 }
+	receive window state
+		{ base: 25, next 25, ack: 25 }
+[33mWARN[0m ./src/udp_slw.c:slw_process:494	time 12699707 greater than timeout 12699681 triggering retransmission
+[32mINFO[0m ./src/udp_slw.c:slw_write_packet:169	writing packet produced following checksum 544
+[33mWARN[0m ./src/udp_slw.c:slw_process:507	`recvfrom` call would block
+[33mWARN[0m ./src/udp_server.c:slw_loop:118	poll returned but there was nothing to process on the socket
+[32mINFO[0m ./src/udp_slw.c:slw_process:479	
+process start
+	send window state
+		{ base: 20, next 21, ack: -1 }
+	receive window state
+		{ base: 25, next 25, ack: 25 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:532	Recevied Packet { id: 22, ack 18, checksum: 540, length 7 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:595	packet id is invalid
+[32mINFO[0m ./src/udp_slw.c:slw_transmit_ack:322	Transmit pure ACK { id: 0, ack: 25 }
+[32mINFO[0m ./src/udp_slw.c:slw_write_packet:169	writing packet produced following checksum 26
+[32mINFO[0m ./src/udp_slw.c:slw_process:607	
+process end
+	send window state
+		{ base: 20, next 21, ack: -1 }
+	receive window state
+		{ base: 25, next 25, ack: 25 }
+[33mWARN[0m ./src/udp_slw.c:slw_recv:433	no packets to receive
+[33mWARN[0m ./src/udp_server.c:slw_loop:136	rcvwind is empty nothing to receive
+[32mINFO[0m ./src/udp_slw.c:slw_process:479	
+process start
+	send window state
+		{ base: 20, next 21, ack: -1 }
+	receive window state
+		{ base: 25, next 25, ack: 25 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:532	Recevied Packet { id: 0, ack 20, checksum: 21, length 0 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:607	
+process end
+	send window state
+		{ base: 20, next 21, ack: -1 }
+	receive window state
+		{ base: 25, next 25, ack: 25 }
+[33mWARN[0m ./src/udp_slw.c:slw_recv:433	no packets to receive
+[33mWARN[0m ./src/udp_server.c:slw_loop:136	rcvwind is empty nothing to receive
+[32mINFO[0m ./src/udp_slw.c:slw_process:479	
+process start
+	send window state
+		{ base: 20, next 21, ack: -1 }
+	receive window state
+		{ base: 25, next 25, ack: 25 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:532	Recevied Packet { id: 25, ack 21, checksum: 549, length 7 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:550	ACK is in the window
+[32mINFO[0m ./src/udp_slw.c:slw_process:586	packet id is the expected id
+[32mINFO[0m ./src/udp_slw.c:slw_process:607	
+process end
+	send window state
+		{ base: 21, next 21, ack: -1 }
+	receive window state
+		{ base: 25, next 26, ack: 26 }
+[32mINFO[0m ./src/udp_slw.c:slw_write_packet:169	writing packet produced following checksum 550
+[32mINFO[0m ./src/udp_slw.c:slw_send:411	Packet { id: 21, ack: 26, checksum: 0, length: 7 }
+[32mINFO[0m ./src/udp_slw.c:slw_send:419	slw_send transmitted 1 packets
+[32mINFO[0m ./src/udp_slw.c:slw_process:479	
+process start
+	send window state
+		{ base: 21, next 22, ack: -1 }
+	receive window state
+		{ base: 26, next 26, ack: 26 }
+[33mWARN[0m ./src/udp_slw.c:slw_process:494	time 12699955 greater than timeout 12699955 triggering retransmission
+[32mINFO[0m ./src/udp_slw.c:slw_write_packet:169	writing packet produced following checksum 550
+[33mWARN[0m ./src/udp_slw.c:slw_process:507	`recvfrom` call would block
+[33mWARN[0m ./src/udp_server.c:slw_loop:118	poll returned but there was nothing to process on the socket
+[32mINFO[0m ./src/udp_slw.c:slw_process:479	
+process start
+	send window state
+		{ base: 21, next 22, ack: -1 }
+	receive window state
+		{ base: 26, next 26, ack: 26 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:532	Recevied Packet { id: 25, ack 21, checksum: 549, length 7 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:595	packet id is invalid
+[32mINFO[0m ./src/udp_slw.c:slw_transmit_ack:322	Transmit pure ACK { id: 0, ack: 26 }
+[32mINFO[0m ./src/udp_slw.c:slw_write_packet:169	writing packet produced following checksum 27
+[32mINFO[0m ./src/udp_slw.c:slw_process:607	
+process end
+	send window state
+		{ base: 21, next 22, ack: -1 }
+	receive window state
+		{ base: 26, next 26, ack: 26 }
+[33mWARN[0m ./src/udp_slw.c:slw_recv:433	no packets to receive
+[33mWARN[0m ./src/udp_server.c:slw_loop:136	rcvwind is empty nothing to receive
+[32mINFO[0m ./src/udp_slw.c:slw_process:479	
+process start
+	send window state
+		{ base: 21, next 22, ack: -1 }
+	receive window state
+		{ base: 26, next 26, ack: 26 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:532	Recevied Packet { id: 25, ack 21, checksum: 549, length 7 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:595	packet id is invalid
+[32mINFO[0m ./src/udp_slw.c:slw_transmit_ack:322	Transmit pure ACK { id: 0, ack: 26 }
+[32mINFO[0m ./src/udp_slw.c:slw_write_packet:169	writing packet produced following checksum 27
+[32mINFO[0m ./src/udp_slw.c:slw_process:607	
+process end
+	send window state
+		{ base: 21, next 22, ack: -1 }
+	receive window state
+		{ base: 26, next 26, ack: 26 }
+[33mWARN[0m ./src/udp_slw.c:slw_recv:433	no packets to receive
+[33mWARN[0m ./src/udp_server.c:slw_loop:136	rcvwind is empty nothing to receive
+[32mINFO[0m ./src/udp_slw.c:slw_process:479	
+process start
+	send window state
+		{ base: 21, next 22, ack: -1 }
+	receive window state
+		{ base: 26, next 26, ack: 26 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:532	Recevied Packet { id: 25, ack 21, checksum: 549, length 7 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:595	packet id is invalid
+[32mINFO[0m ./src/udp_slw.c:slw_transmit_ack:322	Transmit pure ACK { id: 0, ack: 26 }
+[32mINFO[0m ./src/udp_slw.c:slw_write_packet:169	writing packet produced following checksum 27
+[32mINFO[0m ./src/udp_slw.c:slw_process:607	
+process end
+	send window state
+		{ base: 21, next 22, ack: -1 }
+	receive window state
+		{ base: 26, next 26, ack: 26 }
+[33mWARN[0m ./src/udp_slw.c:slw_recv:433	no packets to receive
+[33mWARN[0m ./src/udp_server.c:slw_loop:136	rcvwind is empty nothing to receive
+[32mINFO[0m ./src/udp_slw.c:slw_process:479	
+process start
+	send window state
+		{ base: 21, next 22, ack: -1 }
+	receive window state
+		{ base: 26, next 26, ack: 26 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:532	Recevied Packet { id: 0, ack 22, checksum: 23, length 0 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:550	ACK is in the window
+[32mINFO[0m ./src/udp_slw.c:slw_process:563	pure ACK no receive window updates
+[32mINFO[0m ./src/udp_slw.c:slw_process:607	
+process end
+	send window state
+		{ base: 22, next 22, ack: -1 }
+	receive window state
+		{ base: 26, next 26, ack: 26 }
+[33mWARN[0m ./src/udp_slw.c:slw_recv:433	no packets to receive
+[33mWARN[0m ./src/udp_server.c:slw_loop:136	rcvwind is empty nothing to receive
+[32mINFO[0m ./src/udp_slw.c:slw_process:479	
+process start
+	send window state
+		{ base: 22, next 22, ack: -1 }
+	receive window state
+		{ base: 26, next 26, ack: 26 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:532	Recevied Packet { id: 0, ack 21, checksum: 22, length 0 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:607	
+process end
+	send window state
+		{ base: 22, next 22, ack: -1 }
+	receive window state
+		{ base: 26, next 26, ack: 26 }
+[33mWARN[0m ./src/udp_slw.c:slw_recv:433	no packets to receive
+[33mWARN[0m ./src/udp_server.c:slw_loop:136	rcvwind is empty nothing to receive
+[32mINFO[0m ./src/udp_slw.c:slw_process:479	
+process start
+	send window state
+		{ base: 22, next 22, ack: -1 }
+	receive window state
+		{ base: 26, next 26, ack: 26 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:532	Recevied Packet { id: 26, ack 22, checksum: 589, length 8 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:586	packet id is the expected id
+[32mINFO[0m ./src/udp_slw.c:slw_process:607	
+process end
+	send window state
+		{ base: 22, next 22, ack: -1 }
+	receive window state
+		{ base: 26, next 27, ack: 27 }
+[32mINFO[0m ./src/udp_slw.c:slw_write_packet:169	writing packet produced following checksum 590
+[32mINFO[0m ./src/udp_slw.c:slw_send:411	Packet { id: 22, ack: 27, checksum: 0, length: 8 }
+[32mINFO[0m ./src/udp_slw.c:slw_send:419	slw_send transmitted 1 packets
+[32mINFO[0m ./src/udp_slw.c:slw_process:479	
+process start
+	send window state
+		{ base: 22, next 23, ack: -1 }
+	receive window state
+		{ base: 27, next 27, ack: 27 }
+[33mWARN[0m ./src/udp_slw.c:slw_process:494	time 12700405 greater than timeout 12700405 triggering retransmission
+[32mINFO[0m ./src/udp_slw.c:slw_write_packet:169	writing packet produced following checksum 590
+[33mWARN[0m ./src/udp_slw.c:slw_process:507	`recvfrom` call would block
+[33mWARN[0m ./src/udp_server.c:slw_loop:118	poll returned but there was nothing to process on the socket
+[32mINFO[0m ./src/udp_slw.c:slw_process:479	
+process start
+	send window state
+		{ base: 22, next 23, ack: -1 }
+	receive window state
+		{ base: 27, next 27, ack: 27 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:532	Recevied Packet { id: 26, ack 22, checksum: 589, length 8 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:595	packet id is invalid
+[32mINFO[0m ./src/udp_slw.c:slw_transmit_ack:322	Transmit pure ACK { id: 0, ack: 27 }
+[32mINFO[0m ./src/udp_slw.c:slw_write_packet:169	writing packet produced following checksum 28
+[32mINFO[0m ./src/udp_slw.c:slw_process:607	
+process end
+	send window state
+		{ base: 22, next 23, ack: -1 }
+	receive window state
+		{ base: 27, next 27, ack: 27 }
+[33mWARN[0m ./src/udp_slw.c:slw_recv:433	no packets to receive
+[33mWARN[0m ./src/udp_server.c:slw_loop:136	rcvwind is empty nothing to receive
+[32mINFO[0m ./src/udp_slw.c:slw_process:479	
+process start
+	send window state
+		{ base: 22, next 23, ack: -1 }
+	receive window state
+		{ base: 27, next 27, ack: 27 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:532	Recevied Packet { id: 27, ack 22, checksum: 589, length 8 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:586	packet id is the expected id
+[32mINFO[0m ./src/udp_slw.c:slw_process:607	
+process end
+	send window state
+		{ base: 22, next 23, ack: -1 }
+	receive window state
+		{ base: 27, next 28, ack: 28 }
+[33mWARN[0m ./src/udp_slw.c:slw_send:353	send window is full
+[33mWARN[0m ./src/udp_server.c:slw_loop:163	new message dropped send window is full
+[32mINFO[0m ./src/udp_slw.c:slw_process:479	
+process start
+	send window state
+		{ base: 22, next 23, ack: -1 }
+	receive window state
+		{ base: 28, next 28, ack: 28 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:532	Recevied Packet { id: 26, ack 22, checksum: 589, length 8 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:595	packet id is invalid
+[32mINFO[0m ./src/udp_slw.c:slw_transmit_ack:322	Transmit pure ACK { id: 0, ack: 28 }
+[32mINFO[0m ./src/udp_slw.c:slw_write_packet:169	writing packet produced following checksum 29
+[32mINFO[0m ./src/udp_slw.c:slw_process:607	
+process end
+	send window state
+		{ base: 22, next 23, ack: -1 }
+	receive window state
+		{ base: 28, next 28, ack: 28 }
+[33mWARN[0m ./src/udp_slw.c:slw_recv:433	no packets to receive
+[33mWARN[0m ./src/udp_server.c:slw_loop:136	rcvwind is empty nothing to receive
+[32mINFO[0m ./src/udp_slw.c:slw_process:479	
+process start
+	send window state
+		{ base: 22, next 23, ack: -1 }
+	receive window state
+		{ base: 28, next 28, ack: 28 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:532	Recevied Packet { id: 28, ack 22, checksum: 591, length 8 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:586	packet id is the expected id
+[32mINFO[0m ./src/udp_slw.c:slw_process:607	
+process end
+	send window state
+		{ base: 22, next 23, ack: -1 }
+	receive window state
+		{ base: 28, next 29, ack: 29 }
+[33mWARN[0m ./src/udp_slw.c:slw_send:353	send window is full
+[33mWARN[0m ./src/udp_server.c:slw_loop:163	new message dropped send window is full
+[32mINFO[0m ./src/udp_slw.c:slw_process:479	
+process start
+	send window state
+		{ base: 22, next 23, ack: -1 }
+	receive window state
+		{ base: 29, next 29, ack: 29 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:532	Recevied Packet { id: 26, ack 22, checksum: 589, length 8 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:595	packet id is invalid
+[32mINFO[0m ./src/udp_slw.c:slw_transmit_ack:322	Transmit pure ACK { id: 0, ack: 29 }
+[32mINFO[0m ./src/udp_slw.c:slw_write_packet:169	writing packet produced following checksum 30
+[32mINFO[0m ./src/udp_slw.c:slw_process:607	
+process end
+	send window state
+		{ base: 22, next 23, ack: -1 }
+	receive window state
+		{ base: 29, next 29, ack: 29 }
+[33mWARN[0m ./src/udp_slw.c:slw_recv:433	no packets to receive
+[33mWARN[0m ./src/udp_server.c:slw_loop:136	rcvwind is empty nothing to receive
+[32mINFO[0m ./src/udp_slw.c:slw_process:479	
+process start
+	send window state
+		{ base: 22, next 23, ack: -1 }
+	receive window state
+		{ base: 29, next 29, ack: 29 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:532	Recevied Packet { id: 28, ack 23, checksum: 592, length 8 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:550	ACK is in the window
+[32mINFO[0m ./src/udp_slw.c:slw_process:595	packet id is invalid
+[32mINFO[0m ./src/udp_slw.c:slw_transmit_ack:322	Transmit pure ACK { id: 0, ack: 29 }
+[32mINFO[0m ./src/udp_slw.c:slw_write_packet:169	writing packet produced following checksum 30
+[32mINFO[0m ./src/udp_slw.c:slw_process:607	
+process end
+	send window state
+		{ base: 23, next 23, ack: -1 }
+	receive window state
+		{ base: 29, next 29, ack: 29 }
+[33mWARN[0m ./src/udp_slw.c:slw_recv:433	no packets to receive
+[33mWARN[0m ./src/udp_server.c:slw_loop:136	rcvwind is empty nothing to receive
+[32mINFO[0m ./src/udp_slw.c:slw_process:479	
+process start
+	send window state
+		{ base: 23, next 23, ack: -1 }
+	receive window state
+		{ base: 29, next 29, ack: 29 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:532	Recevied Packet { id: 28, ack 23, checksum: 592, length 8 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:595	packet id is invalid
+[32mINFO[0m ./src/udp_slw.c:slw_transmit_ack:322	Transmit pure ACK { id: 0, ack: 29 }
+[32mINFO[0m ./src/udp_slw.c:slw_write_packet:169	writing packet produced following checksum 30
+[32mINFO[0m ./src/udp_slw.c:slw_process:607	
+process end
+	send window state
+		{ base: 23, next 23, ack: -1 }
+	receive window state
+		{ base: 29, next 29, ack: 29 }
+[33mWARN[0m ./src/udp_slw.c:slw_recv:433	no packets to receive
+[33mWARN[0m ./src/udp_server.c:slw_loop:136	rcvwind is empty nothing to receive
+[32mINFO[0m ./src/udp_slw.c:slw_process:479	
+process start
+	send window state
+		{ base: 23, next 23, ack: -1 }
+	receive window state
+		{ base: 29, next 29, ack: 29 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:532	Recevied Packet { id: 26, ack 22, checksum: 589, length 8 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:595	packet id is invalid
+[32mINFO[0m ./src/udp_slw.c:slw_transmit_ack:322	Transmit pure ACK { id: 0, ack: 29 }
+[32mINFO[0m ./src/udp_slw.c:slw_write_packet:169	writing packet produced following checksum 30
+[32mINFO[0m ./src/udp_slw.c:slw_process:607	
+process end
+	send window state
+		{ base: 23, next 23, ack: -1 }
+	receive window state
+		{ base: 29, next 29, ack: 29 }
+[33mWARN[0m ./src/udp_slw.c:slw_recv:433	no packets to receive
+[33mWARN[0m ./src/udp_server.c:slw_loop:136	rcvwind is empty nothing to receive
+[32mINFO[0m ./src/udp_slw.c:slw_process:479	
+process start
+	send window state
+		{ base: 23, next 23, ack: -1 }
+	receive window state
+		{ base: 29, next 29, ack: 29 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:532	Recevied Packet { id: 29, ack 23, checksum: 598, length 8 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:586	packet id is the expected id
+[32mINFO[0m ./src/udp_slw.c:slw_process:607	
+process end
+	send window state
+		{ base: 23, next 23, ack: -1 }
+	receive window state
+		{ base: 29, next 30, ack: 30 }
+[32mINFO[0m ./src/udp_slw.c:slw_write_packet:169	writing packet produced following checksum 599
+[32mINFO[0m ./src/udp_slw.c:slw_send:411	Packet { id: 23, ack: 30, checksum: 0, length: 8 }
+[32mINFO[0m ./src/udp_slw.c:slw_send:419	slw_send transmitted 1 packets
+[32mINFO[0m ./src/udp_slw.c:slw_process:479	
+process start
+	send window state
+		{ base: 23, next 24, ack: -1 }
+	receive window state
+		{ base: 30, next 30, ack: 30 }
+[33mWARN[0m ./src/udp_slw.c:slw_process:494	time 12700881 greater than timeout 12700881 triggering retransmission
+[32mINFO[0m ./src/udp_slw.c:slw_write_packet:169	writing packet produced following checksum 599
+[32mINFO[0m ./src/udp_slw.c:slw_process:532	Recevied Packet { id: 30, ack 24, checksum: 594, length 8 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:550	ACK is in the window
+[32mINFO[0m ./src/udp_slw.c:slw_process:586	packet id is the expected id
+[32mINFO[0m ./src/udp_slw.c:slw_process:607	
+process end
+	send window state
+		{ base: 24, next 24, ack: -1 }
+	receive window state
+		{ base: 30, next 31, ack: 31 }
+[32mINFO[0m ./src/udp_slw.c:slw_write_packet:169	writing packet produced following checksum 595
+[32mINFO[0m ./src/udp_slw.c:slw_send:411	Packet { id: 24, ack: 31, checksum: 0, length: 8 }
+[32mINFO[0m ./src/udp_slw.c:slw_send:419	slw_send transmitted 1 packets
+[32mINFO[0m ./src/udp_slw.c:slw_process:479	
+process start
+	send window state
+		{ base: 24, next 25, ack: -1 }
+	receive window state
+		{ base: 31, next 31, ack: 31 }
+[33mWARN[0m ./src/udp_slw.c:slw_process:494	time 12700932 greater than timeout 12700932 triggering retransmission
+[32mINFO[0m ./src/udp_slw.c:slw_write_packet:169	writing packet produced following checksum 595
+[33mWARN[0m ./src/udp_slw.c:slw_process:507	`recvfrom` call would block
+[33mWARN[0m ./src/udp_server.c:slw_loop:118	poll returned but there was nothing to process on the socket
+[32mINFO[0m ./src/udp_slw.c:slw_process:479	
+process start
+	send window state
+		{ base: 24, next 25, ack: -1 }
+	receive window state
+		{ base: 31, next 31, ack: 31 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:532	Recevied Packet { id: 31, ack 25, checksum: 598, length 8 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:550	ACK is in the window
+[32mINFO[0m ./src/udp_slw.c:slw_process:586	packet id is the expected id
+[32mINFO[0m ./src/udp_slw.c:slw_process:607	
+process end
+	send window state
+		{ base: 25, next 25, ack: -1 }
+	receive window state
+		{ base: 31, next 32, ack: 32 }
+[32mINFO[0m ./src/udp_slw.c:slw_write_packet:169	writing packet produced following checksum 599
+[32mINFO[0m ./src/udp_slw.c:slw_send:411	Packet { id: 25, ack: 32, checksum: 0, length: 8 }
+[32mINFO[0m ./src/udp_slw.c:slw_send:419	slw_send transmitted 1 packets
+[32mINFO[0m ./src/udp_slw.c:slw_process:479	
+process start
+	send window state
+		{ base: 25, next 26, ack: -1 }
+	receive window state
+		{ base: 32, next 32, ack: 32 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:532	Recevied Packet { id: 28, ack 23, checksum: 592, length 8 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:595	packet id is invalid
+[32mINFO[0m ./src/udp_slw.c:slw_transmit_ack:322	Transmit pure ACK { id: 0, ack: 32 }
+[32mINFO[0m ./src/udp_slw.c:slw_write_packet:169	writing packet produced following checksum 33
+[32mINFO[0m ./src/udp_slw.c:slw_process:607	
+process end
+	send window state
+		{ base: 25, next 26, ack: -1 }
+	receive window state
+		{ base: 32, next 32, ack: 32 }
+[33mWARN[0m ./src/udp_slw.c:slw_recv:433	no packets to receive
+[33mWARN[0m ./src/udp_server.c:slw_loop:136	rcvwind is empty nothing to receive
+[32mINFO[0m ./src/udp_slw.c:slw_process:479	
+process start
+	send window state
+		{ base: 25, next 26, ack: -1 }
+	receive window state
+		{ base: 32, next 32, ack: 32 }
+[33mWARN[0m ./src/udp_slw.c:slw_read_packet:139	packet checksum did not match calculated checksum
+[33mWARN[0m ./src/udp_slw.c:slw_process:527	invalid packet dropped
+	packet parse failed
+[32mINFO[0m ./src/udp_slw.c:slw_process:607	
+process end
+	send window state
+		{ base: 25, next 26, ack: -1 }
+	receive window state
+		{ base: 32, next 32, ack: 32 }
+[33mWARN[0m ./src/udp_slw.c:slw_recv:433	no packets to receive
+[33mWARN[0m ./src/udp_server.c:slw_loop:136	rcvwind is empty nothing to receive
+[32mINFO[0m ./src/udp_slw.c:slw_process:479	
+process start
+	send window state
+		{ base: 25, next 26, ack: -1 }
+	receive window state
+		{ base: 32, next 32, ack: 32 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:532	Recevied Packet { id: 29, ack 23, checksum: 598, length 8 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:595	packet id is invalid
+[32mINFO[0m ./src/udp_slw.c:slw_transmit_ack:322	Transmit pure ACK { id: 0, ack: 32 }
+[32mINFO[0m ./src/udp_slw.c:slw_write_packet:169	writing packet produced following checksum 33
+[32mINFO[0m ./src/udp_slw.c:slw_process:607	
+process end
+	send window state
+		{ base: 25, next 26, ack: -1 }
+	receive window state
+		{ base: 32, next 32, ack: 32 }
+[33mWARN[0m ./src/udp_slw.c:slw_recv:433	no packets to receive
+[33mWARN[0m ./src/udp_server.c:slw_loop:136	rcvwind is empty nothing to receive
+[32mINFO[0m ./src/udp_slw.c:slw_process:479	
+process start
+	send window state
+		{ base: 25, next 26, ack: -1 }
+	receive window state
+		{ base: 32, next 32, ack: 32 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:532	Recevied Packet { id: 31, ack 25, checksum: 598, length 8 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:595	packet id is invalid
+[32mINFO[0m ./src/udp_slw.c:slw_transmit_ack:322	Transmit pure ACK { id: 0, ack: 32 }
+[32mINFO[0m ./src/udp_slw.c:slw_write_packet:169	writing packet produced following checksum 33
+[32mINFO[0m ./src/udp_slw.c:slw_process:607	
+process end
+	send window state
+		{ base: 25, next 26, ack: -1 }
+	receive window state
+		{ base: 32, next 32, ack: 32 }
+[33mWARN[0m ./src/udp_slw.c:slw_recv:433	no packets to receive
+[33mWARN[0m ./src/udp_server.c:slw_loop:136	rcvwind is empty nothing to receive
+[32mINFO[0m ./src/udp_slw.c:slw_process:479	
+process start
+	send window state
+		{ base: 25, next 26, ack: -1 }
+	receive window state
+		{ base: 32, next 32, ack: 32 }
+[33mWARN[0m ./src/udp_slw.c:slw_process:494	time 12701132 greater than timeout 12701126 triggering retransmission
+[32mINFO[0m ./src/udp_slw.c:slw_write_packet:169	writing packet produced following checksum 599
+[32mINFO[0m ./src/udp_slw.c:slw_process:532	Recevied Packet { id: 32, ack 25, checksum: 602, length 8 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:586	packet id is the expected id
+[32mINFO[0m ./src/udp_slw.c:slw_process:607	
+process end
+	send window state
+		{ base: 25, next 26, ack: -1 }
+	receive window state
+		{ base: 32, next 33, ack: 33 }
+[33mWARN[0m ./src/udp_slw.c:slw_send:353	send window is full
+[33mWARN[0m ./src/udp_server.c:slw_loop:163	new message dropped send window is full
+[32mINFO[0m ./src/udp_slw.c:slw_process:479	
+process start
+	send window state
+		{ base: 25, next 26, ack: -1 }
+	receive window state
+		{ base: 33, next 33, ack: 33 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:532	Recevied Packet { id: 30, ack 24, checksum: 594, length 8 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:595	packet id is invalid
+[32mINFO[0m ./src/udp_slw.c:slw_transmit_ack:322	Transmit pure ACK { id: 0, ack: 33 }
+[32mINFO[0m ./src/udp_slw.c:slw_write_packet:169	writing packet produced following checksum 34
+[32mINFO[0m ./src/udp_slw.c:slw_process:607	
+process end
+	send window state
+		{ base: 25, next 26, ack: -1 }
+	receive window state
+		{ base: 33, next 33, ack: 33 }
+[33mWARN[0m ./src/udp_slw.c:slw_recv:433	no packets to receive
+[33mWARN[0m ./src/udp_server.c:slw_loop:136	rcvwind is empty nothing to receive
+[32mINFO[0m ./src/udp_slw.c:slw_process:479	
+process start
+	send window state
+		{ base: 25, next 26, ack: -1 }
+	receive window state
+		{ base: 33, next 33, ack: 33 }
+[33mWARN[0m ./src/udp_slw.c:slw_process:494	time 12701215 greater than timeout 12701182 triggering retransmission
+[32mINFO[0m ./src/udp_slw.c:slw_write_packet:169	writing packet produced following checksum 600
+[33mWARN[0m ./src/udp_slw.c:slw_process:507	`recvfrom` call would block
+[33mWARN[0m ./src/udp_server.c:slw_loop:118	poll returned but there was nothing to process on the socket
+[32mINFO[0m ./src/udp_slw.c:slw_process:479	
+process start
+	send window state
+		{ base: 25, next 26, ack: -1 }
+	receive window state
+		{ base: 33, next 33, ack: 33 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:532	Recevied Packet { id: 32, ack 26, checksum: 603, length 8 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:550	ACK is in the window
+[32mINFO[0m ./src/udp_slw.c:slw_process:595	packet id is invalid
+[32mINFO[0m ./src/udp_slw.c:slw_transmit_ack:322	Transmit pure ACK { id: 0, ack: 33 }
+[32mINFO[0m ./src/udp_slw.c:slw_write_packet:169	writing packet produced following checksum 34
+[32mINFO[0m ./src/udp_slw.c:slw_process:607	
+process end
+	send window state
+		{ base: 26, next 26, ack: -1 }
+	receive window state
+		{ base: 33, next 33, ack: 33 }
+[33mWARN[0m ./src/udp_slw.c:slw_recv:433	no packets to receive
+[33mWARN[0m ./src/udp_server.c:slw_loop:136	rcvwind is empty nothing to receive
+[32mINFO[0m ./src/udp_slw.c:slw_process:479	
+process start
+	send window state
+		{ base: 26, next 26, ack: -1 }
+	receive window state
+		{ base: 33, next 33, ack: 33 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:532	Recevied Packet { id: 0, ack 26, checksum: 27, length 0 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:607	
+process end
+	send window state
+		{ base: 26, next 26, ack: -1 }
+	receive window state
+		{ base: 33, next 33, ack: 33 }
+[33mWARN[0m ./src/udp_slw.c:slw_recv:433	no packets to receive
+[33mWARN[0m ./src/udp_server.c:slw_loop:136	rcvwind is empty nothing to receive
+[32mINFO[0m ./src/udp_slw.c:slw_process:479	
+process start
+	send window state
+		{ base: 26, next 26, ack: -1 }
+	receive window state
+		{ base: 33, next 33, ack: 33 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:532	Recevied Packet { id: 33, ack 26, checksum: 606, length 8 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:586	packet id is the expected id
+[32mINFO[0m ./src/udp_slw.c:slw_process:607	
+process end
+	send window state
+		{ base: 26, next 26, ack: -1 }
+	receive window state
+		{ base: 33, next 34, ack: 34 }
+[32mINFO[0m ./src/udp_slw.c:slw_write_packet:169	writing packet produced following checksum 607
+[32mINFO[0m ./src/udp_slw.c:slw_send:411	Packet { id: 26, ack: 34, checksum: 0, length: 8 }
+[32mINFO[0m ./src/udp_slw.c:slw_send:419	slw_send transmitted 1 packets
+[32mINFO[0m ./src/udp_slw.c:slw_process:479	
+process start
+	send window state
+		{ base: 26, next 27, ack: -1 }
+	receive window state
+		{ base: 34, next 34, ack: 34 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:532	Recevied Packet { id: 33, ack 26, checksum: 606, length 8 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:595	packet id is invalid
+[32mINFO[0m ./src/udp_slw.c:slw_transmit_ack:322	Transmit pure ACK { id: 0, ack: 34 }
+[32mINFO[0m ./src/udp_slw.c:slw_write_packet:169	writing packet produced following checksum 35
+[32mINFO[0m ./src/udp_slw.c:slw_process:607	
+process end
+	send window state
+		{ base: 26, next 27, ack: -1 }
+	receive window state
+		{ base: 34, next 34, ack: 34 }
+[33mWARN[0m ./src/udp_slw.c:slw_recv:433	no packets to receive
+[33mWARN[0m ./src/udp_server.c:slw_loop:136	rcvwind is empty nothing to receive
+[32mINFO[0m ./src/udp_slw.c:slw_process:479	
+process start
+	send window state
+		{ base: 26, next 27, ack: -1 }
+	receive window state
+		{ base: 34, next 34, ack: 34 }
+[33mWARN[0m ./src/udp_slw.c:slw_process:494	time 12701381 greater than timeout 12701351 triggering retransmission
+[32mINFO[0m ./src/udp_slw.c:slw_write_packet:169	writing packet produced following checksum 607
+[33mWARN[0m ./src/udp_slw.c:slw_process:507	`recvfrom` call would block
+[33mWARN[0m ./src/udp_server.c:slw_loop:118	poll returned but there was nothing to process on the socket
+[32mINFO[0m ./src/udp_slw.c:slw_process:479	
+process start
+	send window state
+		{ base: 26, next 27, ack: -1 }
+	receive window state
+		{ base: 34, next 34, ack: 34 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:532	Recevied Packet { id: 0, ack 26, checksum: 27, length 0 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:607	
+process end
+	send window state
+		{ base: 26, next 27, ack: -1 }
+	receive window state
+		{ base: 34, next 34, ack: 34 }
+[33mWARN[0m ./src/udp_slw.c:slw_recv:433	no packets to receive
+[33mWARN[0m ./src/udp_server.c:slw_loop:136	rcvwind is empty nothing to receive
+[32mINFO[0m ./src/udp_slw.c:slw_process:479	
+process start
+	send window state
+		{ base: 26, next 27, ack: -1 }
+	receive window state
+		{ base: 34, next 34, ack: 34 }
+[33mWARN[0m ./src/udp_slw.c:slw_process:494	time 12701444 greater than timeout 12701432 triggering retransmission
+[32mINFO[0m ./src/udp_slw.c:slw_write_packet:169	writing packet produced following checksum 607
+[33mWARN[0m ./src/udp_slw.c:slw_process:507	`recvfrom` call would block
+[33mWARN[0m ./src/udp_server.c:slw_loop:118	poll returned but there was nothing to process on the socket
+[32mINFO[0m ./src/udp_slw.c:slw_process:479	
+process start
+	send window state
+		{ base: 26, next 27, ack: -1 }
+	receive window state
+		{ base: 34, next 34, ack: 34 }
+[33mWARN[0m ./src/udp_slw.c:slw_process:494	time 12701494 greater than timeout 12701494 triggering retransmission
+[32mINFO[0m ./src/udp_slw.c:slw_write_packet:169	writing packet produced following checksum 607
+[33mWARN[0m ./src/udp_slw.c:slw_process:507	`recvfrom` call would block
+[33mWARN[0m ./src/udp_server.c:slw_loop:118	poll returned but there was nothing to process on the socket
+[32mINFO[0m ./src/udp_slw.c:slw_process:479	
+process start
+	send window state
+		{ base: 26, next 27, ack: -1 }
+	receive window state
+		{ base: 34, next 34, ack: 34 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:532	Recevied Packet { id: 34, ack 27, checksum: 603, length 8 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:550	ACK is in the window
+[32mINFO[0m ./src/udp_slw.c:slw_process:586	packet id is the expected id
+[32mINFO[0m ./src/udp_slw.c:slw_process:607	
+process end
+	send window state
+		{ base: 27, next 27, ack: -1 }
+	receive window state
+		{ base: 34, next 35, ack: 35 }
+[32mINFO[0m ./src/udp_slw.c:slw_write_packet:169	writing packet produced following checksum 604
+[32mINFO[0m ./src/udp_slw.c:slw_send:411	Packet { id: 27, ack: 35, checksum: 0, length: 8 }
+[32mINFO[0m ./src/udp_slw.c:slw_send:419	slw_send transmitted 1 packets
+[32mINFO[0m ./src/udp_slw.c:slw_process:479	
+process start
+	send window state
+		{ base: 27, next 28, ack: -1 }
+	receive window state
+		{ base: 35, next 35, ack: 35 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:532	Recevied Packet { id: 0, ack 27, checksum: 28, length 0 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:607	
+process end
+	send window state
+		{ base: 27, next 28, ack: -1 }
+	receive window state
+		{ base: 35, next 35, ack: 35 }
+[33mWARN[0m ./src/udp_slw.c:slw_recv:433	no packets to receive
+[33mWARN[0m ./src/udp_server.c:slw_loop:136	rcvwind is empty nothing to receive
+[32mINFO[0m ./src/udp_slw.c:slw_process:479	
+process start
+	send window state
+		{ base: 27, next 28, ack: -1 }
+	receive window state
+		{ base: 35, next 35, ack: 35 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:532	Recevied Packet { id: 35, ack 28, checksum: 607, length 8 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:550	ACK is in the window
+[32mINFO[0m ./src/udp_slw.c:slw_process:586	packet id is the expected id
+[32mINFO[0m ./src/udp_slw.c:slw_process:607	
+process end
+	send window state
+		{ base: 28, next 28, ack: -1 }
+	receive window state
+		{ base: 35, next 36, ack: 36 }
+[32mINFO[0m ./src/udp_slw.c:slw_write_packet:169	writing packet produced following checksum 608
+[32mINFO[0m ./src/udp_slw.c:slw_send:411	Packet { id: 28, ack: 36, checksum: 0, length: 8 }
+[32mINFO[0m ./src/udp_slw.c:slw_send:419	slw_send transmitted 1 packets
+[32mINFO[0m ./src/udp_slw.c:slw_process:479	
+process start
+	send window state
+		{ base: 28, next 29, ack: -1 }
+	receive window state
+		{ base: 36, next 36, ack: 36 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:532	Recevied Packet { id: 35, ack 28, checksum: 607, length 8 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:595	packet id is invalid
+[32mINFO[0m ./src/udp_slw.c:slw_transmit_ack:322	Transmit pure ACK { id: 0, ack: 36 }
+[32mINFO[0m ./src/udp_slw.c:slw_write_packet:169	writing packet produced following checksum 37
+[32mINFO[0m ./src/udp_slw.c:slw_process:607	
+process end
+	send window state
+		{ base: 28, next 29, ack: -1 }
+	receive window state
+		{ base: 36, next 36, ack: 36 }
+[33mWARN[0m ./src/udp_slw.c:slw_recv:433	no packets to receive
+[33mWARN[0m ./src/udp_server.c:slw_loop:136	rcvwind is empty nothing to receive
+[32mINFO[0m ./src/udp_slw.c:slw_process:479	
+process start
+	send window state
+		{ base: 28, next 29, ack: -1 }
+	receive window state
+		{ base: 36, next 36, ack: 36 }
+[33mWARN[0m ./src/udp_slw.c:slw_process:494	time 12701633 greater than timeout 12701616 triggering retransmission
+[32mINFO[0m ./src/udp_slw.c:slw_write_packet:169	writing packet produced following checksum 608
+[33mWARN[0m ./src/udp_slw.c:slw_read_packet:139	packet checksum did not match calculated checksum
+[33mWARN[0m ./src/udp_slw.c:slw_process:527	invalid packet dropped
+	packet parse failed
+[32mINFO[0m ./src/udp_slw.c:slw_process:607	
+process end
+	send window state
+		{ base: 28, next 29, ack: -1 }
+	receive window state
+		{ base: 36, next 36, ack: 36 }
+[33mWARN[0m ./src/udp_slw.c:slw_recv:433	no packets to receive
+[33mWARN[0m ./src/udp_server.c:slw_loop:136	rcvwind is empty nothing to receive
+[32mINFO[0m ./src/udp_slw.c:slw_process:479	
+process start
+	send window state
+		{ base: 28, next 29, ack: -1 }
+	receive window state
+		{ base: 36, next 36, ack: 36 }
+[33mWARN[0m ./src/udp_slw.c:slw_process:494	time 12701701 greater than timeout 12701701 triggering retransmission
+[32mINFO[0m ./src/udp_slw.c:slw_write_packet:169	writing packet produced following checksum 608
+[33mWARN[0m ./src/udp_slw.c:slw_process:507	`recvfrom` call would block
+[33mWARN[0m ./src/udp_server.c:slw_loop:118	poll returned but there was nothing to process on the socket
+[32mINFO[0m ./src/udp_slw.c:slw_process:479	
+process start
+	send window state
+		{ base: 28, next 29, ack: -1 }
+	receive window state
+		{ base: 36, next 36, ack: 36 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:532	Recevied Packet { id: 33, ack 26, checksum: 606, length 8 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:595	packet id is invalid
+[32mINFO[0m ./src/udp_slw.c:slw_transmit_ack:322	Transmit pure ACK { id: 0, ack: 36 }
+[32mINFO[0m ./src/udp_slw.c:slw_write_packet:169	writing packet produced following checksum 37
+[32mINFO[0m ./src/udp_slw.c:slw_process:607	
+process end
+	send window state
+		{ base: 28, next 29, ack: -1 }
+	receive window state
+		{ base: 36, next 36, ack: 36 }
+[33mWARN[0m ./src/udp_slw.c:slw_recv:433	no packets to receive
+[33mWARN[0m ./src/udp_server.c:slw_loop:136	rcvwind is empty nothing to receive
+[32mINFO[0m ./src/udp_slw.c:slw_process:479	
+process start
+	send window state
+		{ base: 28, next 29, ack: -1 }
+	receive window state
+		{ base: 36, next 36, ack: 36 }
+[33mWARN[0m ./src/udp_slw.c:slw_process:494	time 12701817 greater than timeout 12701785 triggering retransmission
+[32mINFO[0m ./src/udp_slw.c:slw_write_packet:169	writing packet produced following checksum 608
+[32mINFO[0m ./src/udp_slw.c:slw_process:532	Recevied Packet { id: 0, ack 29, checksum: 30, length 0 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:550	ACK is in the window
+[32mINFO[0m ./src/udp_slw.c:slw_process:563	pure ACK no receive window updates
+[32mINFO[0m ./src/udp_slw.c:slw_process:607	
+process end
+	send window state
+		{ base: 29, next 29, ack: -1 }
+	receive window state
+		{ base: 36, next 36, ack: 36 }
+[33mWARN[0m ./src/udp_slw.c:slw_recv:433	no packets to receive
+[33mWARN[0m ./src/udp_server.c:slw_loop:136	rcvwind is empty nothing to receive
+[32mINFO[0m ./src/udp_slw.c:slw_process:479	
+process start
+	send window state
+		{ base: 29, next 29, ack: -1 }
+	receive window state
+		{ base: 36, next 36, ack: 36 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:532	Recevied Packet { id: 36, ack 29, checksum: 611, length 8 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:586	packet id is the expected id
+[32mINFO[0m ./src/udp_slw.c:slw_process:607	
+process end
+	send window state
+		{ base: 29, next 29, ack: -1 }
+	receive window state
+		{ base: 36, next 37, ack: 37 }
+[32mINFO[0m ./src/udp_slw.c:slw_write_packet:169	writing packet produced following checksum 612
+[32mINFO[0m ./src/udp_slw.c:slw_send:411	Packet { id: 29, ack: 37, checksum: 0, length: 8 }
+[32mINFO[0m ./src/udp_slw.c:slw_send:419	slw_send transmitted 1 packets
+[32mINFO[0m ./src/udp_slw.c:slw_process:479	
+process start
+	send window state
+		{ base: 29, next 30, ack: -1 }
+	receive window state
+		{ base: 37, next 37, ack: 37 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:532	Recevied Packet { id: 0, ack 29, checksum: 30, length 0 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:607	
+process end
+	send window state
+		{ base: 29, next 30, ack: -1 }
+	receive window state
+		{ base: 37, next 37, ack: 37 }
+[33mWARN[0m ./src/udp_slw.c:slw_recv:433	no packets to receive
+[33mWARN[0m ./src/udp_server.c:slw_loop:136	rcvwind is empty nothing to receive
+[32mINFO[0m ./src/udp_slw.c:slw_process:479	
+process start
+	send window state
+		{ base: 29, next 30, ack: -1 }
+	receive window state
+		{ base: 37, next 37, ack: 37 }
+[33mWARN[0m ./src/udp_slw.c:slw_process:494	time 12701932 greater than timeout 12701921 triggering retransmission
+[32mINFO[0m ./src/udp_slw.c:slw_write_packet:169	writing packet produced following checksum 612
+[32mINFO[0m ./src/udp_slw.c:slw_process:532	Recevied Packet { id: 36, ack 29, checksum: 611, length 8 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:595	packet id is invalid
+[32mINFO[0m ./src/udp_slw.c:slw_transmit_ack:322	Transmit pure ACK { id: 0, ack: 37 }
+[32mINFO[0m ./src/udp_slw.c:slw_write_packet:169	writing packet produced following checksum 38
+[32mINFO[0m ./src/udp_slw.c:slw_process:607	
+process end
+	send window state
+		{ base: 29, next 30, ack: -1 }
+	receive window state
+		{ base: 37, next 37, ack: 37 }
+[33mWARN[0m ./src/udp_slw.c:slw_recv:433	no packets to receive
+[33mWARN[0m ./src/udp_server.c:slw_loop:136	rcvwind is empty nothing to receive
+[32mINFO[0m ./src/udp_slw.c:slw_process:479	
+process start
+	send window state
+		{ base: 29, next 30, ack: -1 }
+	receive window state
+		{ base: 37, next 37, ack: 37 }
+[33mWARN[0m ./src/udp_slw.c:slw_process:494	time 12701982 greater than timeout 12701982 triggering retransmission
+[32mINFO[0m ./src/udp_slw.c:slw_write_packet:169	writing packet produced following checksum 612
+[33mWARN[0m ./src/udp_slw.c:slw_process:507	`recvfrom` call would block
+[33mWARN[0m ./src/udp_server.c:slw_loop:118	poll returned but there was nothing to process on the socket
+[32mINFO[0m ./src/udp_slw.c:slw_process:479	
+process start
+	send window state
+		{ base: 29, next 30, ack: -1 }
+	receive window state
+		{ base: 37, next 37, ack: 37 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:532	Recevied Packet { id: 36, ack 29, checksum: 611, length 8 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:595	packet id is invalid
+[32mINFO[0m ./src/udp_slw.c:slw_transmit_ack:322	Transmit pure ACK { id: 0, ack: 37 }
+[32mINFO[0m ./src/udp_slw.c:slw_write_packet:169	writing packet produced following checksum 38
+[32mINFO[0m ./src/udp_slw.c:slw_process:607	
+process end
+	send window state
+		{ base: 29, next 30, ack: -1 }
+	receive window state
+		{ base: 37, next 37, ack: 37 }
+[33mWARN[0m ./src/udp_slw.c:slw_recv:433	no packets to receive
+[33mWARN[0m ./src/udp_server.c:slw_loop:136	rcvwind is empty nothing to receive
+[32mINFO[0m ./src/udp_slw.c:slw_process:479	
+process start
+	send window state
+		{ base: 29, next 30, ack: -1 }
+	receive window state
+		{ base: 37, next 37, ack: 37 }
+[33mWARN[0m ./src/udp_slw.c:slw_process:494	time 12702059 greater than timeout 12702032 triggering retransmission
+[32mINFO[0m ./src/udp_slw.c:slw_write_packet:169	writing packet produced following checksum 612
+[33mWARN[0m ./src/udp_slw.c:slw_process:507	`recvfrom` call would block
+[33mWARN[0m ./src/udp_server.c:slw_loop:118	poll returned but there was nothing to process on the socket
+[32mINFO[0m ./src/udp_slw.c:slw_process:479	
+process start
+	send window state
+		{ base: 29, next 30, ack: -1 }
+	receive window state
+		{ base: 37, next 37, ack: 37 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:532	Recevied Packet { id: 0, ack 30, checksum: 31, length 0 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:550	ACK is in the window
+[32mINFO[0m ./src/udp_slw.c:slw_process:563	pure ACK no receive window updates
+[32mINFO[0m ./src/udp_slw.c:slw_process:607	
+process end
+	send window state
+		{ base: 30, next 30, ack: -1 }
+	receive window state
+		{ base: 37, next 37, ack: 37 }
+[33mWARN[0m ./src/udp_slw.c:slw_recv:433	no packets to receive
+[33mWARN[0m ./src/udp_server.c:slw_loop:136	rcvwind is empty nothing to receive
+[32mINFO[0m ./src/udp_slw.c:slw_process:479	
+process start
+	send window state
+		{ base: 30, next 30, ack: -1 }
+	receive window state
+		{ base: 37, next 37, ack: 37 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:532	Recevied Packet { id: 37, ack 29, checksum: 610, length 8 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:586	packet id is the expected id
+[32mINFO[0m ./src/udp_slw.c:slw_process:607	
+process end
+	send window state
+		{ base: 30, next 30, ack: -1 }
+	receive window state
+		{ base: 37, next 38, ack: 38 }
+[32mINFO[0m ./src/udp_slw.c:slw_write_packet:169	writing packet produced following checksum 612
+[32mINFO[0m ./src/udp_slw.c:slw_send:411	Packet { id: 30, ack: 38, checksum: 0, length: 8 }
+[32mINFO[0m ./src/udp_slw.c:slw_send:419	slw_send transmitted 1 packets
+[32mINFO[0m ./src/udp_slw.c:slw_process:479	
+process start
+	send window state
+		{ base: 30, next 31, ack: -1 }
+	receive window state
+		{ base: 38, next 38, ack: 38 }
+[33mWARN[0m ./src/udp_slw.c:slw_read_packet:139	packet checksum did not match calculated checksum
+[33mWARN[0m ./src/udp_slw.c:slw_process:527	invalid packet dropped
+	packet parse failed
+[32mINFO[0m ./src/udp_slw.c:slw_process:607	
+process end
+	send window state
+		{ base: 30, next 31, ack: -1 }
+	receive window state
+		{ base: 38, next 38, ack: 38 }
+[33mWARN[0m ./src/udp_slw.c:slw_recv:433	no packets to receive
+[33mWARN[0m ./src/udp_server.c:slw_loop:136	rcvwind is empty nothing to receive
+[32mINFO[0m ./src/udp_slw.c:slw_process:479	
+process start
+	send window state
+		{ base: 30, next 31, ack: -1 }
+	receive window state
+		{ base: 38, next 38, ack: 38 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:532	Recevied Packet { id: 37, ack 30, checksum: 611, length 8 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:595	packet id is invalid
+[32mINFO[0m ./src/udp_slw.c:slw_transmit_ack:322	Transmit pure ACK { id: 0, ack: 38 }
+[32mINFO[0m ./src/udp_slw.c:slw_write_packet:169	writing packet produced following checksum 39
+[32mINFO[0m ./src/udp_slw.c:slw_process:607	
+process end
+	send window state
+		{ base: 30, next 31, ack: -1 }
+	receive window state
+		{ base: 38, next 38, ack: 38 }
+[33mWARN[0m ./src/udp_slw.c:slw_recv:433	no packets to receive
+[33mWARN[0m ./src/udp_server.c:slw_loop:136	rcvwind is empty nothing to receive
+[32mINFO[0m ./src/udp_slw.c:slw_process:479	
+process start
+	send window state
+		{ base: 30, next 31, ack: -1 }
+	receive window state
+		{ base: 38, next 38, ack: 38 }
+[33mWARN[0m ./src/udp_slw.c:slw_process:494	time 12702195 greater than timeout 12702166 triggering retransmission
+[32mINFO[0m ./src/udp_slw.c:slw_write_packet:169	writing packet produced following checksum 612
+[33mWARN[0m ./src/udp_slw.c:slw_process:507	`recvfrom` call would block
+[33mWARN[0m ./src/udp_server.c:slw_loop:118	poll returned but there was nothing to process on the socket
+[32mINFO[0m ./src/udp_slw.c:slw_process:479	
+process start
+	send window state
+		{ base: 30, next 31, ack: -1 }
+	receive window state
+		{ base: 38, next 38, ack: 38 }
+[33mWARN[0m ./src/udp_slw.c:slw_process:494	time 12702246 greater than timeout 12702245 triggering retransmission
+[32mINFO[0m ./src/udp_slw.c:slw_write_packet:169	writing packet produced following checksum 612
+[33mWARN[0m ./src/udp_slw.c:slw_process:507	`recvfrom` call would block
+[33mWARN[0m ./src/udp_server.c:slw_loop:118	poll returned but there was nothing to process on the socket
+[32mINFO[0m ./src/udp_slw.c:slw_process:479	
+process start
+	send window state
+		{ base: 30, next 31, ack: -1 }
+	receive window state
+		{ base: 38, next 38, ack: 38 }
+[33mWARN[0m ./src/udp_slw.c:slw_process:494	time 12702308 greater than timeout 12702308 triggering retransmission
+[32mINFO[0m ./src/udp_slw.c:slw_write_packet:169	writing packet produced following checksum 612
+[33mWARN[0m ./src/udp_slw.c:slw_process:507	`recvfrom` call would block
+[33mWARN[0m ./src/udp_server.c:slw_loop:118	poll returned but there was nothing to process on the socket
+[32mINFO[0m ./src/udp_slw.c:slw_process:479	
+process start
+	send window state
+		{ base: 30, next 31, ack: -1 }
+	receive window state
+		{ base: 38, next 38, ack: 38 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:532	Recevied Packet { id: 0, ack 31, checksum: 32, length 0 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:550	ACK is in the window
+[32mINFO[0m ./src/udp_slw.c:slw_process:563	pure ACK no receive window updates
+[32mINFO[0m ./src/udp_slw.c:slw_process:607	
+process end
+	send window state
+		{ base: 31, next 31, ack: -1 }
+	receive window state
+		{ base: 38, next 38, ack: 38 }
+[33mWARN[0m ./src/udp_slw.c:slw_recv:433	no packets to receive
+[33mWARN[0m ./src/udp_server.c:slw_loop:136	rcvwind is empty nothing to receive
+[32mINFO[0m ./src/udp_slw.c:slw_process:479	
+process start
+	send window state
+		{ base: 31, next 31, ack: -1 }
+	receive window state
+		{ base: 38, next 38, ack: 38 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:532	Recevied Packet { id: 38, ack 31, checksum: 619, length 8 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:586	packet id is the expected id
+[32mINFO[0m ./src/udp_slw.c:slw_process:607	
+process end
+	send window state
+		{ base: 31, next 31, ack: -1 }
+	receive window state
+		{ base: 38, next 39, ack: 39 }
+[32mINFO[0m ./src/udp_slw.c:slw_write_packet:169	writing packet produced following checksum 620
+[32mINFO[0m ./src/udp_slw.c:slw_send:411	Packet { id: 31, ack: 39, checksum: 0, length: 8 }
+[32mINFO[0m ./src/udp_slw.c:slw_send:419	slw_send transmitted 1 packets
+[32mINFO[0m ./src/udp_slw.c:slw_process:479	
+process start
+	send window state
+		{ base: 31, next 32, ack: -1 }
+	receive window state
+		{ base: 39, next 39, ack: 39 }
+[33mWARN[0m ./src/udp_slw.c:slw_process:494	time 12702423 greater than timeout 12702423 triggering retransmission
+[32mINFO[0m ./src/udp_slw.c:slw_write_packet:169	writing packet produced following checksum 620
+[33mWARN[0m ./src/udp_slw.c:slw_process:507	`recvfrom` call would block
+[33mWARN[0m ./src/udp_server.c:slw_loop:118	poll returned but there was nothing to process on the socket
+[32mINFO[0m ./src/udp_slw.c:slw_process:479	
+process start
+	send window state
+		{ base: 31, next 32, ack: -1 }
+	receive window state
+		{ base: 39, next 39, ack: 39 }
+[33mWARN[0m ./src/udp_slw.c:slw_process:494	time 12702473 greater than timeout 12702473 triggering retransmission
+[32mINFO[0m ./src/udp_slw.c:slw_write_packet:169	writing packet produced following checksum 620
+[33mWARN[0m ./src/udp_slw.c:slw_process:507	`recvfrom` call would block
+[33mWARN[0m ./src/udp_server.c:slw_loop:118	poll returned but there was nothing to process on the socket
+[32mINFO[0m ./src/udp_slw.c:slw_process:479	
+process start
+	send window state
+		{ base: 31, next 32, ack: -1 }
+	receive window state
+		{ base: 39, next 39, ack: 39 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:532	Recevied Packet { id: 0, ack 32, checksum: 33, length 0 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:550	ACK is in the window
+[32mINFO[0m ./src/udp_slw.c:slw_process:563	pure ACK no receive window updates
+[32mINFO[0m ./src/udp_slw.c:slw_process:607	
+process end
+	send window state
+		{ base: 32, next 32, ack: -1 }
+	receive window state
+		{ base: 39, next 39, ack: 39 }
+[33mWARN[0m ./src/udp_slw.c:slw_recv:433	no packets to receive
+[33mWARN[0m ./src/udp_server.c:slw_loop:136	rcvwind is empty nothing to receive
+[32mINFO[0m ./src/udp_slw.c:slw_process:479	
+process start
+	send window state
+		{ base: 32, next 32, ack: -1 }
+	receive window state
+		{ base: 39, next 39, ack: 39 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:532	Recevied Packet { id: 38, ack 31, checksum: 619, length 8 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:595	packet id is invalid
+[32mINFO[0m ./src/udp_slw.c:slw_transmit_ack:322	Transmit pure ACK { id: 0, ack: 39 }
+[32mINFO[0m ./src/udp_slw.c:slw_write_packet:169	writing packet produced following checksum 40
+[32mINFO[0m ./src/udp_slw.c:slw_process:607	
+process end
+	send window state
+		{ base: 32, next 32, ack: -1 }
+	receive window state
+		{ base: 39, next 39, ack: 39 }
+[33mWARN[0m ./src/udp_slw.c:slw_recv:433	no packets to receive
+[33mWARN[0m ./src/udp_server.c:slw_loop:136	rcvwind is empty nothing to receive
+[32mINFO[0m ./src/udp_slw.c:slw_process:479	
+process start
+	send window state
+		{ base: 32, next 32, ack: -1 }
+	receive window state
+		{ base: 39, next 39, ack: 39 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:532	Recevied Packet { id: 0, ack 30, checksum: 31, length 0 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:607	
+process end
+	send window state
+		{ base: 32, next 32, ack: -1 }
+	receive window state
+		{ base: 39, next 39, ack: 39 }
+[33mWARN[0m ./src/udp_slw.c:slw_recv:433	no packets to receive
+[33mWARN[0m ./src/udp_server.c:slw_loop:136	rcvwind is empty nothing to receive
+[32mINFO[0m ./src/udp_slw.c:slw_process:479	
+process start
+	send window state
+		{ base: 32, next 32, ack: -1 }
+	receive window state
+		{ base: 39, next 39, ack: 39 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:532	Recevied Packet { id: 39, ack 32, checksum: 615, length 8 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:586	packet id is the expected id
+[32mINFO[0m ./src/udp_slw.c:slw_process:607	
+process end
+	send window state
+		{ base: 32, next 32, ack: -1 }
+	receive window state
+		{ base: 39, next 40, ack: 40 }
+[32mINFO[0m ./src/udp_slw.c:slw_write_packet:169	writing packet produced following checksum 616
+[32mINFO[0m ./src/udp_slw.c:slw_send:411	Packet { id: 32, ack: 40, checksum: 0, length: 8 }
+[32mINFO[0m ./src/udp_slw.c:slw_send:419	slw_send transmitted 1 packets
+[32mINFO[0m ./src/udp_slw.c:slw_process:479	
+process start
+	send window state
+		{ base: 32, next 33, ack: -1 }
+	receive window state
+		{ base: 40, next 40, ack: 40 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:532	Recevied Packet { id: 0, ack 32, checksum: 33, length 0 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:607	
+process end
+	send window state
+		{ base: 32, next 33, ack: -1 }
+	receive window state
+		{ base: 40, next 40, ack: 40 }
+[33mWARN[0m ./src/udp_slw.c:slw_recv:433	no packets to receive
+[33mWARN[0m ./src/udp_server.c:slw_loop:136	rcvwind is empty nothing to receive
+[32mINFO[0m ./src/udp_slw.c:slw_process:479	
+process start
+	send window state
+		{ base: 32, next 33, ack: -1 }
+	receive window state
+		{ base: 40, next 40, ack: 40 }
+[33mWARN[0m ./src/udp_slw.c:slw_process:494	time 12702633 greater than timeout 12702632 triggering retransmission
+[32mINFO[0m ./src/udp_slw.c:slw_write_packet:169	writing packet produced following checksum 616
+[32mINFO[0m ./src/udp_slw.c:slw_process:532	Recevied Packet { id: 40, ack 33, checksum: 621, length 8 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:550	ACK is in the window
+[32mINFO[0m ./src/udp_slw.c:slw_process:586	packet id is the expected id
+[32mINFO[0m ./src/udp_slw.c:slw_process:607	
+process end
+	send window state
+		{ base: 33, next 33, ack: -1 }
+	receive window state
+		{ base: 40, next 41, ack: 41 }
+[32mINFO[0m ./src/udp_slw.c:slw_write_packet:169	writing packet produced following checksum 622
+[32mINFO[0m ./src/udp_slw.c:slw_send:411	Packet { id: 33, ack: 41, checksum: 0, length: 8 }
+[32mINFO[0m ./src/udp_slw.c:slw_send:419	slw_send transmitted 1 packets
+[32mINFO[0m ./src/udp_slw.c:slw_process:479	
+process start
+	send window state
+		{ base: 33, next 34, ack: -1 }
+	receive window state
+		{ base: 41, next 41, ack: 41 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:532	Recevied Packet { id: 38, ack 31, checksum: 619, length 8 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:595	packet id is invalid
+[32mINFO[0m ./src/udp_slw.c:slw_transmit_ack:322	Transmit pure ACK { id: 0, ack: 41 }
+[32mINFO[0m ./src/udp_slw.c:slw_write_packet:169	writing packet produced following checksum 42
+[32mINFO[0m ./src/udp_slw.c:slw_process:607	
+process end
+	send window state
+		{ base: 33, next 34, ack: -1 }
+	receive window state
+		{ base: 41, next 41, ack: 41 }
+[33mWARN[0m ./src/udp_slw.c:slw_recv:433	no packets to receive
+[33mWARN[0m ./src/udp_server.c:slw_loop:136	rcvwind is empty nothing to receive
+[32mINFO[0m ./src/udp_slw.c:slw_process:479	
+process start
+	send window state
+		{ base: 33, next 34, ack: -1 }
+	receive window state
+		{ base: 41, next 41, ack: 41 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:532	Recevied Packet { id: 41, ack 33, checksum: 623, length 8 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:586	packet id is the expected id
+[32mINFO[0m ./src/udp_slw.c:slw_process:607	
+process end
+	send window state
+		{ base: 33, next 34, ack: -1 }
+	receive window state
+		{ base: 41, next 42, ack: 42 }
+[33mWARN[0m ./src/udp_slw.c:slw_send:353	send window is full
+[33mWARN[0m ./src/udp_server.c:slw_loop:163	new message dropped send window is full
+[32mINFO[0m ./src/udp_slw.c:slw_process:479	
+process start
+	send window state
+		{ base: 33, next 34, ack: -1 }
+	receive window state
+		{ base: 42, next 42, ack: 42 }
+[33mWARN[0m ./src/udp_slw.c:slw_process:494	time 12702704 greater than timeout 12702683 triggering retransmission
+[32mINFO[0m ./src/udp_slw.c:slw_write_packet:169	writing packet produced following checksum 623
+[32mINFO[0m ./src/udp_slw.c:slw_process:532	Recevied Packet { id: 0, ack 32, checksum: 33, length 0 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:607	
+process end
+	send window state
+		{ base: 33, next 34, ack: -1 }
+	receive window state
+		{ base: 42, next 42, ack: 42 }
+[33mWARN[0m ./src/udp_slw.c:slw_recv:433	no packets to receive
+[33mWARN[0m ./src/udp_server.c:slw_loop:136	rcvwind is empty nothing to receive
+[32mINFO[0m ./src/udp_slw.c:slw_process:479	
+process start
+	send window state
+		{ base: 33, next 34, ack: -1 }
+	receive window state
+		{ base: 42, next 42, ack: 42 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:532	Recevied Packet { id: 42, ack 34, checksum: 626, length 8 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:550	ACK is in the window
+[32mINFO[0m ./src/udp_slw.c:slw_process:586	packet id is the expected id
+[32mINFO[0m ./src/udp_slw.c:slw_process:607	
+process end
+	send window state
+		{ base: 34, next 34, ack: -1 }
+	receive window state
+		{ base: 42, next 43, ack: 43 }
+[32mINFO[0m ./src/udp_slw.c:slw_write_packet:169	writing packet produced following checksum 627
+[32mINFO[0m ./src/udp_slw.c:slw_send:411	Packet { id: 34, ack: 43, checksum: 0, length: 8 }
+[32mINFO[0m ./src/udp_slw.c:slw_send:419	slw_send transmitted 1 packets
+[32mINFO[0m ./src/udp_slw.c:slw_process:479	
+process start
+	send window state
+		{ base: 34, next 35, ack: -1 }
+	receive window state
+		{ base: 43, next 43, ack: 43 }
+[33mWARN[0m ./src/udp_slw.c:slw_process:494	time 12702817 greater than timeout 12702816 triggering retransmission
+[32mINFO[0m ./src/udp_slw.c:slw_write_packet:169	writing packet produced following checksum 627
+[33mWARN[0m ./src/udp_slw.c:slw_process:507	`recvfrom` call would block
+[33mWARN[0m ./src/udp_server.c:slw_loop:118	poll returned but there was nothing to process on the socket
+[32mINFO[0m ./src/udp_slw.c:slw_process:479	
+process start
+	send window state
+		{ base: 34, next 35, ack: -1 }
+	receive window state
+		{ base: 43, next 43, ack: 43 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:532	Recevied Packet { id: 42, ack 34, checksum: 626, length 8 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:595	packet id is invalid
+[32mINFO[0m ./src/udp_slw.c:slw_transmit_ack:322	Transmit pure ACK { id: 0, ack: 43 }
+[32mINFO[0m ./src/udp_slw.c:slw_write_packet:169	writing packet produced following checksum 44
+[32mINFO[0m ./src/udp_slw.c:slw_process:607	
+process end
+	send window state
+		{ base: 34, next 35, ack: -1 }
+	receive window state
+		{ base: 43, next 43, ack: 43 }
+[33mWARN[0m ./src/udp_slw.c:slw_recv:433	no packets to receive
+[33mWARN[0m ./src/udp_server.c:slw_loop:136	rcvwind is empty nothing to receive
+[32mINFO[0m ./src/udp_slw.c:slw_process:479	
+process start
+	send window state
+		{ base: 34, next 35, ack: -1 }
+	receive window state
+		{ base: 43, next 43, ack: 43 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:532	Recevied Packet { id: 43, ack 35, checksum: 630, length 8 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:550	ACK is in the window
+[32mINFO[0m ./src/udp_slw.c:slw_process:586	packet id is the expected id
+[32mINFO[0m ./src/udp_slw.c:slw_process:607	
+process end
+	send window state
+		{ base: 35, next 35, ack: -1 }
+	receive window state
+		{ base: 43, next 44, ack: 44 }
+[32mINFO[0m ./src/udp_slw.c:slw_write_packet:169	writing packet produced following checksum 631
+[32mINFO[0m ./src/udp_slw.c:slw_send:411	Packet { id: 35, ack: 44, checksum: 0, length: 8 }
+[32mINFO[0m ./src/udp_slw.c:slw_send:419	slw_send transmitted 1 packets
+[32mINFO[0m ./src/udp_slw.c:slw_process:479	
+process start
+	send window state
+		{ base: 35, next 36, ack: -1 }
+	receive window state
+		{ base: 44, next 44, ack: 44 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:532	Recevied Packet { id: 39, ack 32, checksum: 615, length 8 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:595	packet id is invalid
+[32mINFO[0m ./src/udp_slw.c:slw_transmit_ack:322	Transmit pure ACK { id: 0, ack: 44 }
+[32mINFO[0m ./src/udp_slw.c:slw_write_packet:169	writing packet produced following checksum 45
+[32mINFO[0m ./src/udp_slw.c:slw_process:607	
+process end
+	send window state
+		{ base: 35, next 36, ack: -1 }
+	receive window state
+		{ base: 44, next 44, ack: 44 }
+[33mWARN[0m ./src/udp_slw.c:slw_recv:433	no packets to receive
+[33mWARN[0m ./src/udp_server.c:slw_loop:136	rcvwind is empty nothing to receive
+[32mINFO[0m ./src/udp_slw.c:slw_process:479	
+process start
+	send window state
+		{ base: 35, next 36, ack: -1 }
+	receive window state
+		{ base: 44, next 44, ack: 44 }
+[33mWARN[0m ./src/udp_slw.c:slw_process:494	time 12702913 greater than timeout 12702899 triggering retransmission
+[32mINFO[0m ./src/udp_slw.c:slw_write_packet:169	writing packet produced following checksum 631
+[33mWARN[0m ./src/udp_slw.c:slw_process:507	`recvfrom` call would block
+[33mWARN[0m ./src/udp_server.c:slw_loop:118	poll returned but there was nothing to process on the socket
+[32mINFO[0m ./src/udp_slw.c:slw_process:479	
+process start
+	send window state
+		{ base: 35, next 36, ack: -1 }
+	receive window state
+		{ base: 44, next 44, ack: 44 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:532	Recevied Packet { id: 44, ack 35, checksum: 623, length 8 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:586	packet id is the expected id
+[32mINFO[0m ./src/udp_slw.c:slw_process:607	
+process end
+	send window state
+		{ base: 35, next 36, ack: -1 }
+	receive window state
+		{ base: 44, next 45, ack: 45 }
+[33mWARN[0m ./src/udp_slw.c:slw_send:353	send window is full
+[33mWARN[0m ./src/udp_server.c:slw_loop:163	new message dropped send window is full
+[32mINFO[0m ./src/udp_slw.c:slw_process:479	
+process start
+	send window state
+		{ base: 35, next 36, ack: -1 }
+	receive window state
+		{ base: 45, next 45, ack: 45 }
+[33mWARN[0m ./src/udp_slw.c:slw_process:494	time 12702974 greater than timeout 12702963 triggering retransmission
+[32mINFO[0m ./src/udp_slw.c:slw_write_packet:169	writing packet produced following checksum 632
+[33mWARN[0m ./src/udp_slw.c:slw_process:507	`recvfrom` call would block
+[33mWARN[0m ./src/udp_server.c:slw_loop:118	poll returned but there was nothing to process on the socket
+[32mINFO[0m ./src/udp_slw.c:slw_process:479	
+process start
+	send window state
+		{ base: 35, next 36, ack: -1 }
+	receive window state
+		{ base: 45, next 45, ack: 45 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:532	Recevied Packet { id: 45, ack 36, checksum: 627, length 8 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:550	ACK is in the window
+[32mINFO[0m ./src/udp_slw.c:slw_process:586	packet id is the expected id
+[32mINFO[0m ./src/udp_slw.c:slw_process:607	
+process end
+	send window state
+		{ base: 36, next 36, ack: -1 }
+	receive window state
+		{ base: 45, next 46, ack: 46 }
+[32mINFO[0m ./src/udp_slw.c:slw_write_packet:169	writing packet produced following checksum 628
+[32mINFO[0m ./src/udp_slw.c:slw_send:411	Packet { id: 36, ack: 46, checksum: 0, length: 8 }
+[32mINFO[0m ./src/udp_slw.c:slw_send:419	slw_send transmitted 1 packets
+[32mINFO[0m ./src/udp_slw.c:slw_process:479	
+process start
+	send window state
+		{ base: 36, next 37, ack: -1 }
+	receive window state
+		{ base: 46, next 46, ack: 46 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:532	Recevied Packet { id: 44, ack 36, checksum: 624, length 8 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:595	packet id is invalid
+[32mINFO[0m ./src/udp_slw.c:slw_transmit_ack:322	Transmit pure ACK { id: 0, ack: 46 }
+[32mINFO[0m ./src/udp_slw.c:slw_write_packet:169	writing packet produced following checksum 47
+[32mINFO[0m ./src/udp_slw.c:slw_process:607	
+process end
+	send window state
+		{ base: 36, next 37, ack: -1 }
+	receive window state
+		{ base: 46, next 46, ack: 46 }
+[33mWARN[0m ./src/udp_slw.c:slw_recv:433	no packets to receive
+[33mWARN[0m ./src/udp_server.c:slw_loop:136	rcvwind is empty nothing to receive
+[32mINFO[0m ./src/udp_slw.c:slw_process:479	
+process start
+	send window state
+		{ base: 36, next 37, ack: -1 }
+	receive window state
+		{ base: 46, next 46, ack: 46 }
+[33mWARN[0m ./src/udp_slw.c:slw_process:494	time 12703033 greater than timeout 12703032 triggering retransmission
+[32mINFO[0m ./src/udp_slw.c:slw_write_packet:169	writing packet produced following checksum 628
+[32mINFO[0m ./src/udp_slw.c:slw_process:532	Recevied Packet { id: 0, ack 36, checksum: 37, length 0 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:607	
+process end
+	send window state
+		{ base: 36, next 37, ack: -1 }
+	receive window state
+		{ base: 46, next 46, ack: 46 }
+[33mWARN[0m ./src/udp_slw.c:slw_recv:433	no packets to receive
+[33mWARN[0m ./src/udp_server.c:slw_loop:136	rcvwind is empty nothing to receive
+[32mINFO[0m ./src/udp_slw.c:slw_process:479	
+process start
+	send window state
+		{ base: 36, next 37, ack: -1 }
+	receive window state
+		{ base: 46, next 46, ack: 46 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:532	Recevied Packet { id: 45, ack 36, checksum: 627, length 8 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:595	packet id is invalid
+[32mINFO[0m ./src/udp_slw.c:slw_transmit_ack:322	Transmit pure ACK { id: 0, ack: 46 }
+[32mINFO[0m ./src/udp_slw.c:slw_write_packet:169	writing packet produced following checksum 47
+[32mINFO[0m ./src/udp_slw.c:slw_process:607	
+process end
+	send window state
+		{ base: 36, next 37, ack: -1 }
+	receive window state
+		{ base: 46, next 46, ack: 46 }
+[33mWARN[0m ./src/udp_slw.c:slw_recv:433	no packets to receive
+[33mWARN[0m ./src/udp_server.c:slw_loop:136	rcvwind is empty nothing to receive
+[32mINFO[0m ./src/udp_slw.c:slw_process:479	
+process start
+	send window state
+		{ base: 36, next 37, ack: -1 }
+	receive window state
+		{ base: 46, next 46, ack: 46 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:532	Recevied Packet { id: 46, ack 37, checksum: 631, length 8 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:550	ACK is in the window
+[32mINFO[0m ./src/udp_slw.c:slw_process:586	packet id is the expected id
+[32mINFO[0m ./src/udp_slw.c:slw_process:607	
+process end
+	send window state
+		{ base: 37, next 37, ack: -1 }
+	receive window state
+		{ base: 46, next 47, ack: 47 }
+[32mINFO[0m ./src/udp_slw.c:slw_write_packet:169	writing packet produced following checksum 632
+[32mINFO[0m ./src/udp_slw.c:slw_send:411	Packet { id: 37, ack: 47, checksum: 0, length: 8 }
+[32mINFO[0m ./src/udp_slw.c:slw_send:419	slw_send transmitted 1 packets
+[32mINFO[0m ./src/udp_slw.c:slw_process:479	
+process start
+	send window state
+		{ base: 37, next 38, ack: -1 }
+	receive window state
+		{ base: 47, next 47, ack: 47 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:532	Recevied Packet { id: 0, ack 34, checksum: 35, length 0 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:607	
+process end
+	send window state
+		{ base: 37, next 38, ack: -1 }
+	receive window state
+		{ base: 47, next 47, ack: 47 }
+[33mWARN[0m ./src/udp_slw.c:slw_recv:433	no packets to receive
+[33mWARN[0m ./src/udp_server.c:slw_loop:136	rcvwind is empty nothing to receive
+[32mINFO[0m ./src/udp_slw.c:slw_process:479	
+process start
+	send window state
+		{ base: 37, next 38, ack: -1 }
+	receive window state
+		{ base: 47, next 47, ack: 47 }
+[33mWARN[0m ./src/udp_slw.c:slw_process:494	time 12703145 greater than timeout 12703133 triggering retransmission
+[32mINFO[0m ./src/udp_slw.c:slw_write_packet:169	writing packet produced following checksum 632
+[33mWARN[0m ./src/udp_slw.c:slw_process:507	`recvfrom` call would block
+[33mWARN[0m ./src/udp_server.c:slw_loop:118	poll returned but there was nothing to process on the socket
+[32mINFO[0m ./src/udp_slw.c:slw_process:479	
+process start
+	send window state
+		{ base: 37, next 38, ack: -1 }
+	receive window state
+		{ base: 47, next 47, ack: 47 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:532	Recevied Packet { id: 46, ack 37, checksum: 631, length 8 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:595	packet id is invalid
+[32mINFO[0m ./src/udp_slw.c:slw_transmit_ack:322	Transmit pure ACK { id: 0, ack: 47 }
+[32mINFO[0m ./src/udp_slw.c:slw_write_packet:169	writing packet produced following checksum 48
+[32mINFO[0m ./src/udp_slw.c:slw_process:607	
+process end
+	send window state
+		{ base: 37, next 38, ack: -1 }
+	receive window state
+		{ base: 47, next 47, ack: 47 }
+[33mWARN[0m ./src/udp_slw.c:slw_recv:433	no packets to receive
+[33mWARN[0m ./src/udp_server.c:slw_loop:136	rcvwind is empty nothing to receive
+[32mINFO[0m ./src/udp_slw.c:slw_process:479	
+process start
+	send window state
+		{ base: 37, next 38, ack: -1 }
+	receive window state
+		{ base: 47, next 47, ack: 47 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:532	Recevied Packet { id: 47, ack 38, checksum: 635, length 8 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:550	ACK is in the window
+[32mINFO[0m ./src/udp_slw.c:slw_process:586	packet id is the expected id
+[32mINFO[0m ./src/udp_slw.c:slw_process:607	
+process end
+	send window state
+		{ base: 38, next 38, ack: -1 }
+	receive window state
+		{ base: 47, next 48, ack: 48 }
+[32mINFO[0m ./src/udp_slw.c:slw_write_packet:169	writing packet produced following checksum 636
+[32mINFO[0m ./src/udp_slw.c:slw_send:411	Packet { id: 38, ack: 48, checksum: 0, length: 8 }
+[32mINFO[0m ./src/udp_slw.c:slw_send:419	slw_send transmitted 1 packets
+[32mINFO[0m ./src/udp_slw.c:slw_process:479	
+process start
+	send window state
+		{ base: 38, next 39, ack: -1 }
+	receive window state
+		{ base: 48, next 48, ack: 48 }
+[33mWARN[0m ./src/udp_slw.c:slw_process:494	time 12703283 greater than timeout 12703283 triggering retransmission
+[32mINFO[0m ./src/udp_slw.c:slw_write_packet:169	writing packet produced following checksum 636
+[32mINFO[0m ./src/udp_slw.c:slw_process:532	Recevied Packet { id: 47, ack 38, checksum: 635, length 8 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:595	packet id is invalid
+[32mINFO[0m ./src/udp_slw.c:slw_transmit_ack:322	Transmit pure ACK { id: 0, ack: 48 }
+[32mINFO[0m ./src/udp_slw.c:slw_write_packet:169	writing packet produced following checksum 49
+[32mINFO[0m ./src/udp_slw.c:slw_process:607	
+process end
+	send window state
+		{ base: 38, next 39, ack: -1 }
+	receive window state
+		{ base: 48, next 48, ack: 48 }
+[33mWARN[0m ./src/udp_slw.c:slw_recv:433	no packets to receive
+[33mWARN[0m ./src/udp_server.c:slw_loop:136	rcvwind is empty nothing to receive
+[32mINFO[0m ./src/udp_slw.c:slw_process:479	
+process start
+	send window state
+		{ base: 38, next 39, ack: -1 }
+	receive window state
+		{ base: 48, next 48, ack: 48 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:532	Recevied Packet { id: 47, ack 38, checksum: 635, length 8 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:595	packet id is invalid
+[32mINFO[0m ./src/udp_slw.c:slw_transmit_ack:322	Transmit pure ACK { id: 0, ack: 48 }
+[32mINFO[0m ./src/udp_slw.c:slw_write_packet:169	writing packet produced following checksum 49
+[32mINFO[0m ./src/udp_slw.c:slw_process:607	
+process end
+	send window state
+		{ base: 38, next 39, ack: -1 }
+	receive window state
+		{ base: 48, next 48, ack: 48 }
+[33mWARN[0m ./src/udp_slw.c:slw_recv:433	no packets to receive
+[33mWARN[0m ./src/udp_server.c:slw_loop:136	rcvwind is empty nothing to receive
+[32mINFO[0m ./src/udp_slw.c:slw_process:479	
+process start
+	send window state
+		{ base: 38, next 39, ack: -1 }
+	receive window state
+		{ base: 48, next 48, ack: 48 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:532	Recevied Packet { id: 48, ack 38, checksum: 639, length 8 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:586	packet id is the expected id
+[32mINFO[0m ./src/udp_slw.c:slw_process:607	
+process end
+	send window state
+		{ base: 38, next 39, ack: -1 }
+	receive window state
+		{ base: 48, next 49, ack: 49 }
+[33mWARN[0m ./src/udp_slw.c:slw_send:353	send window is full
+[33mWARN[0m ./src/udp_server.c:slw_loop:163	new message dropped send window is full
+[32mINFO[0m ./src/udp_slw.c:slw_process:479	
+process start
+	send window state
+		{ base: 38, next 39, ack: -1 }
+	receive window state
+		{ base: 49, next 49, ack: 49 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:532	Recevied Packet { id: 48, ack 38, checksum: 639, length 8 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:595	packet id is invalid
+[32mINFO[0m ./src/udp_slw.c:slw_transmit_ack:322	Transmit pure ACK { id: 0, ack: 49 }
+[32mINFO[0m ./src/udp_slw.c:slw_write_packet:169	writing packet produced following checksum 50
+[32mINFO[0m ./src/udp_slw.c:slw_process:607	
+process end
+	send window state
+		{ base: 38, next 39, ack: -1 }
+	receive window state
+		{ base: 49, next 49, ack: 49 }
+[33mWARN[0m ./src/udp_slw.c:slw_recv:433	no packets to receive
+[33mWARN[0m ./src/udp_server.c:slw_loop:136	rcvwind is empty nothing to receive
+[32mINFO[0m ./src/udp_slw.c:slw_process:479	
+process start
+	send window state
+		{ base: 38, next 39, ack: -1 }
+	receive window state
+		{ base: 49, next 49, ack: 49 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:532	Recevied Packet { id: 0, ack 37, checksum: 38, length 0 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:607	
+process end
+	send window state
+		{ base: 38, next 39, ack: -1 }
+	receive window state
+		{ base: 49, next 49, ack: 49 }
+[33mWARN[0m ./src/udp_slw.c:slw_recv:433	no packets to receive
+[33mWARN[0m ./src/udp_server.c:slw_loop:136	rcvwind is empty nothing to receive
+[32mINFO[0m ./src/udp_slw.c:slw_process:479	
+process start
+	send window state
+		{ base: 38, next 39, ack: -1 }
+	receive window state
+		{ base: 49, next 49, ack: 49 }
+[33mWARN[0m ./src/udp_slw.c:slw_process:494	time 12703630 greater than timeout 12703547 triggering retransmission
+[32mINFO[0m ./src/udp_slw.c:slw_write_packet:169	writing packet produced following checksum 637
+[32mINFO[0m ./src/udp_slw.c:slw_process:532	Recevied Packet { id: 48, ack 38, checksum: 639, length 8 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:595	packet id is invalid
+[32mINFO[0m ./src/udp_slw.c:slw_transmit_ack:322	Transmit pure ACK { id: 0, ack: 49 }
+[32mINFO[0m ./src/udp_slw.c:slw_write_packet:169	writing packet produced following checksum 50
+[32mINFO[0m ./src/udp_slw.c:slw_process:607	
+process end
+	send window state
+		{ base: 38, next 39, ack: -1 }
+	receive window state
+		{ base: 49, next 49, ack: 49 }
+[33mWARN[0m ./src/udp_slw.c:slw_recv:433	no packets to receive
+[33mWARN[0m ./src/udp_server.c:slw_loop:136	rcvwind is empty nothing to receive
+[32mINFO[0m ./src/udp_slw.c:slw_process:479	
+process start
+	send window state
+		{ base: 38, next 39, ack: -1 }
+	receive window state
+		{ base: 49, next 49, ack: 49 }
+[33mWARN[0m ./src/udp_slw.c:slw_process:494	time 12703680 greater than timeout 12703680 triggering retransmission
+[32mINFO[0m ./src/udp_slw.c:slw_write_packet:169	writing packet produced following checksum 637
+[33mWARN[0m ./src/udp_slw.c:slw_process:507	`recvfrom` call would block
+[33mWARN[0m ./src/udp_server.c:slw_loop:118	poll returned but there was nothing to process on the socket
+[32mINFO[0m ./src/udp_slw.c:slw_process:479	
+process start
+	send window state
+		{ base: 38, next 39, ack: -1 }
+	receive window state
+		{ base: 49, next 49, ack: 49 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:532	Recevied Packet { id: 48, ack 38, checksum: 639, length 8 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:595	packet id is invalid
+[32mINFO[0m ./src/udp_slw.c:slw_transmit_ack:322	Transmit pure ACK { id: 0, ack: 49 }
+[32mINFO[0m ./src/udp_slw.c:slw_write_packet:169	writing packet produced following checksum 50
+[32mINFO[0m ./src/udp_slw.c:slw_process:607	
+process end
+	send window state
+		{ base: 38, next 39, ack: -1 }
+	receive window state
+		{ base: 49, next 49, ack: 49 }
+[33mWARN[0m ./src/udp_slw.c:slw_recv:433	no packets to receive
+[33mWARN[0m ./src/udp_server.c:slw_loop:136	rcvwind is empty nothing to receive
+[32mINFO[0m ./src/udp_slw.c:slw_process:479	
+process start
+	send window state
+		{ base: 38, next 39, ack: -1 }
+	receive window state
+		{ base: 49, next 49, ack: 49 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:532	Recevied Packet { id: 49, ack 39, checksum: 639, length 8 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:550	ACK is in the window
+[32mINFO[0m ./src/udp_slw.c:slw_process:586	packet id is the expected id
+[32mINFO[0m ./src/udp_slw.c:slw_process:607	
+process end
+	send window state
+		{ base: 39, next 39, ack: -1 }
+	receive window state
+		{ base: 49, next 50, ack: 50 }
+[32mINFO[0m ./src/udp_slw.c:slw_write_packet:169	writing packet produced following checksum 640
+[32mINFO[0m ./src/udp_slw.c:slw_send:411	Packet { id: 39, ack: 50, checksum: 0, length: 8 }
+[32mINFO[0m ./src/udp_slw.c:slw_send:419	slw_send transmitted 1 packets
+[32mINFO[0m ./src/udp_slw.c:slw_process:479	
+process start
+	send window state
+		{ base: 39, next 40, ack: -1 }
+	receive window state
+		{ base: 50, next 50, ack: 50 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:532	Recevied Packet { id: 0, ack 39, checksum: 40, length 0 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:607	
+process end
+	send window state
+		{ base: 39, next 40, ack: -1 }
+	receive window state
+		{ base: 50, next 50, ack: 50 }
+[33mWARN[0m ./src/udp_slw.c:slw_recv:433	no packets to receive
+[33mWARN[0m ./src/udp_server.c:slw_loop:136	rcvwind is empty nothing to receive
+[32mINFO[0m ./src/udp_slw.c:slw_process:479	
+process start
+	send window state
+		{ base: 39, next 40, ack: -1 }
+	receive window state
+		{ base: 50, next 50, ack: 50 }
+[33mWARN[0m ./src/udp_slw.c:slw_process:494	time 12703784 greater than timeout 12703782 triggering retransmission
+[32mINFO[0m ./src/udp_slw.c:slw_write_packet:169	writing packet produced following checksum 640
+[32mINFO[0m ./src/udp_slw.c:slw_process:532	Recevied Packet { id: 49, ack 39, checksum: 639, length 8 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:595	packet id is invalid
+[32mINFO[0m ./src/udp_slw.c:slw_transmit_ack:322	Transmit pure ACK { id: 0, ack: 50 }
+[32mINFO[0m ./src/udp_slw.c:slw_write_packet:169	writing packet produced following checksum 51
+[32mINFO[0m ./src/udp_slw.c:slw_process:607	
+process end
+	send window state
+		{ base: 39, next 40, ack: -1 }
+	receive window state
+		{ base: 50, next 50, ack: 50 }
+[33mWARN[0m ./src/udp_slw.c:slw_recv:433	no packets to receive
+[33mWARN[0m ./src/udp_server.c:slw_loop:136	rcvwind is empty nothing to receive
+[32mINFO[0m ./src/udp_slw.c:slw_process:479	
+process start
+	send window state
+		{ base: 39, next 40, ack: -1 }
+	receive window state
+		{ base: 50, next 50, ack: 50 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:532	Recevied Packet { id: 48, ack 38, checksum: 639, length 8 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:595	packet id is invalid
+[32mINFO[0m ./src/udp_slw.c:slw_transmit_ack:322	Transmit pure ACK { id: 0, ack: 50 }
+[32mINFO[0m ./src/udp_slw.c:slw_write_packet:169	writing packet produced following checksum 51
+[32mINFO[0m ./src/udp_slw.c:slw_process:607	
+process end
+	send window state
+		{ base: 39, next 40, ack: -1 }
+	receive window state
+		{ base: 50, next 50, ack: 50 }
+[33mWARN[0m ./src/udp_slw.c:slw_recv:433	no packets to receive
+[33mWARN[0m ./src/udp_server.c:slw_loop:136	rcvwind is empty nothing to receive
+[32mINFO[0m ./src/udp_slw.c:slw_process:479	
+process start
+	send window state
+		{ base: 39, next 40, ack: -1 }
+	receive window state
+		{ base: 50, next 50, ack: 50 }
+[33mWARN[0m ./src/udp_slw.c:slw_process:494	time 12703967 greater than timeout 12703940 triggering retransmission
+[32mINFO[0m ./src/udp_slw.c:slw_write_packet:169	writing packet produced following checksum 640
+[32mINFO[0m ./src/udp_slw.c:slw_process:532	Recevied Packet { id: 50, ack 39, checksum: 643, length 8 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:586	packet id is the expected id
+[32mINFO[0m ./src/udp_slw.c:slw_process:607	
+process end
+	send window state
+		{ base: 39, next 40, ack: -1 }
+	receive window state
+		{ base: 50, next 51, ack: 51 }
+[33mWARN[0m ./src/udp_slw.c:slw_send:353	send window is full
+[33mWARN[0m ./src/udp_server.c:slw_loop:163	new message dropped send window is full
+[32mINFO[0m ./src/udp_slw.c:slw_process:479	
+process start
+	send window state
+		{ base: 39, next 40, ack: -1 }
+	receive window state
+		{ base: 51, next 51, ack: 51 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:532	Recevied Packet { id: 50, ack 40, checksum: 644, length 8 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:550	ACK is in the window
+[32mINFO[0m ./src/udp_slw.c:slw_process:595	packet id is invalid
+[32mINFO[0m ./src/udp_slw.c:slw_transmit_ack:322	Transmit pure ACK { id: 0, ack: 51 }
+[32mINFO[0m ./src/udp_slw.c:slw_write_packet:169	writing packet produced following checksum 52
+[32mINFO[0m ./src/udp_slw.c:slw_process:607	
+process end
+	send window state
+		{ base: 40, next 40, ack: -1 }
+	receive window state
+		{ base: 51, next 51, ack: 51 }
+[33mWARN[0m ./src/udp_slw.c:slw_recv:433	no packets to receive
+[33mWARN[0m ./src/udp_server.c:slw_loop:136	rcvwind is empty nothing to receive
+[32mINFO[0m ./src/udp_slw.c:slw_process:479	
+process start
+	send window state
+		{ base: 40, next 40, ack: -1 }
+	receive window state
+		{ base: 51, next 51, ack: 51 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:532	Recevied Packet { id: 0, ack 40, checksum: 41, length 0 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:607	
+process end
+	send window state
+		{ base: 40, next 40, ack: -1 }
+	receive window state
+		{ base: 51, next 51, ack: 51 }
+[33mWARN[0m ./src/udp_slw.c:slw_recv:433	no packets to receive
+[33mWARN[0m ./src/udp_server.c:slw_loop:136	rcvwind is empty nothing to receive
+[32mINFO[0m ./src/udp_slw.c:slw_process:479	
+process start
+	send window state
+		{ base: 40, next 40, ack: -1 }
+	receive window state
+		{ base: 51, next 51, ack: 51 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:532	Recevied Packet { id: 51, ack 40, checksum: 640, length 8 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:586	packet id is the expected id
+[32mINFO[0m ./src/udp_slw.c:slw_process:607	
+process end
+	send window state
+		{ base: 40, next 40, ack: -1 }
+	receive window state
+		{ base: 51, next 52, ack: 52 }
+[32mINFO[0m ./src/udp_slw.c:slw_write_packet:169	writing packet produced following checksum 641
+[32mINFO[0m ./src/udp_slw.c:slw_send:411	Packet { id: 40, ack: 52, checksum: 0, length: 8 }
+[32mINFO[0m ./src/udp_slw.c:slw_send:419	slw_send transmitted 1 packets
+[32mINFO[0m ./src/udp_slw.c:slw_process:479	
+process start
+	send window state
+		{ base: 40, next 41, ack: -1 }
+	receive window state
+		{ base: 52, next 52, ack: 52 }
+[33mWARN[0m ./src/udp_slw.c:slw_process:494	time 12704134 greater than timeout 12704134 triggering retransmission
+[32mINFO[0m ./src/udp_slw.c:slw_write_packet:169	writing packet produced following checksum 641
+[33mWARN[0m ./src/udp_slw.c:slw_process:507	`recvfrom` call would block
+[33mWARN[0m ./src/udp_server.c:slw_loop:118	poll returned but there was nothing to process on the socket
+[32mINFO[0m ./src/udp_slw.c:slw_process:479	
+process start
+	send window state
+		{ base: 40, next 41, ack: -1 }
+	receive window state
+		{ base: 52, next 52, ack: 52 }
+[33mWARN[0m ./src/udp_slw.c:slw_process:494	time 12704185 greater than timeout 12704184 triggering retransmission
+[32mINFO[0m ./src/udp_slw.c:slw_write_packet:169	writing packet produced following checksum 641
+[33mWARN[0m ./src/udp_slw.c:slw_process:507	`recvfrom` call would block
+[33mWARN[0m ./src/udp_server.c:slw_loop:118	poll returned but there was nothing to process on the socket
+[32mINFO[0m ./src/udp_slw.c:slw_process:479	
+process start
+	send window state
+		{ base: 40, next 41, ack: -1 }
+	receive window state
+		{ base: 52, next 52, ack: 52 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:532	Recevied Packet { id: 0, ack 41, checksum: 42, length 0 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:550	ACK is in the window
+[32mINFO[0m ./src/udp_slw.c:slw_process:563	pure ACK no receive window updates
+[32mINFO[0m ./src/udp_slw.c:slw_process:607	
+process end
+	send window state
+		{ base: 41, next 41, ack: -1 }
+	receive window state
+		{ base: 52, next 52, ack: 52 }
+[33mWARN[0m ./src/udp_slw.c:slw_recv:433	no packets to receive
+[33mWARN[0m ./src/udp_server.c:slw_loop:136	rcvwind is empty nothing to receive
+[32mINFO[0m ./src/udp_slw.c:slw_process:479	
+process start
+	send window state
+		{ base: 41, next 41, ack: -1 }
+	receive window state
+		{ base: 52, next 52, ack: 52 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:532	Recevied Packet { id: 0, ack 39, checksum: 40, length 0 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:607	
+process end
+	send window state
+		{ base: 41, next 41, ack: -1 }
+	receive window state
+		{ base: 52, next 52, ack: 52 }
+[33mWARN[0m ./src/udp_slw.c:slw_recv:433	no packets to receive
+[33mWARN[0m ./src/udp_server.c:slw_loop:136	rcvwind is empty nothing to receive
+[32mINFO[0m ./src/udp_slw.c:slw_process:479	
+process start
+	send window state
+		{ base: 41, next 41, ack: -1 }
+	receive window state
+		{ base: 52, next 52, ack: 52 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:532	Recevied Packet { id: 52, ack 41, checksum: 645, length 8 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:586	packet id is the expected id
+[32mINFO[0m ./src/udp_slw.c:slw_process:607	
+process end
+	send window state
+		{ base: 41, next 41, ack: -1 }
+	receive window state
+		{ base: 52, next 53, ack: 53 }
+[32mINFO[0m ./src/udp_slw.c:slw_write_packet:169	writing packet produced following checksum 646
+[32mINFO[0m ./src/udp_slw.c:slw_send:411	Packet { id: 41, ack: 53, checksum: 0, length: 8 }
+[32mINFO[0m ./src/udp_slw.c:slw_send:419	slw_send transmitted 1 packets
+[32mINFO[0m ./src/udp_slw.c:slw_process:479	
+process start
+	send window state
+		{ base: 41, next 42, ack: -1 }
+	receive window state
+		{ base: 53, next 53, ack: 53 }
+[33mWARN[0m ./src/udp_slw.c:slw_process:494	time 12704333 greater than timeout 12704333 triggering retransmission
+[32mINFO[0m ./src/udp_slw.c:slw_write_packet:169	writing packet produced following checksum 646
+[33mWARN[0m ./src/udp_slw.c:slw_process:507	`recvfrom` call would block
+[33mWARN[0m ./src/udp_server.c:slw_loop:118	poll returned but there was nothing to process on the socket
+[32mINFO[0m ./src/udp_slw.c:slw_process:479	
+process start
+	send window state
+		{ base: 41, next 42, ack: -1 }
+	receive window state
+		{ base: 53, next 53, ack: 53 }
+[33mWARN[0m ./src/udp_slw.c:slw_process:494	time 12704386 greater than timeout 12704385 triggering retransmission
+[32mINFO[0m ./src/udp_slw.c:slw_write_packet:169	writing packet produced following checksum 646
+[33mWARN[0m ./src/udp_slw.c:slw_process:507	`recvfrom` call would block
+[33mWARN[0m ./src/udp_server.c:slw_loop:118	poll returned but there was nothing to process on the socket
+[32mINFO[0m ./src/udp_slw.c:slw_process:479	
+process start
+	send window state
+		{ base: 41, next 42, ack: -1 }
+	receive window state
+		{ base: 53, next 53, ack: 53 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:532	Recevied Packet { id: 0, ack 41, checksum: 42, length 0 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:607	
+process end
+	send window state
+		{ base: 41, next 42, ack: -1 }
+	receive window state
+		{ base: 53, next 53, ack: 53 }
+[33mWARN[0m ./src/udp_slw.c:slw_recv:433	no packets to receive
+[33mWARN[0m ./src/udp_server.c:slw_loop:136	rcvwind is empty nothing to receive
+[32mINFO[0m ./src/udp_slw.c:slw_process:479	
+process start
+	send window state
+		{ base: 41, next 42, ack: -1 }
+	receive window state
+		{ base: 53, next 53, ack: 53 }
+[33mWARN[0m ./src/udp_slw.c:slw_process:494	time 12704453 greater than timeout 12704436 triggering retransmission
+[32mINFO[0m ./src/udp_slw.c:slw_write_packet:169	writing packet produced following checksum 646
+[33mWARN[0m ./src/udp_slw.c:slw_process:507	`recvfrom` call would block
+[33mWARN[0m ./src/udp_server.c:slw_loop:118	poll returned but there was nothing to process on the socket
+[32mINFO[0m ./src/udp_slw.c:slw_process:479	
+process start
+	send window state
+		{ base: 41, next 42, ack: -1 }
+	receive window state
+		{ base: 53, next 53, ack: 53 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:532	Recevied Packet { id: 52, ack 41, checksum: 645, length 8 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:595	packet id is invalid
+[32mINFO[0m ./src/udp_slw.c:slw_transmit_ack:322	Transmit pure ACK { id: 0, ack: 53 }
+[32mINFO[0m ./src/udp_slw.c:slw_write_packet:169	writing packet produced following checksum 54
+[32mINFO[0m ./src/udp_slw.c:slw_process:607	
+process end
+	send window state
+		{ base: 41, next 42, ack: -1 }
+	receive window state
+		{ base: 53, next 53, ack: 53 }
+[33mWARN[0m ./src/udp_slw.c:slw_recv:433	no packets to receive
+[33mWARN[0m ./src/udp_server.c:slw_loop:136	rcvwind is empty nothing to receive
+[32mINFO[0m ./src/udp_slw.c:slw_process:479	
+process start
+	send window state
+		{ base: 41, next 42, ack: -1 }
+	receive window state
+		{ base: 53, next 53, ack: 53 }
+[33mWARN[0m ./src/udp_slw.c:slw_process:494	time 12704534 greater than timeout 12704505 triggering retransmission
+[32mINFO[0m ./src/udp_slw.c:slw_write_packet:169	writing packet produced following checksum 646
+[32mINFO[0m ./src/udp_slw.c:slw_process:532	Recevied Packet { id: 53, ack 42, checksum: 644, length 8 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:550	ACK is in the window
+[32mINFO[0m ./src/udp_slw.c:slw_process:586	packet id is the expected id
+[32mINFO[0m ./src/udp_slw.c:slw_process:607	
+process end
+	send window state
+		{ base: 42, next 42, ack: -1 }
+	receive window state
+		{ base: 53, next 54, ack: 54 }
+[32mINFO[0m ./src/udp_slw.c:slw_write_packet:169	writing packet produced following checksum 645
+[32mINFO[0m ./src/udp_slw.c:slw_send:411	Packet { id: 42, ack: 54, checksum: 0, length: 8 }
+[32mINFO[0m ./src/udp_slw.c:slw_send:419	slw_send transmitted 1 packets
+[32mINFO[0m ./src/udp_slw.c:slw_process:479	
+process start
+	send window state
+		{ base: 42, next 43, ack: -1 }
+	receive window state
+		{ base: 54, next 54, ack: 54 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:532	Recevied Packet { id: 52, ack 41, checksum: 645, length 8 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:595	packet id is invalid
+[32mINFO[0m ./src/udp_slw.c:slw_transmit_ack:322	Transmit pure ACK { id: 0, ack: 54 }
+[32mINFO[0m ./src/udp_slw.c:slw_write_packet:169	writing packet produced following checksum 55
+[32mINFO[0m ./src/udp_slw.c:slw_process:607	
+process end
+	send window state
+		{ base: 42, next 43, ack: -1 }
+	receive window state
+		{ base: 54, next 54, ack: 54 }
+[33mWARN[0m ./src/udp_slw.c:slw_recv:433	no packets to receive
+[33mWARN[0m ./src/udp_server.c:slw_loop:136	rcvwind is empty nothing to receive
+[32mINFO[0m ./src/udp_slw.c:slw_process:479	
+process start
+	send window state
+		{ base: 42, next 43, ack: -1 }
+	receive window state
+		{ base: 54, next 54, ack: 54 }
+[33mWARN[0m ./src/udp_slw.c:slw_process:494	time 12704595 greater than timeout 12704584 triggering retransmission
+[32mINFO[0m ./src/udp_slw.c:slw_write_packet:169	writing packet produced following checksum 645
+[32mINFO[0m ./src/udp_slw.c:slw_process:532	Recevied Packet { id: 53, ack 42, checksum: 644, length 8 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:595	packet id is invalid
+[32mINFO[0m ./src/udp_slw.c:slw_transmit_ack:322	Transmit pure ACK { id: 0, ack: 54 }
+[32mINFO[0m ./src/udp_slw.c:slw_write_packet:169	writing packet produced following checksum 55
+[32mINFO[0m ./src/udp_slw.c:slw_process:607	
+process end
+	send window state
+		{ base: 42, next 43, ack: -1 }
+	receive window state
+		{ base: 54, next 54, ack: 54 }
+[33mWARN[0m ./src/udp_slw.c:slw_recv:433	no packets to receive
+[33mWARN[0m ./src/udp_server.c:slw_loop:136	rcvwind is empty nothing to receive
+[32mINFO[0m ./src/udp_slw.c:slw_process:479	
+process start
+	send window state
+		{ base: 42, next 43, ack: -1 }
+	receive window state
+		{ base: 54, next 54, ack: 54 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:532	Recevied Packet { id: 0, ack 42, checksum: 43, length 0 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:607	
+process end
+	send window state
+		{ base: 42, next 43, ack: -1 }
+	receive window state
+		{ base: 54, next 54, ack: 54 }
+[33mWARN[0m ./src/udp_slw.c:slw_recv:433	no packets to receive
+[33mWARN[0m ./src/udp_server.c:slw_loop:136	rcvwind is empty nothing to receive
+[32mINFO[0m ./src/udp_slw.c:slw_process:479	
+process start
+	send window state
+		{ base: 42, next 43, ack: -1 }
+	receive window state
+		{ base: 54, next 54, ack: 54 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:532	Recevied Packet { id: 52, ack 41, checksum: 645, length 8 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:595	packet id is invalid
+[32mINFO[0m ./src/udp_slw.c:slw_transmit_ack:322	Transmit pure ACK { id: 0, ack: 54 }
+[32mINFO[0m ./src/udp_slw.c:slw_write_packet:169	writing packet produced following checksum 55
+[32mINFO[0m ./src/udp_slw.c:slw_process:607	
+process end
+	send window state
+		{ base: 42, next 43, ack: -1 }
+	receive window state
+		{ base: 54, next 54, ack: 54 }
+[33mWARN[0m ./src/udp_slw.c:slw_recv:433	no packets to receive
+[33mWARN[0m ./src/udp_server.c:slw_loop:136	rcvwind is empty nothing to receive
+[32mINFO[0m ./src/udp_slw.c:slw_process:479	
+process start
+	send window state
+		{ base: 42, next 43, ack: -1 }
+	receive window state
+		{ base: 54, next 54, ack: 54 }
+[33mWARN[0m ./src/udp_slw.c:slw_process:494	time 12704664 greater than timeout 12704645 triggering retransmission
+[32mINFO[0m ./src/udp_slw.c:slw_write_packet:169	writing packet produced following checksum 645
+[33mWARN[0m ./src/udp_slw.c:slw_process:507	`recvfrom` call would block
+[33mWARN[0m ./src/udp_server.c:slw_loop:118	poll returned but there was nothing to process on the socket
+[32mINFO[0m ./src/udp_slw.c:slw_process:479	
+process start
+	send window state
+		{ base: 42, next 43, ack: -1 }
+	receive window state
+		{ base: 54, next 54, ack: 54 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:532	Recevied Packet { id: 54, ack 43, checksum: 648, length 8 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:550	ACK is in the window
+[32mINFO[0m ./src/udp_slw.c:slw_process:586	packet id is the expected id
+[32mINFO[0m ./src/udp_slw.c:slw_process:607	
+process end
+	send window state
+		{ base: 43, next 43, ack: -1 }
+	receive window state
+		{ base: 54, next 55, ack: 55 }
+[32mINFO[0m ./src/udp_slw.c:slw_write_packet:169	writing packet produced following checksum 649
+[32mINFO[0m ./src/udp_slw.c:slw_send:411	Packet { id: 43, ack: 55, checksum: 0, length: 8 }
+[32mINFO[0m ./src/udp_slw.c:slw_send:419	slw_send transmitted 1 packets
+[32mINFO[0m ./src/udp_slw.c:slw_process:479	
+process start
+	send window state
+		{ base: 43, next 44, ack: -1 }
+	receive window state
+		{ base: 55, next 55, ack: 55 }
+[33mWARN[0m ./src/udp_slw.c:slw_read_packet:139	packet checksum did not match calculated checksum
+[33mWARN[0m ./src/udp_slw.c:slw_process:527	invalid packet dropped
+	packet parse failed
+[32mINFO[0m ./src/udp_slw.c:slw_process:607	
+process end
+	send window state
+		{ base: 43, next 44, ack: -1 }
+	receive window state
+		{ base: 55, next 55, ack: 55 }
+[33mWARN[0m ./src/udp_slw.c:slw_recv:433	no packets to receive
+[33mWARN[0m ./src/udp_server.c:slw_loop:136	rcvwind is empty nothing to receive
+[32mINFO[0m ./src/udp_slw.c:slw_process:479	
+process start
+	send window state
+		{ base: 43, next 44, ack: -1 }
+	receive window state
+		{ base: 55, next 55, ack: 55 }
+[33mWARN[0m ./src/udp_slw.c:slw_process:494	time 12704785 greater than timeout 12704752 triggering retransmission
+[32mINFO[0m ./src/udp_slw.c:slw_write_packet:169	writing packet produced following checksum 649
+[32mINFO[0m ./src/udp_slw.c:slw_process:532	Recevied Packet { id: 52, ack 41, checksum: 645, length 8 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:595	packet id is invalid
+[32mINFO[0m ./src/udp_slw.c:slw_transmit_ack:322	Transmit pure ACK { id: 0, ack: 55 }
+[32mINFO[0m ./src/udp_slw.c:slw_write_packet:169	writing packet produced following checksum 56
+[32mINFO[0m ./src/udp_slw.c:slw_process:607	
+process end
+	send window state
+		{ base: 43, next 44, ack: -1 }
+	receive window state
+		{ base: 55, next 55, ack: 55 }
+[33mWARN[0m ./src/udp_slw.c:slw_recv:433	no packets to receive
+[33mWARN[0m ./src/udp_server.c:slw_loop:136	rcvwind is empty nothing to receive
+[32mINFO[0m ./src/udp_slw.c:slw_process:479	
+process start
+	send window state
+		{ base: 43, next 44, ack: -1 }
+	receive window state
+		{ base: 55, next 55, ack: 55 }
+[33mWARN[0m ./src/udp_slw.c:slw_process:494	time 12704836 greater than timeout 12704836 triggering retransmission
+[32mINFO[0m ./src/udp_slw.c:slw_write_packet:169	writing packet produced following checksum 649
+[33mWARN[0m ./src/udp_slw.c:slw_process:507	`recvfrom` call would block
+[33mWARN[0m ./src/udp_server.c:slw_loop:118	poll returned but there was nothing to process on the socket
+[32mINFO[0m ./src/udp_slw.c:slw_process:479	
+process start
+	send window state
+		{ base: 43, next 44, ack: -1 }
+	receive window state
+		{ base: 55, next 55, ack: 55 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:532	Recevied Packet { id: 55, ack 44, checksum: 653, length 8 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:550	ACK is in the window
+[32mINFO[0m ./src/udp_slw.c:slw_process:586	packet id is the expected id
+[32mINFO[0m ./src/udp_slw.c:slw_process:607	
+process end
+	send window state
+		{ base: 44, next 44, ack: -1 }
+	receive window state
+		{ base: 55, next 56, ack: 56 }
+[32mINFO[0m ./src/udp_slw.c:slw_write_packet:169	writing packet produced following checksum 654
+[32mINFO[0m ./src/udp_slw.c:slw_send:411	Packet { id: 44, ack: 56, checksum: 0, length: 8 }
+[32mINFO[0m ./src/udp_slw.c:slw_send:419	slw_send transmitted 1 packets
+[32mINFO[0m ./src/udp_slw.c:slw_process:479	
+process start
+	send window state
+		{ base: 44, next 45, ack: -1 }
+	receive window state
+		{ base: 56, next 56, ack: 56 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:532	Recevied Packet { id: 0, ack 44, checksum: 45, length 0 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:607	
+process end
+	send window state
+		{ base: 44, next 45, ack: -1 }
+	receive window state
+		{ base: 56, next 56, ack: 56 }
+[33mWARN[0m ./src/udp_slw.c:slw_recv:433	no packets to receive
+[33mWARN[0m ./src/udp_server.c:slw_loop:136	rcvwind is empty nothing to receive
+[32mINFO[0m ./src/udp_slw.c:slw_process:479	
+process start
+	send window state
+		{ base: 44, next 45, ack: -1 }
+	receive window state
+		{ base: 56, next 56, ack: 56 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:532	Recevied Packet { id: 0, ack 44, checksum: 45, length 0 }
+[32mINFO[0m ./src/udp_slw.c:slw_process:607	
+process end
+	send window state
+		{ base: 44, next 45, ack: -1 }
+	receive window state
+		{ base: 56, next 56, ack: 56 }
+[33mWARN[0m ./src/udp_slw.c:slw_recv:433	no packets to receive
+[33mWARN[0m ./src/udp_server.c:slw_loop:136	rcvwind is empty nothing to receive

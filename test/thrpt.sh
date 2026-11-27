@@ -5,11 +5,12 @@ DURATION=10
 
 useage() {
     cat <<EOF >&2
-Useage $0 [-w window_size] [-r reliability] [-h]
+Useage $0 [-w window_size] [-r reliability] [-n number] [-h]
 
 Options
     -w <size>           sliding window size (default is 1)
     -r <reliability>    determines if a reliable or unreliable network will be used (default is 1)
+    -n <test-number>    special test number
     -h                  help message
 EOF
 }
@@ -18,11 +19,13 @@ timestamp="$(date +%s)"
 
 window=1
 reliable=1
+number=0
 
-while getopts ":w:r:h" opt; do
+while getopts ":w:r:n:h" opt; do
     case "$opt" in
         w) window="$OPTARG" ;;
         r) reliable="$OPTARG" ;;
+        n) number="$OPTARG" ;;
         h) useage; exit 0 ;;
         :) useage ;;
     esac
@@ -84,12 +87,13 @@ while True:
 EOF
 )"
 printf "test $timestamp complete\n"
+srt="$(printf "%s\n" "$CMD_OUT" | grep "^echo:" | wc -l)"
+srtsec="$(awk -v sr="$srt" -v dr="$DURATION" 'BEGIN { print sr / dr }')"
 cat <<EOF >&1
 test $timestamp log files:
-[server-out]($server_out_log), [server-err]($server_err_log), [client-out]($client_out_log), [client-err]($client_err_log), [network]($network_log)
+| $number | $timestamp | $srt | [server-out]($server_out_log), [server-err]($server_err_log), [client-out]($client_out_log), [client-err]($client_err_log), [network]($network_log) | $srtsec |
 EOF
 
-printf "%s\n" "$CMD_OUT" | grep "^echo:" | wc -l
 
 
 kill "$server_pid" 2> /dev/null
