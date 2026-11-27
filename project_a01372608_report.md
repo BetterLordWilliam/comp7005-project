@@ -704,12 +704,21 @@ Average SRT/sec = 51.6 / 5 = **10.32 SRT/sec**
 
 ## Reflection and Novelty
 
-There are a few extensions to this project that I have considered.
+There are a few extensions to this project that I have considered, only one is asked of for the report so feel free to consider only the first section here, I think it's a more important development for the completeness of the library.
 
 ### Potential for Better Abstraction
-- create a version of `poll`, `slw_poll`, which will call `slw_process` on behalf of the caller, otherwise returning poll errors / events such that the calling application is able to interface with the library without having to manually invoke this primitive
-- effectively, provide the calling application with only the `slw_send` / `slw_recv`, replace have a public `slw_process` with a `slw_poll` that takes care of internally invoking `slw_process`, the calling application can be completely unaware any underlying protocol mechanisms
-    - this would also remove the requirement to have `slw_window_empty` as a public member, the only three public member's would be `slw_poll`, `slw_send`, `slw_recv`.
+- I want to create a version of `poll`, `slw_poll`, which will call `slw_process` on behalf of the calling application, returning poll errors / events such that the calling application is able to interface as with standard `poll`.
+    - The calling application would have `slw_send` / `slw_recv`, with `slw_poll` replacing a public `slw_process`
+    - `slw_poll` would invoke `poll` as per the calling applications inputs, handling the SLW protocol specific logic that exists on top of poll, which would mean that calling application's would not need to worry about checking send window emptiness to determine whether to poll infinitely or to poll as per the transmission timeout.
+    - calling applications would not have to worry about calling `slw_process` on either `poll` timeout or data returned events for the socket.
+    - There would need to be a contract about the order of the pollfds that `slw_poll` accepts, or `slw_poll` would copy the user supplied pollfds & place the `slw_state_t` first in the array so it knows which fd is the socket fd.
+    - `slw_window_empty` would no longer need to be a public library function.
+    - pretty much all the SLW protocol implementation details could be abstracted from the calling application which would be almost perfect.
+
+### Connections
+- The other thing I was thinking about would be implementing a `slw_listen` & `slw_connect`, because the current version of the protocol only works between 2 peers & does not validate whether packets are coming from the expected peer (its relatively easy to spoof SLW).
+    - A connection handshake would occur with the SLW protocol creating a new socket for the connection once the handshake completes
+    - I sort of implemented this in my first stop-and-wait protocol attempt (`include/udp_saw.h`, `src/udp_saw.c`) but it was not reliable & broke in the test scenarios because of that
 
 
 ## Appendix
@@ -719,9 +728,89 @@ Additional information about SLW & resources.
 
 Because SLW has an ID space of 2^8 and the fact that SLW uses go-back-N for retransmission, maximum possible windows size would be 255, except that I implement the comparison arithmetic for serial numbers defined in [RFC 1982](https://www.rfc-editor.org/info/rfc1982/), where such comparisons only have meaning for 2^(n-1) in a space of 2^(n). Practically, this means that the maximum window size is 127 (128-1).
 
+The comparison operations are implemented as the `slw_seq_less` & `slw_seq_greater` functions:
+
+```c
+static inline int slw_seq_less(uint8_t a, uint8_t b) {
+    return (
+        (a < b && (b - a < (SLW_MAX_SLOTS/2))) ||
+        (a > b && (a - b > (SLW_MAX_SLOTS/2)))
+    );
+}
+
+static inline int slw_seq_greater(uint8_t a, uint8_t b) {
+    return (
+        (a < b && (b - a > (SLW_MAX_SLOTS/2))) ||
+        (a > b && (a - b < (SLW_MAX_SLOTS/2)))
+    );
+}
+```
+
 ### SLW Checksum Calculation
+
+SLW uses a very simple checksum, it sums all the bytes of the header & the payload, excluding the checksum bytes themselves. This is not a particularly strong checksum method, but that wasn't mentioned as a requirement, it works because of the simplicity of the application's on top of the SLW in this assignment.
+
+```c
+static uint16_t slw_compute_checksum(
+    const uint8_t* header, uint16_t header_len,
+    const char* body, uint16_t body_len
+) {
+    uint32_t sum = 0;
+    for (int i = 0; i < header_len; i++) {
+        if (i == 3 || i == 4) continue;
+        sum += (uint8_t)header[i];
+    }
+    for (int i = 0; i < body_len; i++) {
+        sum += (uint8_t)body[i];
+    }
+    return (uint16_t)sum;
+}
+```
 
 ### SLW RTT Tracking & Timer Calculations
 
-### Piggy-backing ACKs
+RTT is tracked in the `slw_state_t` `rtt` field, this is calculated from the current monotonic time & the senttime of the base packet, upon determining that an incoming packet's ACK is within the send window.
 
+```c
+static inline void slw_update_rtt(slw_state_t* state) {
+    state->rtt = slw_time_ms() - state->senttime;
+}
+```
+
+The tracked RTT is used in the `slw_calc_timeout` function, which calculates RTT variation and smoothed RTT error, as per the equations discussed in out lectures, & which uses these numbers to determine the duration of the timeout & also the expected timeout monotime itself.
+
+```c
+static inline time_t slw_calc_timeout(slw_state_t* state) {
+    time_t nrttv = (state->rttv != 0)
+        ? (3/4)*(state->rttv) + (1/4)*(state->rtt - state->srtt)
+        : (state->rtt)/2;
+    time_t nsrtt = (state->srtt != 0)
+        ? (7/8)*(state->srtt) + (1/8)*(state->rtt)
+        : (state->rtt);
+    time_t ntimeoutdur = nsrtt + max(SLW_MIN_TIMEOUT_MS, 4 * nrttv);
+
+    state->srtt = nsrtt;
+    state->rttv = nrttv;
+    state->timeoutdur = ntimeoutdur;
+
+    time_t ntimeout = slw_time_ms() + state->timeoutdur;
+    state->timeout = ntimeout;
+    return ntimeout;
+}
+```
+
+> `SLW_MIN_TIMEOUT_MS` is defined as 50 ms.
+
+The other time helpers are the following functions, responsible for retrieving monotonic time & normalizing it to milliseconds.
+
+```c
+static inline time_t slw_nmtime_ms(struct timespec ts) {
+    return ( ts.tv_sec * 1000 ) + ( ts.tv_nsec / 1000000 );
+}
+
+static inline time_t slw_time_ms(void) {
+    struct timespec ts;
+    clock_gettime(CLOCK_MONOTONIC, &ts);
+    return slw_nmtime_ms(ts);
+}
+```

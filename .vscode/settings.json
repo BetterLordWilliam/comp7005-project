@@ -12,6 +12,7 @@
         "memcpy",
         "monotime",
         "pollfd",
+        "pollfds",
         "POLLHUP",
         "POLLIN",
         "rcvwind",
