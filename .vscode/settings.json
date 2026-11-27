@@ -2,5 +2,31 @@
     "workbench.colorCustomizations": {
         "minimap.background": "#00000000",
         "scrollbar.shadow": "#00000000"
-    }
+    },
+    "cSpell.words": [
+        "datagram",
+        "EAGAIN",
+        "EBUFSIZE",
+        "EINTR",
+        "EWOULDBLOCK",
+        "memcpy",
+        "monotime",
+        "pollfd",
+        "pollfds",
+        "POLLHUP",
+        "POLLIN",
+        "rcvwind",
+        "recvfrom",
+        "rttv",
+        "sendto",
+        "senttime",
+        "sndwind",
+        "socka",
+        "sockaddr",
+        "sockalen",
+        "socklen",
+        "srtt",
+        "thrpt",
+        "timeoutdur"
+    ]
 }

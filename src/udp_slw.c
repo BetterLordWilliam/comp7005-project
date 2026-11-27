@@ -6,6 +6,15 @@ static inline int slw_advance(int idx, slw_window_t* win) {
     return abs(idx + 1) % win->slots;
 }
 
+static inline int slw_window_full(slw_window_t* win) {
+    int in_flight = (uint8_t)((win->next - win->base) % win->slots);
+    if (in_flight >= win->length) {
+        return 1;
+    } else {
+        return 0;
+    }
+}
+
 /*
 static inline int slw_retreat(int idx, slw_window_t* win) {
     return abs(idx - 1) % win->slots;
@@ -195,10 +204,10 @@ static void slw_init_packet(
 }
 
 
-int slw_init(slw_state_t* state, int fd, int window_slots, int timeoutdur)
+int slw_init(slw_state_t* state, int fd, int window_length, int timeoutdur)
 {
     state->fd           = fd;
-    state->slots        = min(window_slots, SLW_MAX_SLOTS);
+    state->slots        = SLW_MAX_SLOTS;
 
     state->timeoutdur   = timeoutdur;
     state->timeout      = 0;
@@ -206,15 +215,15 @@ int slw_init(slw_state_t* state, int fd, int window_slots, int timeoutdur)
     state->rtt = state->rttv = state->srtt = 0;
 
     state->rcvwind = (slw_window_t){
-        .slots  = SLW_MAX_SLOTS,
+        .slots  = state->slots,
         .length = 1,
         .base   = 0,
         .next   = 0,
         .ack    = -1
     };
     state->sndwind = (slw_window_t){
-        .slots  = SLW_MAX_SLOTS,
-        .length = min((state->slots - 1), SLW_MAX_WIND_LEN),
+        .slots  = state->slots,
+        .length = min((window_length), SLW_MAX_WIND_LEN),
         .base   = 0,
         .next   = 0,
         .ack    = -1,
@@ -263,7 +272,7 @@ int slw_window_empty(slw_window_t* wind) {
 }
 
 
-int slw_retransmit(
+static int slw_retransmit(
     slw_state_t* state, const struct sockaddr* dest_addr, socklen_t addrlen
 ) {
     slw_window_t *win = &state->sndwind;
@@ -337,8 +346,9 @@ ssize_t slw_send(slw_state_t* state, const char* buf, size_t bufsize,
     slw_window_t* rcvwind = &state->rcvwind;
 
     // cannot send if the send window is full ie.
-    int next = slw_advance(sndwind->next, sndwind);
-    if (next == sndwind->base) {
+    // int in_flight = (uint8_t)((sndwind->next - sndwind->base) % sndwind->slots);
+    int sndwind_full = slw_window_full(sndwind);
+    if (sndwind_full) {
 #ifdef UDP_DEBUG
         LWARN("send window is full");
 #endif
@@ -354,7 +364,8 @@ ssize_t slw_send(slw_state_t* state, const char* buf, size_t bufsize,
     while (sent_count < packets) {
         // window is full mid chunking
         int candidate_next = slw_advance(sndwind->next, sndwind);
-        if (candidate_next == sndwind->base)
+        sndwind_full = slw_window_full(sndwind);
+        if (sndwind_full)
             break;
 
         // create a packet for the data, put it at next, advance next
