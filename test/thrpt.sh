@@ -14,6 +14,8 @@ Options
 EOF
 }
 
+timestamp="$(date +%s)"
+
 window=1
 reliable=1
 
@@ -26,18 +28,21 @@ while getopts ":w:r:h" opt; do
     esac
 done
 
+server_out_log="./logs/$timestamp-server-out.log"
+server_err_log="./logs/$timestamp-server-err.log"
 ./build/udp_server 8080 "$window"   \
-    > ./logs/win1-server.log        \
-    2> ./logs/win1-server-err.log   \
+    > "$server_out_log"             \
+    2> "$server_err_log"            \
     & server_pid=$!
 
+network_log="./logs/$timestamp-network.log"
 if (( reliable == 1)); then
     printf "reliable network\n"
     ./build/network                                             \
         --server-ip 127.0.0.1 --server-port 8080                \
         --listen-port 8081 --loss 0.0 --delay 0.0               \
         --corrupt 0.0 --max-delay-ms 0 --seed 7005              \
-        &> ./logs/win1-network.log                              \
+        &> "$network_log"                                       \
         & network_pid=$!
 else
     printf "unreliable network\n"
@@ -45,13 +50,15 @@ else
         --server-ip 127.0.0.1 --server-port 8080                \
         --listen-port 8081 --loss 0.10 --delay 0.50             \
         --corrupt 0.05 --max-delay-ms 500 --seed 7005           \
-        &> ./logs/win1-network.log                              \
+        &> "$network_log"                                       \
         & network_pid=$!
 fi
 
+client_out_log="./logs/$timestamp-client-out.log"
+client_err_log="./logs/$timestamp-client-err.log"
 CMD="./build/udp_client 127.0.0.1 8081 $window"
 
-printf "starting test...\n"
+printf "starting test $timestamp...\n"
 
 CMD_OUT="$(
 python3 - "$INTERVAL" "$DURATION" <<EOF | \
@@ -76,7 +83,11 @@ while True:
         time.sleep(sleep_for)
 EOF
 )"
-printf "test complete\n"
+printf "test $timestamp complete\n"
+cat <<EOF >&1
+test $timestamp log files:
+[server-out]($server_out_log), [server-err]($server_err_log), [client-out]($client_out_log), [client-err]($client_err_log), [network]($network_log)
+EOF
 
 printf "%s\n" "$CMD_OUT" | grep "^echo:" | wc -l
 
