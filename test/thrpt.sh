@@ -62,7 +62,7 @@ printf "starting test $timestamp...\n"
 
 CMD_OUT="$(
 python3 - "$INTERVAL" "$DURATION" <<EOF | \
-    $CMD 2> ./logs/win1-client-err.log | tee ./logs/win1-client.log
+    $CMD 2> "$client_err_log" | tee "$client_out_log"
 import sys, time
 
 interval = float(sys.argv[1])
