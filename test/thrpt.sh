@@ -96,6 +96,6 @@ EOF
 
 
 
-kill "$server_pid" 2> /dev/null
-kill "$network_pid" 2> /dev/null
+kill "$server_pid"
+kill "$network_pid"
 
