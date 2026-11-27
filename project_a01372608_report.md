@@ -500,9 +500,11 @@ network:
 ./build/network --server-port 8080 --server-ip 127.0.0.1 --listen-port 8081 --loss 0 --delay 0 --corrupt 0 --max-delay-ms 0 --seed 7005
 ```
 
-
+![perfect initial](./screenshots/perfect-i.png)
 
 results:
+
+![perfect results](./screenshots/perfect.png)
 
 
 ### Delay / Order
@@ -525,8 +527,11 @@ network:
 ./build/network --server-port 8080 --server-ip 127.0.0.1 --listen-port 8081 --loss 0 --delay 1 --corrupt 0 --max-delay-ms 1000 --seed 7005
 ```
 
+![delay-order initial](./screenshots/delay-order-i.png)
 
 results:
+
+![delay-order results](./screenshots/delay-order.png)
 
 
 ### Loss
@@ -549,6 +554,12 @@ network:
 ./build/network --server-port 8080 --server-ip 127.0.0.1 --listen-port 8081 --loss 0.50 --delay 0.10 --corrupt 0 --max-delay-ms 300 --seed 7005
 ```
 
+![loss initial](./screenshots/loss-i.png)
+
+results:
+
+![loss results](./screenshots/loss.png)
+
 ### Corruption
 
 server:
@@ -569,6 +580,12 @@ network:
 ./build/network --server-port 8080 --server-ip 127.0.0.1 --listen-port 8081 --loss 0 --delay 0.10 --corrupt 0.50 --max-delay-ms 300 --seed 7005
 ```
 
+![corruption initial](./screenshots/corrupt-i.png)
+
+results:
+
+![corruption results](./screenshots/corrupt.png)
+
 ### Combined
 
 server:
@@ -588,6 +605,12 @@ network:
 ```
 ./build/network --server-port 8080 --server-ip 127.0.0.1 --listen-port 8081 --loss 0.10 --delay 0.50 --corrupt 0.05 --max-delay-ms 500 --seed 7005
 ```
+
+![combined initial](./screenshots/combined-i.png)
+
+results:
+
+![combined results](./screenshots/combined.png)
 
 ### ULTIMATE
 
@@ -617,7 +640,11 @@ network:
 
 with the extreme settings from the combined test
 
+![ultimate initial](./screenshots/ultimate-i.png)
 
+results:
+
+![ultimate results](./screenshots/ultimate.png)
 
 
 ## Throughput Comparison
