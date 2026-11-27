@@ -61,6 +61,7 @@ The goal of SLW is to improve upon the reliability of UDP, specifically with reg
 
 At a macro level, SLW provides peer applications with send and receive windows within which outgoing & incoming packets can be queued. SLW guarantees that packets will be uncorrupted & that packets will be delivered in order, without duplication & retransmitted if necessary. Duplex communication is enabled by "piggy-backed" ACKs, meaning that any packet can simultaneously serve as a DAT & ACK packet, transmitting reply bytes with acknowledging received packets. SLW will adjust retransmission timers according to the state of the network, which will reduce unnecessary retransmission (as much as can be done using go-back-N strategy anyways).
 
+<!--
 ```mermaid
 sequenceDiagram
     participant p1 as peer1
@@ -97,6 +98,7 @@ sequenceDiagram
     p2 ->> p1: ID: 0, ACK: 5, FLAGS: 1, ...
     note right of p1: p1 receives ACK 5, frees slot(s) in send window
 ```
+-->
 
 *etc*
 
@@ -335,7 +337,44 @@ If processing completes normally or returns early via packet drop, `SLW_OK` is r
 
 This section will discuss how `udp_server` was modified to work with the SLW protocol.
 
-Instead of immediately entering it's event loop on the UDP socket, the server initializes the `slw_state_t` SLW protocol state object supplying the user provided window length (or the default value of 10).
+Instead of immediately entering it's event loop on the UDP socket, the server initializes the `slw_state_t` SLW protocol state object supplying the user provided window length (or the default value of 5).
+
+```c
+int main(int argc, char** argv)
+{
+    int window_length = 5;
+    if (argc < 2) {
+        fprintf(stderr, "Usage: %s <listen-port> [<window-length>]\n", argv[0]);
+        return EXIT_FAILURE;
+    }
+    if (argc == 3) {
+        window_length = atoi(argv[2]);
+    }
+
+    /* earlier in main parsing of CLI arguments & socket creation */
+
+    // [WO] slw server state
+    slw_state_t state = { 0 };
+    slw_init(&state, server_fd, window_length, 400);
+
+    LINFO("SLW STATE: { fd: %d, slots: %d }", state.fd, state.slots);
+    LINFO("SLW SNDWIND STATE: { slots: %d, length: %d }",
+        state.sndwind.slots, state.sndwind.length);
+    LINFO("SLW RCVWIND STATE: { slots: %d, length: %d }",
+        state.rcvwind.slots, state.rcvwind.length);
+
+    // [WO] slw server loop
+    int r = slw_loop(&state, (struct sockaddr*)&local, sizeof(local));
+
+    slw_free(&state); 
+    close(server_fd);
+
+    if (r == EXIT_FAILURE)
+        return EXIT_FAILURE;
+
+    return EXIT_SUCCESS;
+}
+```
 
 The server enters it's event loop by invoking the `slw_loop` function, which begins polling on the `pollfd` object initialized for the socket's file descriptor using the `poll_s` wrapper (again handling `EINTR` returns). The timeout is set to -1 if the send window is empty (there's nothing outgoing, this peer is just waiting for traffic), otherwise some transmission is in progress & so the timeout is the current value of the state's `timeoutdur`.
 
@@ -360,9 +399,45 @@ This section will discuss how `udp_client` was modified to work with the SLW pro
 
 Like the `udp_server`, the `udp_client` first initializes the SLW protocol state `slw_state_t` object with the window length supplied by the command line (or with the default value of 5).
 
-The client's event loop polls on both the socket FD and the STDIN FD, again with an infinite wait time (-1) if the SLW's send window is empty.
+```c
+int main(int argc, char** argv)
+{
+    int window_length = 5;
+    if (argc < 3) {
+        usage(argv[0]);
+        return EXIT_FAILURE;
+    }
+    if (argc == 4) {
+        window_length = atoi(argv[3]);
+    }
 
-If a timeout occurs, data is in transmission but no reply was received (and STDIN also has no new data to read in), but `slw_process` still needs to be invoked to determine if retransmission must be done for current in flight packets.
+    /* earlier in main parsing of CLI arguments & socket creation */
+
+    // [WO] slw client state
+    slw_state_t state = { 0 };
+    slw_init(&state, client_fd, window_length, 400);
+
+    LINFO("SLW STATE: { fd: %d, slots: %d }", state.fd, state.slots);
+    LINFO("SLW SNDWIND STATE: { slots: %d, length: %d }",
+        state.sndwind.slots, state.sndwind.length);
+    LINFO("SLW RCVWIND STATE: { slots: %d, length: %d }",
+        state.rcvwind.slots, state.rcvwind.length);
+
+    // [WO] slw client loop
+    int r = slw_loop(&state, (struct sockaddr*)&network, sizeof(network));
+    (void)r;
+
+    slw_free(&state);
+    close(client_fd);
+
+    if (r == EXIT_FAILURE)
+        return EXIT_FAILURE;
+
+    return EXIT_SUCCESS;
+}
+```
+
+The client's event loop polls on both the socket FD and the STDIN FD, again with an infinite wait time (-1) if the SLW's send window is empty. If a timeout occurs, data is in transmission but no reply was received (and STDIN also has no new data to read in), but `slw_process` still needs to be invoked to determine if retransmission must be done for current in flight packets.
 
 If the STDIN fd returns data (`POLLIN` or `POLLHUP`), STDIN is read into the clients buffer, & `slw_send` is invoked to transmit the contents of STDIN to the server. If the send window is full, the client's STDIN is not transmitted & the client prints a message stating "cannot send new messages at this time.".
 
@@ -384,8 +459,172 @@ stateDiagram
 
 ## Testing Scenarios
 
+For testing, I use the default window length of 5.
+
+server:
+
+```
+./build/udp_server 8080
+```
+
+client:
+
+```
+./build/udp_client 127.0.0.1 8081
+```
+
+network:
+
+```
+./build/network --server-port 8080 --server-ip 127.0.0.1 --listen-port 8081
+```
+
+
+### Perfect
+
+server:
+
+```
+./build/udp_server 8080 2> ./logs/server-perfect.log
+```
+
+client:
+
+```
+./build/udp_client 127.0.0.1 8081 2> ./logs/client-perfect.log
+```
+
+network:
+
+```
+./build/network --server-port 8080 --server-ip 127.0.0.1 --listen-port 8081 --loss 0 --delay 0 --corrupt 0 --max-delay-ms 0 --seed 7005
+```
+
+
+
+results:
+
+
+### Delay / Order
+
+server:
+
+```
+./build/udp_server 8080 2> ./logs/server-delay-order.log
+```
+
+client:
+
+```
+./build/udp_client 127.0.0.1 8081 2> ./logs/client-delay-order.log
+```
+
+network:
+
+```
+./build/network --server-port 8080 --server-ip 127.0.0.1 --listen-port 8081 --loss 0 --delay 1 --corrupt 0 --max-delay-ms 1000 --seed 7005
+```
+
+
+results:
+
+
+### Loss
+
+server:
+
+```
+./build/udp_server 8080 2> ./logs/server-loss.log
+```
+
+client:
+
+```
+./build/udp_client 127.0.0.1 8081 2> ./logs/client-loss.log
+```
+
+network:
+
+```
+./build/network --server-port 8080 --server-ip 127.0.0.1 --listen-port 8081 --loss 0.50 --delay 0.10 --corrupt 0 --max-delay-ms 300 --seed 7005
+```
+
+### Corruption
+
+server:
+
+```
+./build/udp_server 8080 2> ./logs/server-corruption.log
+```
+
+client:
+
+```
+./build/udp_client 127.0.0.1 8081 2> ./logs/client-corruption.log
+```
+
+network:
+
+```
+./build/network --server-port 8080 --server-ip 127.0.0.1 --listen-port 8081 --loss 0 --delay 0.10 --corrupt 0.50 --max-delay-ms 300 --seed 7005
+```
+
+### Combined
+
+server:
+
+```
+./build/udp_server 8080
+```
+
+client:
+
+```
+./build/udp_client 127.0.0.1 8081
+```
+
+network:
+
+```
+./build/network --server-port 8080 --server-ip 127.0.0.1 --listen-port 8081 --loss 0.10 --delay 0.50 --corrupt 0.05 --max-delay-ms 500 --seed 7005
+```
+
+### ULTIMATE
+
+server:
+
+```
+./build/udp_server 8080 25
+```
+
+client:
+
+```
+./build/udp_client 127.0.0.1 8081 25
+```
+
+use a window length of 25 & send all the messages at once
+
+```
+cat ./test/inputs.txt
+```
+
+network:
+
+```
+./build/network --server-port 8080 --server-ip 127.0.0.1 --listen-port 8081 --loss 0.10 --delay 0.50 --corrupt 0.05 --max-delay-ms 500 --seed 7005
+```
+
+with the extreme settings from the combined test
+
+
+
+
 ## Throughput Comparison
 
+### Stop and Wait (window length 1)
+
+### Default (window length 5)
 
 
 
