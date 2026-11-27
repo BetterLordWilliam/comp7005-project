@@ -1,0 +1,10 @@
+network.c listening on 127.0.0.1:8081
+forwarding to 127.0.0.1:8080
+loss=0.00 delay=0.00 corrupt=0.00 max-delay=0ms seed=7005
+FORWARD           C->S     8 bytes -> 127.0.0.1:8080
+FORWARD           S->C     8 bytes -> 127.0.0.1:40340
+FORWARD           C->S     8 bytes -> 127.0.0.1:8080
+FORWARD           C->S    13 bytes -> 127.0.0.1:8080
+FORWARD           S->C     8 bytes -> 127.0.0.1:40340
+FORWARD           S->C    13 bytes -> 127.0.0.1:40340
+FORWARD           C->S    18 bytes -> 127.0.0.1:8080
