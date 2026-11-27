@@ -667,20 +667,23 @@ The network parameters are the same as the combined test from the scenarios.
 
 > The `thrpt.sh` testing script use `python3` for the monotime precision it offers over a pure bash script.
 
+> SRT = successful rount trip
+
 ### Window Length of 1
 
 ```
 ./test/thrpt.sh -r 0
 ```
 
-| Test No. | ID | Successful Messages | Logs |
-| :- | :- | :- | :- |
-| 1 | 1795764418 | 47 | [server-out](./logs/1795764418-server-out.log), [server-err](./logs/1795764418-server-err.log), [client-out](./logs/1795764418-client-out.log), [client-err](./logs/1795764418-client-err.log), [network](./logs/1795764418-network.log) |
-| 2 | 1795764489 | 52 | [server-out](./logs/1795764489-server-out.log), [server-err](./logs/1795764489-server-err.log), [client-out](./logs/1795764489-client-out.log), [client-err](./logs/1795764489-client-err.log), [network](./logs/1795764489-network.log) |
-| 3 | 1795764680 | 48 | [server-out](./logs/1795764680-server-out.log), [server-err](./logs/1795764680-server-err.log), [client-out](./logs/1795764680-client-out.log), [client-err](./logs/1795764680-client-err.log), [network](./logs/1795764680-network.log) |
-| 4 | 1795764720 | 48 | [server-out](./logs/1795764720-server-out.log), [server-err](./logs/1795764720-server-err.log), [client-out](./logs/1795764720-client-out.log), [client-err](./logs/1795764720-client-err.log), [network](./logs/1795764720-network.log) |
-| 5 | 1795764769 | 53 | [server-out](./logs/1795764769-server-out.log), [server-err](./logs/1795764769-server-err.log), [client-out](./logs/1795764769-client-out.log), [client-err](./logs/1795764769-client-err.log), [network](./logs/1795764769-network.log) |
+| Test No. | ID | Successful Messages | Logs | SRT/sec |
+| :- | :- | :- | :- | :- |
+| 1 | 1795764418 | 47 | [server-out](./logs/1795764418-server-out.log), [server-err](./logs/1795764418-server-err.log), [client-out](./logs/1795764418-client-out.log), [client-err](./logs/1795764418-client-err.log), [network](./logs/1795764418-network.log) | 4.7 |
+| 2 | 1795764489 | 52 | [server-out](./logs/1795764489-server-out.log), [server-err](./logs/1795764489-server-err.log), [client-out](./logs/1795764489-client-out.log), [client-err](./logs/1795764489-client-err.log), [network](./logs/1795764489-network.log) | 5.2 |
+| 3 | 1795764680 | 48 | [server-out](./logs/1795764680-server-out.log), [server-err](./logs/1795764680-server-err.log), [client-out](./logs/1795764680-client-out.log), [client-err](./logs/1795764680-client-err.log), [network](./logs/1795764680-network.log) | 4.8 |
+| 4 | 1795764720 | 48 | [server-out](./logs/1795764720-server-out.log), [server-err](./logs/1795764720-server-err.log), [client-out](./logs/1795764720-client-out.log), [client-err](./logs/1795764720-client-err.log), [network](./logs/1795764720-network.log) | 4.8 |
+| 5 | 1795764769 | 53 | [server-out](./logs/1795764769-server-out.log), [server-err](./logs/1795764769-server-err.log), [client-out](./logs/1795764769-client-out.log), [client-err](./logs/1795764769-client-err.log), [network](./logs/1795764769-network.log) | 5.3 |
 
+Average SRT/sec = 24.8 / 5 = **4.69 SRT/sec**
 
 
 ### Window Length of 25
@@ -689,18 +692,15 @@ The network parameters are the same as the combined test from the scenarios.
 ./test/thrpt.sh -w 25 -r 0
 ```
 
-| Test No. | ID | Successful Messages | Logs |
-| :- | :- | :- | :- |
-| 1 | 1795764955 | 98 | [server-out](./logs/1795764955-server-out.log), [server-err](./logs/1795764955-server-err.log), [client-out](./logs/1795764955-client-out.log), [client-err](./logs/1795764955-client-err.log), [network](./logs/1795764955-network.log) |
-| 2 | 1795764985 | 119 | [server-out](./logs/1795764985-server-out.log), [server-err](./logs/1795764985-server-err.log), [client-out](./logs/1795764985-client-out.log), [client-err](./logs/1795764985-client-err.log), [network](./logs/1795764985-network.log) |
-| 3 | 1795765023 | 109 | [server-out](./logs/1795765023-server-out.log), [server-err](./logs/1795765023-server-err.log), [client-out](./logs/1795765023-client-out.log), [client-err](./logs/1795765023-client-err.log), [network](./logs/1795765023-network.log) |
-| 4 | 1795765036 | 103 | [server-out](./logs/1795765036-server-out.log), [server-err](./logs/1795765036-server-err.log), [client-out](./logs/1795765036-client-out.log), [client-err](./logs/1795765036-client-err.log), [network](./logs/1795765036-network.log) |
-| 5 | 1795765051 | 101 | [server-out](./logs/1795765051-server-out.log), [server-err](./logs/1795765051-server-err.log), [client-out](./logs/1795765051-client-out.log), [client-err](./logs/1795765051-client-err.log), [network](./logs/1795765051-network.log) |
+| Test No. | ID | Successful Messages | Logs | SRT/sec |
+| :- | :- | :- | :- | :- |
+| 1 | 1795764955 | 98 | [server-out](./logs/1795764955-server-out.log), [server-err](./logs/1795764955-server-err.log), [client-out](./logs/1795764955-client-out.log), [client-err](./logs/1795764955-client-err.log), [network](./logs/1795764955-network.log) | 9.8 |
+| 2 | 1795764985 | 119 | [server-out](./logs/1795764985-server-out.log), [server-err](./logs/1795764985-server-err.log), [client-out](./logs/1795764985-client-out.log), [client-err](./logs/1795764985-client-err.log), [network](./logs/1795764985-network.log) | 11.9 |
+| 3 | 1795765023 | 109 | [server-out](./logs/1795765023-server-out.log), [server-err](./logs/1795765023-server-err.log), [client-out](./logs/1795765023-client-out.log), [client-err](./logs/1795765023-client-err.log), [network](./logs/1795765023-network.log) | 10.9 |
+| 4 | 1795765036 | 103 | [server-out](./logs/1795765036-server-out.log), [server-err](./logs/1795765036-server-err.log), [client-out](./logs/1795765036-client-out.log), [client-err](./logs/1795765036-client-err.log), [network](./logs/1795765036-network.log) | 10.3 |
+| 5 | 1795765051 | 101 | [server-out](./logs/1795765051-server-out.log), [server-err](./logs/1795765051-server-err.log), [client-out](./logs/1795765051-client-out.log), [client-err](./logs/1795765051-client-err.log), [network](./logs/1795765051-network.log) | 10.1 |
 
-### Conclusions
-
-
-
+Average SRT/sec = 53 / 5 = **10.6 SRT/sec**
 
 ## Reflection and Novelty
 
