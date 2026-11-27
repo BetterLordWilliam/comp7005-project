@@ -672,26 +672,35 @@ The network parameters are the same as the combined test from the scenarios.
 ### Window Length of 1
 
 ```
-./test/thrpt.sh -r 0
+for i in {0..4}; do ./test/thrpt.sh -r 0; done
 ```
 
 | Test No. | ID | Successful Messages | Logs | SRT/sec |
 | :- | :- | :- | :- | :- |
-| 
+| 1 | 1795766594 | 49 | [server-out](./logs/1795766594-server-out.log), [server-err](./logs/1795766594-server-err.log), [client-out](./logs/1795766594-client-out.log), [client-err](./logs/1795766594-client-err.log), [network](./logs/1795766594-network.log) | 4.9 |
+| 2 | 1795766604 | 52 | [server-out](./logs/1795766604-server-out.log), [server-err](./logs/1795766604-server-err.log), [client-out](./logs/1795766604-client-out.log), [client-err](./logs/1795766604-client-err.log), [network](./logs/1795766604-network.log) | 5.2 |
+| 3 | 1795766614 | 45 | [server-out](./logs/1795766614-server-out.log), [server-err](./logs/1795766614-server-err.log), [client-out](./logs/1795766614-client-out.log), [client-err](./logs/1795766614-client-err.log), [network](./logs/1795766614-network.log) | 4.5 |
+| 4 | 1795766624 | 58 | [server-out](./logs/1795766624-server-out.log), [server-err](./logs/1795766624-server-err.log), [client-out](./logs/1795766624-client-out.log), [client-err](./logs/1795766624-client-err.log), [network](./logs/1795766624-network.log) | 5.8 |
+| 5 | 1795766634 | 52 | [server-out](./logs/1795766634-server-out.log), [server-err](./logs/1795766634-server-err.log), [client-out](./logs/1795766634-client-out.log), [client-err](./logs/1795766634-client-err.log), [network](./logs/1795766634-network.log) | 5.2 |
 
-Average SRT/sec = 
+Average SRT/sec = 25.6 / 5 = **5.12 SRT/sec**
 
 
 ### Window Length of 25
 
 ```
-./test/thrpt.sh -w 25 -r 0
+for i in {0..4}; do ./test/thrpt.sh -w 25 -r 0; done
 ```
 
 | Test No. | ID | Successful Messages | Logs | SRT/sec |
 | :- | :- | :- | :- | :- |
+| 1 | 1795766657 | 92 | [server-out](./logs/1795766657-server-out.log), [server-err](./logs/1795766657-server-err.log), [client-out](./logs/1795766657-client-out.log), [client-err](./logs/1795766657-client-err.log), [network](./logs/1795766657-network.log) | 9.2 |
+| 2 | 1795766667 | 101 | [server-out](./logs/1795766667-server-out.log), [server-err](./logs/1795766667-server-err.log), [client-out](./logs/1795766667-client-out.log), [client-err](./logs/1795766667-client-err.log), [network](./logs/1795766667-network.log) | 10.1 |
+| 3 | 1795766677 | 94 | [server-out](./logs/1795766677-server-out.log), [server-err](./logs/1795766677-server-err.log), [client-out](./logs/1795766677-client-out.log), [client-err](./logs/1795766677-client-err.log), [network](./logs/1795766677-network.log) | 9.4 |
+| 4 | 1795766687 | 115 | [server-out](./logs/1795766687-server-out.log), [server-err](./logs/1795766687-server-err.log), [client-out](./logs/1795766687-client-out.log), [client-err](./logs/1795766687-client-err.log), [network](./logs/1795766687-network.log) | 11.5 |
+| 5 | 1795766697 | 114 | [server-out](./logs/1795766697-server-out.log), [server-err](./logs/1795766697-server-err.log), [client-out](./logs/1795766697-client-out.log), [client-err](./logs/1795766697-client-err.log), [network](./logs/1795766697-network.log) | 11.4 |
 
-Average SRT/sec = 
+Average SRT/sec = 51.6 / 5 = **10.32 SRC/sec**
 
 ## Reflection and Novelty
 
@@ -706,6 +715,7 @@ There are a few extensions to this project that I have considered.
 - 
 
 ## Appendix
+Additional information about SLW & resources.
 
 ### SLW Serial Arithmetic (RFC 1982)
 
@@ -714,3 +724,6 @@ Because SLW has an ID space of 2^8 and the fact that SLW uses go-back-N for retr
 ### SLW Checksum Calculation
 
 ### SLW RTT Tracking & Timer Calculations
+
+### Piggy-backing ACKs
+
