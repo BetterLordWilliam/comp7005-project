@@ -16,7 +16,13 @@ random delays can naturally make later datagrams arrive before earlier ones.
 Run on Linux:
 
 ```sh
-make build
+make
+```
+
+To build the programs with debug logging:
+
+```sh
+make debug
 ```
 
 ## Run the echo demo
@@ -26,19 +32,19 @@ Open three terminals from this directory.
 Terminal 1, start the real server on port 9001:
 
 ```sh
-./udp_server 9001
+./build/udp_server 9001
 ```
 
 Terminal 2, start the simulated network on port 9000:
 
 ```sh
-./network --listen-port 9000 --server-ip 127.0.0.1 --server-port 9001 --loss 0.10 --delay 0.30 --corrupt 0.05 --max-delay-ms 500 --seed 42
+./build/network --listen-port 9000 --server-ip 127.0.0.1 --server-port 9001 --loss 0.10 --delay 0.30 --corrupt 0.05 --max-delay-ms 500 --seed 42
 ```
 
 Terminal 3, point the client at the simulated network, not the real server:
 
 ```sh
-./udp_client 127.0.0.1 9000
+./build/udp_client 127.0.0.1 9000
 ```
 
 Every line typed into the client is one UDP datagram. The server prints any
@@ -58,7 +64,7 @@ server's echo is application data, not a reliability ACK.
 Give every datagram its own independent random delay of up to one second:
 
 ```sh
-./network --listen-port 9000 --server-ip 127.0.0.1 --server-port 9001 --loss 0 --delay 1 --corrupt 0 --max-delay-ms 1000 --seed 42
+./build/network --listen-port 9000 --server-ip 127.0.0.1 --server-port 9001 --loss 0 --delay 1 --corrupt 0 --max-delay-ms 1000 --seed 42
 ```
 
 Start the server and client as above, then paste many numbered lines into the
@@ -107,3 +113,23 @@ with a deliberately invalid UDP checksum.
 The relay intentionally supports one active client to keep the code small. A
 later version can identify clients with a session ID when the project adds its
 reliable application protocol.
+
+## `udp_server` arguments
+
+Usage:
+
+```sh
+./udp_server port [window size]
+```
+
+If the window length argument is omitted a default window length of 5 is used.
+
+## `udp_client` arguments
+
+Usage
+
+```sh
+./udp_client ip port [window size]
+```
+
+If the window length argument is omitted a default window length of 5 is used.
